@@ -12,7 +12,7 @@ language = "nodejs"
 [deployment]
 deploymentTarget = "static"
 build = ["npm", "run", "build"]
-publicDir = "dist"
+publicDir = "build"
 
 [[ports]]
 localPort = 5173
