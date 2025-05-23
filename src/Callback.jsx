@@ -7,7 +7,7 @@ const Callback = () => {
 		const verifier = localStorage.getItem('code_verifier');
 
 		if (!code || !verifier) {
-			console.error('Missing code or verifier');
+			console.error('❌ Missing code or verifier');
 			return;
 		}
 
@@ -30,6 +30,20 @@ const Callback = () => {
 			.then((data) => {
 				console.log('✅ Access token response:', data);
 				localStorage.setItem('spotifyAccessToken', data.access_token);
+
+				// 🎧 Fetch the user profile
+				fetch('https://api.spotify.com/v1/me', {
+					headers: {
+						Authorization: `Bearer ${data.access_token}`,
+					},
+				})
+					.then((res) => res.json())
+					.then((profile) => {
+						console.log('🎧 Spotify Profile:', profile);
+					})
+					.catch((err) => {
+						console.error('❌ Failed to fetch profile:', err);
+					});
 			})
 			.catch((err) => {
 				console.error('❌ Token exchange failed:', err);
@@ -38,7 +52,7 @@ const Callback = () => {
 
 	return (
 		<div style={{ backgroundColor: 'black', color: 'lime', padding: '20px' }}>
-			✅ Callback received — token should be in console!
+			✅ Callback received — token + profile should be in console!
 		</div>
 	);
 };
