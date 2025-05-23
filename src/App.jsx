@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Callback from './Callback';
 
 const CLIENT_ID = '43d52d0d3774470688a3fec0bc7e3378';
-const REDIRECT_URI = 'https://pulse-app-maxime111.replit.app/callback';
+  const REDIRECT_URI = "https://celebrated-hotteok-20bdf2.netlify.app/callback";
+;
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const RESPONSE_TYPE = 'code';
 const SCOPES = [
