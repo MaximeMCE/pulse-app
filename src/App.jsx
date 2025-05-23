@@ -2,12 +2,11 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Callback from './Callback';
+import { generateCodeVerifier, generateCodeChallenge } from './pkce';
 
 const CLIENT_ID = '43d52d0d3774470688a3fec0bc7e3378';
 const REDIRECT_URI = 'https://celebrated-hotteok-20bdf2.netlify.app/callback';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
-const RESPONSE_TYPE = 'token';
-
 const SCOPES = [
   'user-read-email',
   'user-top-read',
@@ -15,7 +14,15 @@ const SCOPES = [
   'user-library-read',
 ].join('%20');
 
-const loginUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPES}`;
+async function handleLogin() {
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  localStorage.setItem('code_verifier', codeVerifier);
+
+  const loginUrl = `${AUTH_ENDPOINT}?response_type=code&client_id=${CLIENT_ID}&scope=${SCOPES}&redirect_uri=${REDIRECT_URI}&code_challenge_method=S256&code_challenge=${codeChallenge}`;
+
+  window.location.href = loginUrl;
+}
 
 function App() {
   return (
@@ -26,11 +33,9 @@ function App() {
           element={
             <div style={{ padding: '2rem' }}>
               <h1>🎧 Pulse App</h1>
-              <a href={loginUrl}>
-                <button style={{ fontSize: '1.2rem', padding: '1rem' }}>
-                  Login with Spotify
-                </button>
-              </a>
+              <button onClick={handleLogin} style={{ fontSize: '1.2rem', padding: '1rem' }}>
+                Login with Spotify
+              </button>
             </div>
           }
         />
