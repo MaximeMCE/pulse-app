@@ -58,7 +58,7 @@ const Dashboard = () => {
         </div>
       </section>
 
-      {/* 🔥 Hot Leads */}
+      {/* 📁 Hot Leads */}
       <section style={{ marginTop: '3rem' }}>
         <h2>📁 Hot Leads</h2>
         <p>No leads yet. Start scouting or add manually.</p>
@@ -79,7 +79,7 @@ const Dashboard = () => {
         </button>
       </section>
 
-      {/* 🎯 CTA */}
+      {/* 🎯 Scout Now */}
       <section style={{ marginTop: '3rem' }}>
         <h2>🎯 Scout Now</h2>
         <p>
