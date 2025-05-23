@@ -4,36 +4,36 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Callback from './Callback';
 
 const CLIENT_ID = '43d52d0d3774470688a3fec0bc7e3378';
-  const REDIRECT_URI = "https://celebrated-hotteok-20bdf2.netlify.app/callback";
-;
+const REDIRECT_URI = 'https://celebrated-hotteok-20bdf2.netlify.app/callback';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const RESPONSE_TYPE = 'token';
+
 const SCOPES = [
   'user-read-email',
   'user-top-read',
   'playlist-read-private',
-  'user-library-read'
+  'user-library-read',
 ].join('%20');
 
-function Home() {
-  const loginUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPES}&show_dialog=true`;
-
-  return (
-    <div className="App">
-      <h1>Pulse – Spotify Artist Tracker</h1>
-      <a href={loginUrl}>
-        <button>Login with Spotify</button>
-      </a>
-      <h2>Please log in to start tracking artists.</h2>
-    </div>
-  );
-}
+const loginUrl = `${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPES}`;
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <div style={{ padding: '2rem' }}>
+              <h1>🎧 Pulse App</h1>
+              <a href={loginUrl}>
+                <button style={{ fontSize: '1.2rem', padding: '1rem' }}>
+                  Login with Spotify
+                </button>
+              </a>
+            </div>
+          }
+        />
         <Route path="/callback" element={<Callback />} />
       </Routes>
     </Router>
