@@ -15,21 +15,13 @@ import ProtectedLayout from './ProtectedLayout.jsx';
 const App = () => {
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<Login />} />
       <Route path="/callback" element={<Callback />} />
 
-      {/* Protected area */}
+      {/* Protected routes with sidebar layout */}
       <Route element={<ProtectedLayout />}>
-        <Route
-          element={
-            <>
-              <Sidebar />
-              <div className="flex-1 p-4">
-                <Outlet />
-              </div>
-            </>
-          }
-        >
+        <Route element={<SidebarLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/explore" element={<Explorer />} />
           <Route path="/artist/:id" element={<ArtistProfile />} />
@@ -40,5 +32,23 @@ const App = () => {
     </Routes>
   );
 };
+
+// Wrapper to apply Sidebar and page container
+const SidebarLayout = () => (
+  <div className="flex min-h-screen">
+    <Sidebar />
+    <div className="flex-1 p-4">
+      <React.Suspense fallback={<p>Loading...</p>}>
+        <Routes>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="explore" element={<Explorer />} />
+          <Route path="artist/:id" element={<ArtistProfile />} />
+          <Route path="leads" element={<Leads />} />
+          <Route path="settings" element={<Settings />} />
+        </Routes>
+      </React.Suspense>
+    </div>
+  </div>
+);
 
 export default App;
