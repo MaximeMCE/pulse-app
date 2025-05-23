@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('spotify_access_token');
-    if (!token) return;
+
+    if (!token) {
+      navigate('/');
+      return;
+    }
 
     const fetchProfile = async () => {
       try {
@@ -23,7 +29,7 @@ const Dashboard = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [navigate]);
 
   return (
     <div>
