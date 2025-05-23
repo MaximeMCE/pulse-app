@@ -1,17 +1,20 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar.jsx';
+
+import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Explorer from './pages/Explorer.jsx';
 import ArtistProfile from './pages/ArtistProfile.jsx';
 import Leads from './pages/Leads.jsx';
 import Settings from './pages/Settings.jsx';
-import Login from './pages/Login.jsx'; // 👈 Add this
+import Callback from './Callback.jsx'; // 👈 this is the new piece
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route path="/callback" element={<Callback />} />
       <Route
         path="/*"
         element={
