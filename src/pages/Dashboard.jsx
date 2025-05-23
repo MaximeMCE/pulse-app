@@ -1,7 +1,9 @@
 import React from 'react';
 
 const Dashboard = () => (
-  <h2 className="text-xl font-semibold">Dashboard Overview</h2>
+  <div className="text-3xl text-blue-500 font-bold">
+    Tailwind is working 🎉
+  </div>
 );
 
 export default Dashboard;
