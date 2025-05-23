@@ -24,8 +24,37 @@ const Dashboard = () => {
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Welcome, {profile.display_name} 👋</h1>
+
+      {profile.images && profile.images.length > 0 && (
+        <img
+          src={profile.images[0].url}
+          alt="Spotify profile"
+          width="120"
+          style={{ borderRadius: '60px', marginTop: '1rem' }}
+        />
+      )}
+
       <p>Email: {profile.email}</p>
-      <p>Country: {profile.country}</p>
+      <p>Country: {profile.country || 'Not specified'}</p>
+
+      <button
+        onClick={() => {
+          localStorage.clear();
+          window.location.href = '/';
+        }}
+        style={{
+          marginTop: '2rem',
+          padding: '10px 20px',
+          fontSize: '1rem',
+          backgroundColor: 'black',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer',
+        }}
+      >
+        Logout
+      </button>
     </div>
   );
 };
