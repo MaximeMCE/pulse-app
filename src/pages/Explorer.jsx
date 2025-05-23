@@ -60,44 +60,44 @@ const Explorer = () => {
         This is where Pulse detects fast-growing artists across Spotify, TikTok, and more — based on real-time surges in listeners, mentions, or followers.
       </p>
 
-      <div className="flex gap-4 mb-4">
-        <select value={genreFilter} onChange={e => setGenreFilter(e.target.value)}>
+      <div className="flex flex-wrap gap-4 mb-6">
+        <select value={genreFilter} onChange={e => setGenreFilter(e.target.value)} className="px-2 py-1 border rounded">
           <option value="">Genre</option>
           <option value="electronic">Electronic</option>
           <option value="alt-pop">Alt-Pop</option>
           <option value="trap">Trap</option>
         </select>
-        <select value={platformFilter} onChange={e => setPlatformFilter(e.target.value)}>
+        <select value={platformFilter} onChange={e => setPlatformFilter(e.target.value)} className="px-2 py-1 border rounded">
           <option value="">Platform</option>
           <option value="Spotify">Spotify</option>
           <option value="TikTok">TikTok</option>
           <option value="SoundCloud">SoundCloud</option>
         </select>
-        <select value={growthTypeFilter} onChange={e => setGrowthTypeFilter(e.target.value)}>
+        <select value={growthTypeFilter} onChange={e => setGrowthTypeFilter(e.target.value)} className="px-2 py-1 border rounded">
           <option value="">Growth Type</option>
           <option value="listeners">Listeners</option>
           <option value="mentions">Mentions</option>
           <option value="followers">Followers</option>
         </select>
-        <select value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
+        <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} className="px-2 py-1 border rounded">
           <option value="boost">Sort by Boost</option>
           <option value="alphabetical">Sort A-Z</option>
         </select>
       </div>
 
-      <h2 className="text-xl font-semibold mb-3">📈 Trending Boosts</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <h2 className="text-xl font-semibold mb-4">📈 Trending Boosts</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredArtists.map((artist, index) => (
-          <div key={index} className="border p-4 rounded shadow-sm hover:shadow-md transition bg-white">
-            <h3 className="text-lg font-bold">{artist.name}</h3>
+          <div key={index} className="border rounded-lg p-4 shadow-sm bg-white hover:shadow-md transition">
+            <h3 className="text-lg font-bold mb-1">{artist.name}</h3>
             <p className="text-sm text-gray-600">{artist.genre}</p>
-            <p className="text-green-600 font-semibold mt-1" title={`Boost Type: ${artist.growthType}`}>
+            <p className="text-green-600 font-semibold mt-2" title={`Boost Type: ${artist.growthType}`}>
               {artist.growthValue}
             </p>
-            <p className="text-xs text-gray-500">{artist.platformIcon} {artist.platform}</p>
+            <p className="text-sm text-gray-500 mt-1">{artist.platformIcon} {artist.platform}</p>
             <button
               onClick={() => handleSave(artist)}
-              className="mt-2 text-sm text-white bg-black px-3 py-1 rounded hover:bg-gray-800"
+              className="mt-4 text-sm text-white bg-black px-4 py-1 rounded hover:bg-gray-800"
             >
               + Save to Leads
             </button>
