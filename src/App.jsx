@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Callback from './Callback';
+import Dashboard from './Dashboard';
 import { generateCodeVerifier, generateCodeChallenge } from './pkce';
 
 const CLIENT_ID = '43d52d0d3774470688a3fec0bc7e3378';
@@ -40,6 +41,7 @@ function App() {
           }
         />
         <Route path="/callback" element={<Callback />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );

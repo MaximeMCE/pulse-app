@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Callback = () => {
+	const navigate = useNavigate();
+
 	useEffect(() => {
 		const urlParams = new URLSearchParams(window.location.search);
 		const code = urlParams.get('code');
@@ -40,6 +43,8 @@ const Callback = () => {
 					.then((res) => res.json())
 					.then((profile) => {
 						console.log('🎧 Spotify Profile:', profile);
+						localStorage.setItem('spotifyUserProfile', JSON.stringify(profile));
+						navigate('/dashboard');
 					})
 					.catch((err) => {
 						console.error('❌ Failed to fetch profile:', err);
@@ -48,11 +53,11 @@ const Callback = () => {
 			.catch((err) => {
 				console.error('❌ Token exchange failed:', err);
 			});
-	}, []);
+	}, [navigate]);
 
 	return (
 		<div style={{ backgroundColor: 'black', color: 'lime', padding: '20px' }}>
-			✅ Callback received — token + profile should be in console!
+			✅ Callback received — token + profile in console. Redirecting...
 		</div>
 	);
 };
