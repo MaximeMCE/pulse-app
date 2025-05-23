@@ -6,21 +6,21 @@ const mockTrending = [
     genre: 'electronic / downtempo',
     followers: 4200,
     source: 'Spotify',
-    img: 'https://via.placeholder.com/150x150?text=Nova+Aura',
+    img: 'https://dummyimage.com/150x150/000/fff&text=Nova+Aura',
   },
   {
     name: 'Rue Echo',
     genre: 'alt-pop',
     followers: 7300,
     source: 'TikTok',
-    img: 'https://via.placeholder.com/150x150?text=Rue+Echo',
+    img: 'https://dummyimage.com/150x150/000/fff&text=Rue+Echo',
   },
   {
     name: 'Mati Drip',
     genre: 'trap / experimental',
     followers: 3100,
     source: 'SoundCloud',
-    img: 'https://via.placeholder.com/150x150?text=Mati+Drip',
+    img: 'https://dummyimage.com/150x150/000/fff&text=Mati+Drip',
   },
 ];
 
