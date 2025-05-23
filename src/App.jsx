@@ -1,11 +1,9 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import Dashboard from './pages/Dashboard';
-import Explorer from './pages/Explorer';
-import ArtistProfile from './pages/ArtistProfile';
-import Leads from './pages/Leads';
-import Settings from './pages/Settings';
+import Dashboard from './pages/Dashboard.jsx';
+import Explorer from './pages/Explorer.jsx';
+import ArtistProfile from './pages/ArtistProfile.jsx';
+import Leads from './pages/Leads.jsx';
+import Settings from './pages/Settings.jsx';
+import Sidebar from './components/Sidebar.jsx'
 
 const App = () => {
   return (
