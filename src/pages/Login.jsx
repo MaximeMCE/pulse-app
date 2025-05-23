@@ -1,17 +1,28 @@
-// src/pages/Login.jsx
 import React from 'react';
 
 const Login = () => {
   const handleLogin = () => {
-    // Replace with your Spotify auth URL
-    window.location.href = "https://accounts.spotify.com/authorize?...";
+    const clientId = "43d52d0d3774470688a3fec0bc7e3378";
+    const redirectUri = "https://power-pulse-app.netlify.app/callback"; // ✅ Must be registered in your Spotify dashboard
+    const scopes = [
+      "user-read-email",
+      "playlist-read-private",
+      "user-top-read",
+      "user-read-recently-played"
+    ].join(" ");
+
+    const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(
+      redirectUri
+    )}&scope=${encodeURIComponent(scopes)}`;
+
+    window.location.href = authUrl;
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-black text-white">
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-6">Welcome to Pulse</h1>
-        <p className="mb-4 text-gray-300">Track emerging artists before anyone else.</p>
+        <p className="mb-4 text-gray-300">Track emerging artists before they blow up.</p>
         <button
           onClick={handleLogin}
           className="bg-green-500 hover:bg-green-400 px-6 py-3 rounded-full font-semibold"
