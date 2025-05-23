@@ -5,14 +5,10 @@ const ProtectedLayout = () => {
   const token = localStorage.getItem('spotify_access_token');
 
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
-  return (
-    <div className="flex min-h-screen">
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 };
 
 export default ProtectedLayout;
