@@ -2,8 +2,8 @@ import React from 'react';
 
 const Login = () => {
   const handleLogin = () => {
-    const clientId = "43d52d0d3774470688a3fec0bc7e3378"; // Your real client ID
-    const redirectUri = "https://pulse-app.netlify.app/callback"; // ← UPDATE if you rename the Netlify site
+    const clientId = "43d52d0d3774470688a3fec0bc7e3378"; // ✅ Your real Client ID
+    const redirectUri = "https://pulse-scout.netlify.app/callback"; // ✅ Must match exactly what's in Spotify dashboard
     const scopes = [
       "user-read-email",
       "playlist-read-private",
