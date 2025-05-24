@@ -5,7 +5,7 @@ import ProtectedLayout from './ProtectedLayout';
 import Dashboard from './pages/Dashboard';
 import Explorer from './pages/Explorer';
 import Login from './pages/Login';
-import Callback from './Callback'; // ✅ Correctly importing the callback component
+import Callback from './Callback';
 import Settings from './pages/Settings';
 import ArtistProfile from './pages/ArtistProfile';
 
@@ -15,13 +15,17 @@ import CampaignDetails from './pages/CampaignDetails';
 function App() {
   return (
     <>
+      <div style={{ color: 'red', padding: '20px' }}>
+        🧪 App is rendering
+      </div>
+
       <Routes>
         {/* Redirect root to login */}
         <Route path="/" element={<Navigate to="/login" />} />
 
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/callback" element={<Callback />} /> {/* ✅ Fixed this line */}
+        <Route path="/callback" element={<Callback />} />
 
         {/* Protected Routes */}
         <Route
