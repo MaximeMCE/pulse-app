@@ -11,6 +11,7 @@ const Leads = () => {
       genres: ['electronic', 'downtempo'],
       status: 'new',
       image: 'https://placehold.co/80x80?text=IMG',
+      tags: ['female vocals'],
     },
     {
       id: 2,
@@ -19,6 +20,7 @@ const Leads = () => {
       genres: ['alt-pop'],
       status: 'contacted',
       image: 'https://placehold.co/80x80?text=IMG',
+      tags: ['viral on TikTok'],
     },
     {
       id: 3,
@@ -27,30 +29,49 @@ const Leads = () => {
       genres: ['trap', 'experimental'],
       status: 'qualified',
       image: 'https://placehold.co/80x80?text=IMG',
+      tags: [],
     },
   ];
 
   const [leads, setLeads] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [tagInputs, setTagInputs] = useState({});
 
-  // Load leads from localStorage on first mount
+  // Load on mount
   useEffect(() => {
-    const storedLeads = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (storedLeads) {
-      setLeads(JSON.parse(storedLeads));
-    } else {
-      setLeads(defaultLeads);
-    }
+    const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+    setLeads(stored ? JSON.parse(stored) : defaultLeads);
   }, []);
 
-  // Save leads to localStorage on every change
+  // Save on change
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(leads));
   }, [leads]);
 
   const handleDelete = (id) => {
-    const updatedLeads = leads.filter((lead) => lead.id !== id);
-    setLeads(updatedLeads);
+    setLeads(leads.filter((lead) => lead.id !== id));
+  };
+
+  const handleAddTag = (id, tag) => {
+    if (!tag.trim()) return;
+    setLeads((prev) =>
+      prev.map((lead) =>
+        lead.id === id && !lead.tags.includes(tag)
+          ? { ...lead, tags: [...lead.tags, tag] }
+          : lead
+      )
+    );
+    setTagInputs((prev) => ({ ...prev, [id]: '' }));
+  };
+
+  const handleDeleteTag = (id, tag) => {
+    setLeads((prev) =>
+      prev.map((lead) =>
+        lead.id === id
+          ? { ...lead, tags: lead.tags.filter((t) => t !== tag) }
+          : lead
+      )
+    );
   };
 
   const renderLeadCard = (lead) => (
@@ -66,15 +87,14 @@ const Leads = () => {
         />
         <div>
           <h3 className="text-lg font-semibold">{lead.name}</h3>
-          <p className="text-sm text-gray-600">
-            {lead.genres.join(', ')}
-          </p>
+          <p className="text-sm text-gray-600">{lead.genres.join(', ')}</p>
           <p className="text-sm text-gray-700">
             {lead.monthlyListeners.toLocaleString()} listeners
           </p>
         </div>
       </div>
 
+      {/* Status */}
       <span
         className={`inline-block px-2 py-1 mb-2 text-xs font-medium rounded-full ${
           lead.status === 'new'
@@ -89,6 +109,7 @@ const Leads = () => {
         {lead.status}
       </span>
 
+      {/* Status dropdown */}
       <select
         value={lead.status}
         onChange={(e) => {
@@ -104,6 +125,44 @@ const Leads = () => {
         <option value="qualified">Qualified</option>
       </select>
 
+      {/* Tags */}
+      <div className="flex flex-wrap gap-2 mb-2">
+        {lead.tags.map((tag) => (
+          <span
+            key={tag}
+            className="bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full text-xs flex items-center"
+          >
+            {tag}
+            <button
+              onClick={() => handleDeleteTag(lead.id, tag)}
+              className="ml-1 text-xs text-red-500 hover:text-red-700"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
+
+      {/* Add tag */}
+      <div className="flex gap-2 mb-2">
+        <input
+          type="text"
+          value={tagInputs[lead.id] || ''}
+          onChange={(e) =>
+            setTagInputs((prev) => ({ ...prev, [lead.id]: e.target.value }))
+          }
+          placeholder="Add tag"
+          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+        />
+        <button
+          onClick={() => handleAddTag(lead.id, tagInputs[lead.id])}
+          className="bg-blue-100 text-blue-800 px-2 rounded text-sm hover:bg-blue-200"
+        >
+          Add
+        </button>
+      </div>
+
+      {/* Delete */}
       <button
         onClick={() => handleDelete(lead.id)}
         className="w-full bg-red-100 text-red-700 hover:bg-red-200 py-1 rounded text-sm"
