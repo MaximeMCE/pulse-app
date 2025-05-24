@@ -1,47 +1,96 @@
 import React from 'react';
-import './App.css'; // ✅ This line is essential for Tailwind to work
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ProtectedLayout from './ProtectedLayout';
 
-import { Routes, Route, Outlet } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import Explorer from './pages/Explorer';
+import Login from './pages/Login';
+import Settings from './pages/Settings';
+import ArtistProfile from './pages/ArtistProfile';
 
-import Login from './pages/Login.jsx';
-import Callback from './Callback.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import Explorer from './pages/Explorer.jsx';
-import ArtistProfile from './pages/ArtistProfile.jsx';
-import Leads from './pages/Leads.jsx';
-import Settings from './pages/Settings.jsx';
+import Campaigns from './pages/Campaigns'; // ✅ NEW
+import CampaignDetails from './pages/CampaignDetails'; // ✅ NEW
 
-import Sidebar from './components/Sidebar.jsx';
-import ProtectedLayout from './ProtectedLayout.jsx';
-
-const App = () => {
+function App() {
   return (
-    <Routes>
-      {/* Public */}
-      <Route path="/" element={<Login />} />
-      <Route path="/callback" element={<Callback />} />
+    <Router>
+      <Routes>
+        {/* Public Route */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/callback" element={<Login />} />
 
-      {/* Protected routes */}
-      <Route element={<ProtectedLayout />}>
-        <Route element={<SidebarLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/explore" element={<Explorer />} />
-          <Route path="/artist/:id" element={<ArtistProfile />} />
-          <Route path="/leads" element={<Leads />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-      </Route>
-    </Routes>
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedLayout>
+              <Dashboard />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedLayout>
+              <Dashboard />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/explorer"
+          element={
+            <ProtectedLayout>
+              <Explorer />
+            </ProtectedLayout>
+          }
+        />
+        {/* Removed Leads route */}
+        {/* <Route
+          path="/leads"
+          element={
+            <ProtectedLayout>
+              <Leads />
+            </ProtectedLayout>
+          }
+        /> */}
+        <Route
+          path="/settings"
+          element={
+            <ProtectedLayout>
+              <Settings />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/artist/:id"
+          element={
+            <ProtectedLayout>
+              <ArtistProfile />
+            </ProtectedLayout>
+          }
+        />
+
+        {/* ✅ Campaign Routes */}
+        <Route
+          path="/campaigns"
+          element={
+            <ProtectedLayout>
+              <Campaigns />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/campaigns/:id"
+          element={
+            <ProtectedLayout>
+              <CampaignDetails />
+            </ProtectedLayout>
+          }
+        />
+      </Routes>
+    </Router>
   );
-};
-
-const SidebarLayout = () => (
-  <div className="flex min-h-screen">
-    <Sidebar />
-    <div className="flex-1 p-4">
-      <Outlet />
-    </div>
-  </div>
-);
+}
 
 export default App;
+
