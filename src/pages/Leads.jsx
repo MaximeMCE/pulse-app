@@ -8,7 +8,7 @@ const Leads = () => {
       monthlyListeners: 4200,
       genres: ['electronic', 'downtempo'],
       status: 'new',
-      image: 'https://via.placeholder.com/80',
+      image: 'https://placehold.co/80x80?text=IMG',
     },
     {
       id: 2,
@@ -16,7 +16,7 @@ const Leads = () => {
       monthlyListeners: 7300,
       genres: ['alt-pop'],
       status: 'contacted',
-      image: 'https://via.placeholder.com/80',
+      image: 'https://placehold.co/80x80?text=IMG',
     },
     {
       id: 3,
@@ -24,7 +24,7 @@ const Leads = () => {
       monthlyListeners: 3100,
       genres: ['trap', 'experimental'],
       status: 'qualified',
-      image: 'https://via.placeholder.com/80',
+      image: 'https://placehold.co/80x80?text=IMG',
     },
   ]);
 
