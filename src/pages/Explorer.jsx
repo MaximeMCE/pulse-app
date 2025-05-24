@@ -17,14 +17,13 @@ function Explorer() {
     try {
       console.log("Using token for API call:", token);
 
-      if (input.includes('spotify.com') || input.startsWith('spotify:artist:')) {
-        const match = input.match(/artist\/([a-zA-Z0-9]+)|spotify:artist:([a-zA-Z0-9]+)/);
-        artistId = match?.[1] || match?.[2];
+      if (input.includes('spotify.com') || input.toLowerCase().startsWith('spotify:artist:')) {
+        const idMatch = input.match(/(?:artist\/|spotify:artist:)([a-zA-Z0-9]+)/i);
+        artistId = idMatch ? idMatch[1] : null;
       } else {
         const searchRes = await axios.get(`https://api.spotify.com/v1/search?q=${encodeURIComponent(input)}&type=artist&limit=1`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-
         console.log('Search result artist object:', searchRes.data.artists.items[0]);
         artistId = searchRes.data.artists.items[0]?.id;
       }
@@ -34,7 +33,7 @@ function Explorer() {
         return;
       }
 
-      // Step: Check if artist exists
+      // Check if artist exists
       try {
         await axios.get(`https://api.spotify.com/v1/artists/${artistId}`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -44,12 +43,20 @@ function Explorer() {
         return;
       }
 
-      // Fetch related artists
-      const relatedRes = await axios.get(`https://api.spotify.com/v1/artists/${artistId}/related-artists`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setArtists(relatedRes.data.artists);
+      // Fetch related artists with 404 handling
+      try {
+        const relatedRes = await axios.get(`https://api.spotify.com/v1/artists/${artistId}/related-artists`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setArtists(relatedRes.data.artists);
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          setError('No related artists found for this artist.');
+          setArtists([]);
+        } else {
+          throw err;
+        }
+      }
     } catch (err) {
       console.error(err);
       setError('Error fetching artists.');
