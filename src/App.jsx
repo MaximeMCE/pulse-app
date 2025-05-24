@@ -1,4 +1,6 @@
 import React from 'react';
+import './App.css'; // ✅ This line is essential for Tailwind to work
+
 import { Routes, Route, Outlet } from 'react-router-dom';
 
 import Login from './pages/Login.jsx';
