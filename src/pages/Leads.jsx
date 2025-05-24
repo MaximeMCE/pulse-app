@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+const LOCAL_STORAGE_KEY = 'pulse_leads';
 
 const Leads = () => {
-  const [leads, setLeads] = useState([
+  const defaultLeads = [
     {
       id: 1,
       name: 'Nova Aura',
@@ -26,9 +28,25 @@ const Leads = () => {
       status: 'qualified',
       image: 'https://placehold.co/80x80?text=IMG',
     },
-  ]);
+  ];
 
+  const [leads, setLeads] = useState([]);
   const [filterStatus, setFilterStatus] = useState('all');
+
+  // Load leads from localStorage on first mount
+  useEffect(() => {
+    const storedLeads = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedLeads) {
+      setLeads(JSON.parse(storedLeads));
+    } else {
+      setLeads(defaultLeads);
+    }
+  }, []);
+
+  // Save leads to localStorage on every change
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(leads));
+  }, [leads]);
 
   const handleDelete = (id) => {
     const updatedLeads = leads.filter((lead) => lead.id !== id);
