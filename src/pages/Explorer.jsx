@@ -1,111 +1,96 @@
 import React, { useState } from 'react';
 
-const mockArtists = [
-  {
-    name: 'Nova Aura',
-    genre: 'electronic',
-    growthType: 'listeners',
-    growthValue: '+1,200 listeners (7d)',
-    platform: 'Spotify',
-    platformIcon: '🎧',
-  },
-  {
-    name: 'Rue Echo',
-    genre: 'alt-pop',
-    growthType: 'mentions',
-    growthValue: '+3.5K TikTok mentions',
-    platform: 'TikTok',
-    platformIcon: '🎵',
-  },
-  {
-    name: 'Mati Drip',
-    genre: 'trap',
-    growthType: 'followers',
-    growthValue: '+900 followers (5d)',
-    platform: 'SoundCloud',
-    platformIcon: '🌊',
-  },
-];
-
 const Explorer = () => {
-  const [genreFilter, setGenreFilter] = useState('');
-  const [platformFilter, setPlatformFilter] = useState('');
-  const [growthTypeFilter, setGrowthTypeFilter] = useState('');
-  const [sortOrder, setSortOrder] = useState('boost');
+  const [genre, setGenre] = useState('');
+  const [platform, setPlatform] = useState('');
+  const [growthType, setGrowthType] = useState('');
+  const [sortBy, setSortBy] = useState('boost');
 
-  const filteredArtists = mockArtists
-    .filter(artist => {
-      return (
-        (!genreFilter || artist.genre === genreFilter) &&
-        (!platformFilter || artist.platform === platformFilter) &&
-        (!growthTypeFilter || artist.growthType === growthTypeFilter)
-      );
-    })
-    .sort((a, b) => {
-      if (sortOrder === 'alphabetical') {
-        return a.name.localeCompare(b.name);
-      }
-      return 0;
-    });
+  const artists = [
+    {
+      name: 'Nova Aura',
+      genre: 'electronic',
+      boost: '+1,200 listeners (7d)',
+      platform: 'Spotify',
+      icon: '🪐',
+    },
+    {
+      name: 'Rue Echo',
+      genre: 'alt-pop',
+      boost: '+3.5K TikTok mentions',
+      platform: 'TikTok',
+      icon: '🎵',
+    },
+    {
+      name: 'Mati Drip',
+      genre: 'trap',
+      boost: '+900 followers (5d)',
+      platform: 'SoundCloud',
+      icon: '🌊',
+    },
+  ];
 
-  const handleSave = (artist) => {
-    console.log('Saved to leads:', artist.name);
-    alert(`✅ ${artist.name} added to your leads!`);
-  };
+  const sortedArtists = [...artists].sort((a, b) => {
+    if (sortBy === 'alphabetical') return a.name.localeCompare(b.name);
+    if (sortBy === 'boost') return b.boost.length - a.boost.length; // mock logic
+    return 0;
+  });
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-2">🔍 Explore Emerging Artists</h1>
-      <p className="mb-4 text-sm text-gray-700 max-w-xl">
+      <p className="text-sm text-gray-700 mb-4">
         This is where Pulse detects fast-growing artists across Spotify, TikTok, and more — based on real-time surges in listeners, mentions, or followers.
       </p>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <select value={genreFilter} onChange={e => setGenreFilter(e.target.value)} className="px-2 py-1 border rounded">
-          <option value="">Genre</option>
-          <option value="electronic">Electronic</option>
-          <option value="alt-pop">Alt-Pop</option>
-          <option value="trap">Trap</option>
+      <div className="flex gap-2 mb-4">
+        <select className="border rounded px-2 py-1 text-sm" onChange={(e) => setGenre(e.target.value)}>
+          <option>Genre</option>
+          <option>Electronic</option>
+          <option>Pop</option>
+          <option>Trap</option>
         </select>
-        <select value={platformFilter} onChange={e => setPlatformFilter(e.target.value)} className="px-2 py-1 border rounded">
-          <option value="">Platform</option>
-          <option value="Spotify">Spotify</option>
-          <option value="TikTok">TikTok</option>
-          <option value="SoundCloud">SoundCloud</option>
+
+        <select className="border rounded px-2 py-1 text-sm" onChange={(e) => setPlatform(e.target.value)}>
+          <option>Platform</option>
+          <option>Spotify</option>
+          <option>TikTok</option>
+          <option>SoundCloud</option>
         </select>
-        <select value={growthTypeFilter} onChange={e => setGrowthTypeFilter(e.target.value)} className="px-2 py-1 border rounded">
-          <option value="">Growth Type</option>
-          <option value="listeners">Listeners</option>
-          <option value="mentions">Mentions</option>
-          <option value="followers">Followers</option>
+
+        <select className="border rounded px-2 py-1 text-sm" onChange={(e) => setGrowthType(e.target.value)}>
+          <option>Growth Type</option>
+          <option>Listeners</option>
+          <option>Mentions</option>
+          <option>Followers</option>
         </select>
-        <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} className="px-2 py-1 border rounded">
+
+        <select className="border rounded px-2 py-1 text-sm" onChange={(e) => setSortBy(e.target.value)}>
           <option value="boost">Sort by Boost</option>
-          <option value="alphabetical">Sort A-Z</option>
+          <option value="alphabetical">Sort A–Z</option>
         </select>
       </div>
 
-      <h2 className="text-xl font-semibold mb-4">📈 Trending Boosts</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredArtists.map((artist, index) => (
-          <div key={index} className="border rounded-lg p-4 shadow-sm bg-white hover:shadow-md transition">
+      <h2 className="text-xl font-semibold mb-3">📈 Trending Boosts</h2>
+
+      <div className="grid gap-4">
+        {sortedArtists.map((artist, idx) => (
+          <div key={idx} className="border rounded-lg shadow-sm p-4">
             <h3 className="text-lg font-bold mb-1">{artist.name}</h3>
-            <p className="text-sm text-gray-600">{artist.genre}</p>
-            <p className="text-green-600 font-semibold mt-2" title={`Boost Type: ${artist.growthType}`}>
-              {artist.growthValue}
-            </p>
-            <p className="text-sm text-gray-500 mt-1">{artist.platformIcon} {artist.platform}</p>
-            <button
-              onClick={() => handleSave(artist)}
-              className="mt-4 text-sm text-white bg-black px-4 py-1 rounded hover:bg-gray-800"
-            >
+            <p className="text-sm text-gray-700">{artist.genre}</p>
+            <p className="text-sm text-green-600 mt-1">{artist.boost}</p>
+            <div className="flex items-center mt-2">
+              <span className="mr-2">{artist.icon}</span>
+              <span className="text-xs text-gray-500">{artist.platform}</span>
+            </div>
+            <button className="mt-3 bg-black text-white px-3 py-1 rounded text-sm hover:bg-gray-800">
               + Save to Leads
             </button>
           </div>
         ))}
       </div>
 
-      <p className="text-sm text-gray-400 mt-6 italic">
+      <p className="text-xs text-gray-500 italic mt-8">
         🎯 Soon, this page will be powered by real-time data from Spotify, TikTok, SoundCloud, and more.
       </p>
     </div>
