@@ -24,6 +24,8 @@ function Explorer() {
         const searchRes = await axios.get(`https://api.spotify.com/v1/search?q=${encodeURIComponent(input)}&type=artist&limit=1`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+
+        console.log('Search result artist object:', searchRes.data.artists.items[0]);
         artistId = searchRes.data.artists.items[0]?.id;
       }
 
@@ -32,6 +34,17 @@ function Explorer() {
         return;
       }
 
+      // Step: Check if artist exists
+      try {
+        await axios.get(`https://api.spotify.com/v1/artists/${artistId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch {
+        setError('Artist not found or invalid.');
+        return;
+      }
+
+      // Fetch related artists
       const relatedRes = await axios.get(`https://api.spotify.com/v1/artists/${artistId}/related-artists`, {
         headers: { Authorization: `Bearer ${token}` }
       });
