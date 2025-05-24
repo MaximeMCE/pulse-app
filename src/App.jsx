@@ -5,6 +5,7 @@ import ProtectedLayout from './ProtectedLayout';
 import Dashboard from './pages/Dashboard';
 import Explorer from './pages/Explorer';
 import Login from './pages/Login';
+import Callback from './Callback'; // ✅ Correctly importing the callback component
 import Settings from './pages/Settings';
 import ArtistProfile from './pages/ArtistProfile';
 
@@ -20,7 +21,7 @@ function App() {
 
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/callback" element={<Login />} />
+        <Route path="/callback" element={<Callback />} /> {/* ✅ Fixed this line */}
 
         {/* Protected Routes */}
         <Route
