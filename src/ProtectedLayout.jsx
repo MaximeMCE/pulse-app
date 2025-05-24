@@ -1,25 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 
 const ProtectedLayout = () => {
-  const [token, setToken] = useState(localStorage.getItem('spotify_access_token'));
+  const token = localStorage.getItem('spotify_access_token');
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const current = localStorage.getItem('spotify_access_token');
-      if (current !== token) {
-        setToken(current);
-      }
-    }, 200); // check every 200ms for login update
-
-    return () => clearInterval(interval);
-  }, [token]);
+  console.log("🧪 ProtectedLayout loaded");
+  console.log("🧪 Token from localStorage:", token);
 
   if (!token) {
+    console.log("🧪 No token, redirecting to /login");
     return <Navigate to="/login" replace />;
   }
 
+  console.log("🧪 Token found, rendering app layout");
   return (
     <div className="flex">
       <Sidebar />

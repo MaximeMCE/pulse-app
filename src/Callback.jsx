@@ -10,8 +10,12 @@ const Callback = () => {
 			const code = params.get('code');
 			const verifier = localStorage.getItem('spotify_code_verifier');
 
+			console.log("🧪 Callback triggered");
+			console.log("🧪 Code:", code);
+			console.log("🧪 Verifier:", verifier);
+
 			if (!code || !verifier) {
-				console.error('Missing code or verifier');
+				console.error("🧪 Missing code or verifier");
 				return;
 			}
 
@@ -33,16 +37,17 @@ const Callback = () => {
 				});
 
 				const data = await res.json();
+				console.log("🧪 Token response:", data);
 
 				if (data.access_token) {
 					localStorage.setItem('spotify_access_token', data.access_token);
-					console.log('✅ Access token saved. Redirecting to /campaigns...');
-					navigate('/campaigns'); // ✅ updated from /dashboard to /campaigns
+					console.log("🧪 Token saved to localStorage");
+					navigate('/campaigns');
 				} else {
-					console.error('❌ Token error:', data);
+					console.error("🧪 Failed to get token:", data);
 				}
 			} catch (err) {
-				console.error('❌ Fetch error:', err);
+				console.error("🧪 Fetch error:", err);
 			}
 		};
 
