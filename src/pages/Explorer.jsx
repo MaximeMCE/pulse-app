@@ -6,7 +6,8 @@ function Explorer() {
   const [artists, setArtists] = useState([]);
   const [error, setError] = useState('');
 
-  const token = localStorage.getItem('access_token');
+  // FIXED: Use correct localStorage key here
+  const token = localStorage.getItem('spotify_access_token');
 
   const handleSearch = async () => {
     setError('');
@@ -15,13 +16,11 @@ function Explorer() {
     let artistId;
 
     try {
-      // Check if it's a URI (starts with "spotify:artist:" or "https://open.spotify.com/artist/")
       if (input.includes('spotify.com') || input.startsWith('spotify:artist:')) {
         const match = input.match(/artist\/([a-zA-Z0-9]+)|spotify:artist:([a-zA-Z0-9]+)/);
         artistId = match?.[1] || match?.[2];
       } else {
-        // Otherwise search by name
-        const searchRes = await axios.get(`https://api.spotify.com/v1/search?q=${input}&type=artist&limit=1`, {
+        const searchRes = await axios.get(`https://api.spotify.com/v1/search?q=${encodeURIComponent(input)}&type=artist&limit=1`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         artistId = searchRes.data.artists.items[0]?.id;
@@ -74,7 +73,9 @@ function Explorer() {
               className="w-full h-48 object-cover rounded mb-2"
             />
             <h2 className="font-semibold">{artist.name}</h2>
-            <p className="text-sm text-gray-600">{artist.followers.total.toLocaleString()} followers</p>
+            <p className="text-sm text-gray-600">
+              {artist.followers.total.toLocaleString()} followers
+            </p>
           </div>
         ))}
       </div>
