@@ -37,8 +37,10 @@ const Leads = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [tagInputs, setTagInputs] = useState({});
 
-  // Load on mount + migrate missing tags
+  // TEMP FIX: Clear corrupted storage and force default
   useEffect(() => {
+    localStorage.removeItem(LOCAL_STORAGE_KEY); // REMOVE THIS LINE AFTER IT WORKS ONCE
+
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
@@ -52,7 +54,6 @@ const Leads = () => {
     }
   }, []);
 
-  // Save on change
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(leads));
   }, [leads]);
@@ -103,7 +104,6 @@ const Leads = () => {
         </div>
       </div>
 
-      {/* Status */}
       <span
         className={`inline-block px-2 py-1 mb-2 text-xs font-medium rounded-full ${
           lead.status === 'new'
@@ -118,7 +118,6 @@ const Leads = () => {
         {lead.status}
       </span>
 
-      {/* Status dropdown */}
       <select
         value={lead.status}
         onChange={(e) => {
@@ -134,7 +133,6 @@ const Leads = () => {
         <option value="qualified">Qualified</option>
       </select>
 
-      {/* Tags */}
       <div className="flex flex-wrap gap-2 mb-2">
         {(lead.tags || []).map((tag) => (
           <span
@@ -152,7 +150,6 @@ const Leads = () => {
         ))}
       </div>
 
-      {/* Add tag */}
       <div className="flex gap-2 mb-2">
         <input
           type="text"
@@ -171,7 +168,6 @@ const Leads = () => {
         </button>
       </div>
 
-      {/* Delete */}
       <button
         onClick={() => handleDelete(lead.id)}
         className="w-full bg-red-100 text-red-700 hover:bg-red-200 py-1 rounded text-sm"
@@ -185,7 +181,6 @@ const Leads = () => {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">🎯 My Artist Leads</h1>
 
-      {/* Filter Dropdown */}
       <div className="mb-6">
         <label className="mr-2 text-sm font-medium">Filter by status:</label>
         <select
@@ -200,7 +195,6 @@ const Leads = () => {
         </select>
       </div>
 
-      {/* Display */}
       {filterStatus === 'all' ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {['new', 'contacted', 'qualified'].map((status) => (
