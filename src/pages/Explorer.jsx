@@ -1,96 +1,80 @@
 import React, { useState } from 'react';
 
+const sampleArtists = [
+  {
+    name: 'Nova Aura',
+    genre: 'electronic',
+    boost: '+1,200 listeners (7d)',
+    platform: 'Spotify',
+    icon: '🎧',
+  },
+  {
+    name: 'Rue Echo',
+    genre: 'alt-pop',
+    boost: '+3.5K TikTok mentions',
+    platform: 'TikTok',
+    icon: '🎵',
+  },
+  {
+    name: 'Mati Drip',
+    genre: 'trap',
+    boost: '+900 followers (5d)',
+    platform: 'SoundCloud',
+    icon: '🌊',
+  },
+];
+
 const Explorer = () => {
-  const [genre, setGenre] = useState('');
-  const [platform, setPlatform] = useState('');
-  const [growthType, setGrowthType] = useState('');
   const [sortBy, setSortBy] = useState('boost');
-
-  const artists = [
-    {
-      name: 'Nova Aura',
-      genre: 'electronic',
-      boost: '+1,200 listeners (7d)',
-      platform: 'Spotify',
-      icon: '🪐',
-    },
-    {
-      name: 'Rue Echo',
-      genre: 'alt-pop',
-      boost: '+3.5K TikTok mentions',
-      platform: 'TikTok',
-      icon: '🎵',
-    },
-    {
-      name: 'Mati Drip',
-      genre: 'trap',
-      boost: '+900 followers (5d)',
-      platform: 'SoundCloud',
-      icon: '🌊',
-    },
-  ];
-
-  const sortedArtists = [...artists].sort((a, b) => {
-    if (sortBy === 'alphabetical') return a.name.localeCompare(b.name);
-    if (sortBy === 'boost') return b.boost.length - a.boost.length; // mock logic
-    return 0;
-  });
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-2">🔍 Explore Emerging Artists</h1>
-      <p className="text-sm text-gray-700 mb-4">
-        This is where Pulse detects fast-growing artists across Spotify, TikTok, and more — based on real-time surges in listeners, mentions, or followers.
+      <h1 className="text-3xl font-bold mb-2">🔍 Explore Emerging Artists</h1>
+      <p className="text-gray-700 mb-6">
+        This is where Pulse detects fast-growing artists across Spotify, TikTok, and more —
+        based on real-time surges in listeners, mentions, or followers.
       </p>
 
-      <div className="flex gap-2 mb-4">
-        <select className="border rounded px-2 py-1 text-sm" onChange={(e) => setGenre(e.target.value)}>
+      <div className="flex gap-4 mb-6">
+        <select className="border rounded px-2 py-1 text-sm">
           <option>Genre</option>
-          <option>Electronic</option>
-          <option>Pop</option>
-          <option>Trap</option>
         </select>
-
-        <select className="border rounded px-2 py-1 text-sm" onChange={(e) => setPlatform(e.target.value)}>
+        <select className="border rounded px-2 py-1 text-sm">
           <option>Platform</option>
-          <option>Spotify</option>
-          <option>TikTok</option>
-          <option>SoundCloud</option>
         </select>
-
-        <select className="border rounded px-2 py-1 text-sm" onChange={(e) => setGrowthType(e.target.value)}>
+        <select className="border rounded px-2 py-1 text-sm">
           <option>Growth Type</option>
-          <option>Listeners</option>
-          <option>Mentions</option>
-          <option>Followers</option>
         </select>
-
-        <select className="border rounded px-2 py-1 text-sm" onChange={(e) => setSortBy(e.target.value)}>
+        <select
+          className="border rounded px-2 py-1 text-sm"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
           <option value="boost">Sort by Boost</option>
-          <option value="alphabetical">Sort A–Z</option>
+          <option value="recent">Most Recent</option>
+          <option value="alpha">Alphabetical</option>
         </select>
       </div>
 
-      <h2 className="text-xl font-semibold mb-3">📈 Trending Boosts</h2>
+      <h2 className="text-xl font-semibold mb-4">📈 Trending Boosts</h2>
 
-      <div className="grid gap-4">
-        {sortedArtists.map((artist, idx) => (
-          <div key={idx} className="border rounded-lg shadow-sm p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {sampleArtists.map((artist, index) => (
+          <div key={index} className="border rounded-lg p-4 shadow bg-white">
             <h3 className="text-lg font-bold mb-1">{artist.name}</h3>
-            <p className="text-sm text-gray-700">{artist.genre}</p>
-            <p className="text-sm text-green-600 mt-1">{artist.boost}</p>
-            <div className="flex items-center mt-2">
-              <span className="mr-2">{artist.icon}</span>
-              <span className="text-xs text-gray-500">{artist.platform}</span>
+            <p className="text-sm text-gray-600 mb-1">{artist.genre}</p>
+            <p className="text-green-600 font-medium mb-2">{artist.boost}</p>
+            <div className="flex items-center text-gray-700 text-sm mb-2">
+              <span className="mr-1">{artist.icon}</span> {artist.platform}
             </div>
-            <button className="mt-3 bg-black text-white px-3 py-1 rounded text-sm hover:bg-gray-800">
+            <button className="bg-black text-white text-sm px-3 py-1 rounded hover:bg-gray-800">
               + Save to Leads
             </button>
           </div>
         ))}
       </div>
 
-      <p className="text-xs text-gray-500 italic mt-8">
+      <p className="text-xs text-gray-500 mt-8 italic">
         🎯 Soon, this page will be powered by real-time data from Spotify, TikTok, SoundCloud, and more.
       </p>
     </div>
