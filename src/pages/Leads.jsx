@@ -65,6 +65,21 @@ const Leads = () => {
                     </div>
                   </div>
 
+                  {/* Colored Status Badge */}
+                  <span
+                    className={`inline-block px-2 py-1 mb-2 text-xs font-medium rounded-full ${
+                      lead.status === 'new'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : lead.status === 'contacted'
+                        ? 'bg-blue-100 text-blue-800'
+                        : lead.status === 'qualified'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}
+                  >
+                    {lead.status}
+                  </span>
+
                   {/* Status Dropdown */}
                   <select
                     value={lead.status}
