@@ -1,84 +1,85 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
-const sampleArtists = [
-  {
-    name: 'Nova Aura',
-    genre: 'electronic',
-    boost: '+1,200 listeners (7d)',
-    platform: 'Spotify',
-    icon: '🎧',
-  },
-  {
-    name: 'Rue Echo',
-    genre: 'alt-pop',
-    boost: '+3.5K TikTok mentions',
-    platform: 'TikTok',
-    icon: '🎵',
-  },
-  {
-    name: 'Mati Drip',
-    genre: 'trap',
-    boost: '+900 followers (5d)',
-    platform: 'SoundCloud',
-    icon: '🌊',
-  },
-];
+function Explorer() {
+  const [input, setInput] = useState('');
+  const [artists, setArtists] = useState([]);
+  const [error, setError] = useState('');
 
-const Explorer = () => {
-  const [sortBy, setSortBy] = useState('boost');
+  const token = localStorage.getItem('access_token');
+
+  const handleSearch = async () => {
+    setError('');
+    setArtists([]);
+
+    let artistId;
+
+    try {
+      // Check if it's a URI (starts with "spotify:artist:" or "https://open.spotify.com/artist/")
+      if (input.includes('spotify.com') || input.startsWith('spotify:artist:')) {
+        const match = input.match(/artist\/([a-zA-Z0-9]+)|spotify:artist:([a-zA-Z0-9]+)/);
+        artistId = match?.[1] || match?.[2];
+      } else {
+        // Otherwise search by name
+        const searchRes = await axios.get(`https://api.spotify.com/v1/search?q=${input}&type=artist&limit=1`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        artistId = searchRes.data.artists.items[0]?.id;
+      }
+
+      if (!artistId) {
+        setError('Artist not found.');
+        return;
+      }
+
+      const relatedRes = await axios.get(`https://api.spotify.com/v1/artists/${artistId}/related-artists`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setArtists(relatedRes.data.artists);
+    } catch (err) {
+      console.error(err);
+      setError('Error fetching artists.');
+    }
+  };
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-2">🔍 Explore Emerging Artists</h1>
-      <p className="text-gray-700 mb-6">
-        This is where Pulse detects fast-growing artists across Spotify, TikTok, and more —
-        based on real-time surges in listeners, mentions, or followers.
-      </p>
+      <h1 className="text-2xl font-bold mb-4">Explore Artists</h1>
 
-      <div className="flex gap-4 mb-6">
-        <select className="border rounded px-2 py-1 text-sm">
-          <option>Genre</option>
-        </select>
-        <select className="border rounded px-2 py-1 text-sm">
-          <option>Platform</option>
-        </select>
-        <select className="border rounded px-2 py-1 text-sm">
-          <option>Growth Type</option>
-        </select>
-        <select
-          className="border rounded px-2 py-1 text-sm"
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
+      <div className="flex items-center gap-2 mb-6">
+        <input
+          type="text"
+          placeholder="Enter artist name or Spotify URI"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="border border-gray-300 rounded p-2 w-full"
+        />
+        <button
+          onClick={handleSearch}
+          className="bg-black text-white px-4 py-2 rounded"
         >
-          <option value="boost">Sort by Boost</option>
-          <option value="recent">Most Recent</option>
-          <option value="alpha">Alphabetical</option>
-        </select>
+          Search
+        </button>
       </div>
 
-      <h2 className="text-xl font-semibold mb-4">📈 Trending Boosts</h2>
+      {error && <div className="text-red-600 mb-4">{error}</div>}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sampleArtists.map((artist, index) => (
-          <div key={index} className="border rounded-lg p-4 shadow bg-white">
-            <h3 className="text-lg font-bold mb-1">{artist.name}</h3>
-            <p className="text-sm text-gray-600 mb-1">{artist.genre}</p>
-            <p className="text-green-600 font-medium mb-2">{artist.boost}</p>
-            <div className="flex items-center text-gray-700 text-sm mb-2">
-              <span className="mr-1">{artist.icon}</span> {artist.platform}
-            </div>
-            <button className="bg-black text-white text-sm px-3 py-1 rounded hover:bg-gray-800">
-              + Save to Leads
-            </button>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {artists.map((artist) => (
+          <div key={artist.id} className="border p-4 rounded shadow">
+            <img
+              src={artist.images[0]?.url || 'https://via.placeholder.com/150'}
+              alt={artist.name}
+              className="w-full h-48 object-cover rounded mb-2"
+            />
+            <h2 className="font-semibold">{artist.name}</h2>
+            <p className="text-sm text-gray-600">{artist.followers.total.toLocaleString()} followers</p>
           </div>
         ))}
       </div>
-
-      <p className="text-xs text-gray-500 mt-8 italic">
-        🎯 Soon, this page will be powered by real-time data from Spotify, TikTok, SoundCloud, and more.
-      </p>
     </div>
   );
-};
+}
 
 export default Explorer;
