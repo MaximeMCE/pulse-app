@@ -1,4 +1,5 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom'; // ✅ this line was missing too
 import ProtectedLayout from './ProtectedLayout';
 
 import Dashboard from './pages/Dashboard';
@@ -7,12 +8,12 @@ import Login from './pages/Login';
 import Settings from './pages/Settings';
 import ArtistProfile from './pages/ArtistProfile';
 
-import Campaigns from './pages/Campaigns'; // ✅ NEW
-import CampaignDetails from './pages/CampaignDetails'; // ✅ NEW
+import Campaigns from './pages/Campaigns';
+import CampaignDetails from './pages/CampaignDetails';
 
 function App() {
   return (
-    <Router>
+    <>
       <Routes>
         {/* Public Route */}
         <Route path="/login" element={<Login />} />
@@ -43,15 +44,6 @@ function App() {
             </ProtectedLayout>
           }
         />
-        {/* Removed Leads route */}
-        {/* <Route
-          path="/leads"
-          element={
-            <ProtectedLayout>
-              <Leads />
-            </ProtectedLayout>
-          }
-        /> */}
         <Route
           path="/settings"
           element={
@@ -69,7 +61,7 @@ function App() {
           }
         />
 
-        {/* ✅ Campaign Routes */}
+        {/* Campaign Routes */}
         <Route
           path="/campaigns"
           element={
@@ -87,9 +79,8 @@ function App() {
           }
         />
       </Routes>
-    </Router>
+    </>
   );
 }
 
 export default App;
-
