@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom'; // ✅ this line was missing too
+import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedLayout from './ProtectedLayout';
 
 import Dashboard from './pages/Dashboard';
@@ -15,19 +15,14 @@ function App() {
   return (
     <>
       <Routes>
-        {/* Public Route */}
+        {/* Redirect root to login */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/callback" element={<Login />} />
 
         {/* Protected Routes */}
-        <Route
-          path="/"
-          element={
-            <ProtectedLayout>
-              <Dashboard />
-            </ProtectedLayout>
-          }
-        />
         <Route
           path="/dashboard"
           element={
@@ -60,8 +55,6 @@ function App() {
             </ProtectedLayout>
           }
         />
-
-        {/* Campaign Routes */}
         <Route
           path="/campaigns"
           element={
