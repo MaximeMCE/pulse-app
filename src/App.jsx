@@ -14,70 +14,64 @@ import CampaignDetails from './pages/CampaignDetails';
 
 function App() {
   return (
-    <>
-      <div style={{ color: 'red', padding: '20px' }}>
-        🧪 App is rendering
-      </div>
+    <Routes>
+      {/* Redirect root to login */}
+      <Route path="/" element={<Navigate to="/login" />} />
 
-      <Routes>
-        {/* Redirect root to login */}
-        <Route path="/" element={<Navigate to="/login" />} />
+      {/* Public Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/callback" element={<Callback />} />
 
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/callback" element={<Callback />} />
-
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedLayout>
-              <Dashboard />
-            </ProtectedLayout>
-          }
-        />
-        <Route
-          path="/explorer"
-          element={
-            <ProtectedLayout>
-              <Explorer />
-            </ProtectedLayout>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedLayout>
-              <Settings />
-            </ProtectedLayout>
-          }
-        />
-        <Route
-          path="/artist/:id"
-          element={
-            <ProtectedLayout>
-              <ArtistProfile />
-            </ProtectedLayout>
-          }
-        />
-        <Route
-          path="/campaigns"
-          element={
-            <ProtectedLayout>
-              <Campaigns />
-            </ProtectedLayout>
-          }
-        />
-        <Route
-          path="/campaigns/:id"
-          element={
-            <ProtectedLayout>
-              <CampaignDetails />
-            </ProtectedLayout>
-          }
-        />
-      </Routes>
-    </>
+      {/* Protected Routes */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedLayout>
+            <Dashboard />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/explorer"
+        element={
+          <ProtectedLayout>
+            <Explorer />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedLayout>
+            <Settings />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/artist/:id"
+        element={
+          <ProtectedLayout>
+            <ArtistProfile />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/campaigns"
+        element={
+          <ProtectedLayout>
+            <Campaigns />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/campaigns/:id"
+        element={
+          <ProtectedLayout>
+            <CampaignDetails />
+          </ProtectedLayout>
+        }
+      />
+    </Routes>
   );
 }
 
