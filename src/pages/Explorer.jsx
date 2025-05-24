@@ -6,7 +6,6 @@ function Explorer() {
   const [artists, setArtists] = useState([]);
   const [error, setError] = useState('');
 
-  // FIXED: Use correct localStorage key here
   const token = localStorage.getItem('spotify_access_token');
 
   const handleSearch = async () => {
@@ -16,6 +15,8 @@ function Explorer() {
     let artistId;
 
     try {
+      console.log("Using token for API call:", token);
+
       if (input.includes('spotify.com') || input.startsWith('spotify:artist:')) {
         const match = input.match(/artist\/([a-zA-Z0-9]+)|spotify:artist:([a-zA-Z0-9]+)/);
         artistId = match?.[1] || match?.[2];
