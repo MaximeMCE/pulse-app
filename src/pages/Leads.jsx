@@ -37,10 +37,19 @@ const Leads = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [tagInputs, setTagInputs] = useState({});
 
-  // Load on mount
+  // Load on mount + migrate missing tags
   useEffect(() => {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-    setLeads(stored ? JSON.parse(stored) : defaultLeads);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      const migrated = parsed.map((lead) => ({
+        ...lead,
+        tags: lead.tags || [],
+      }));
+      setLeads(migrated);
+    } else {
+      setLeads(defaultLeads);
+    }
   }, []);
 
   // Save on change
@@ -57,7 +66,7 @@ const Leads = () => {
     setLeads((prev) =>
       prev.map((lead) =>
         lead.id === id && !lead.tags.includes(tag)
-          ? { ...lead, tags: [...lead.tags, tag] }
+          ? { ...lead, tags: [...(lead.tags || []), tag] }
           : lead
       )
     );
@@ -68,7 +77,7 @@ const Leads = () => {
     setLeads((prev) =>
       prev.map((lead) =>
         lead.id === id
-          ? { ...lead, tags: lead.tags.filter((t) => t !== tag) }
+          ? { ...lead, tags: (lead.tags || []).filter((t) => t !== tag) }
           : lead
       )
     );
@@ -127,7 +136,7 @@ const Leads = () => {
 
       {/* Tags */}
       <div className="flex flex-wrap gap-2 mb-2">
-        {lead.tags.map((tag) => (
+        {(lead.tags || []).map((tag) => (
           <span
             key={tag}
             className="bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full text-xs flex items-center"
