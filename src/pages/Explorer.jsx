@@ -6,18 +6,18 @@ const Explorer = () => {
   const [results, setResults] = useState([]);
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
-  const [inboxLeads, setInboxLeads] = useState([]);
+  const [unassignedLeads, setUnassignedLeads] = useState([]);
   const [campaignLeads, setCampaignLeads] = useState([]);
-  const [dropdownOpen, setDropdownOpen] = useState(null); // artist ID
+  const [dropdownOpen, setDropdownOpen] = useState(null);
   const campaignId = 'demo-campaign-001';
 
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (storedToken) setToken(storedToken);
 
-    const inbox = JSON.parse(localStorage.getItem('leads_inbox')) || [];
+    const unassigned = JSON.parse(localStorage.getItem('leads_unassigned')) || [];
     const campaign = JSON.parse(localStorage.getItem(`leads_${campaignId}`)) || [];
-    setInboxLeads(inbox);
+    setUnassignedLeads(unassigned);
     setCampaignLeads(campaign);
   }, []);
 
@@ -43,22 +43,22 @@ const Explorer = () => {
   };
 
   const saveLead = (artist, target) => {
-    if (target === 'inbox') {
-      const updated = [...inboxLeads, artist];
-      setInboxLeads(updated);
-      localStorage.setItem('leads_inbox', JSON.stringify(updated));
+    if (target === 'unassigned') {
+      const updated = [...unassignedLeads, artist];
+      setUnassignedLeads(updated);
+      localStorage.setItem('leads_unassigned', JSON.stringify(updated));
     } else if (target === 'campaign') {
       const updated = [...campaignLeads, artist];
       setCampaignLeads(updated);
       localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
     }
 
-    setDropdownOpen(null); // close dropdown
+    setDropdownOpen(null);
   };
 
   const isAlreadySaved = (artistId) => {
     return (
-      inboxLeads.some((a) => a.id === artistId) ||
+      unassignedLeads.some((a) => a.id === artistId) ||
       campaignLeads.some((a) => a.id === artistId)
     );
   };
@@ -122,16 +122,16 @@ const Explorer = () => {
                       }
                       className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
                     >
-                      Save to Leads ▼
+                      Save
                     </button>
 
                     {open && (
                       <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm">
                         <button
-                          onClick={() => saveLead(artist, 'inbox')}
+                          onClick={() => saveLead(artist, 'unassigned')}
                           className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                         >
-                          Save to Inbox
+                          Save to Unassigned
                         </button>
                         <button
                           onClick={() => saveLead(artist, 'campaign')}
@@ -146,7 +146,7 @@ const Explorer = () => {
 
                 {alreadySaved && (
                   <div className="mt-2 text-xs text-green-700 font-medium">
-                    ✅ Already in Leads
+                    ✅ Already Saved
                   </div>
                 )}
               </div>
