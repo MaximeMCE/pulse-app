@@ -5,24 +5,41 @@ const ArtistSearch = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [token, setToken] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('spotify_access_token'); // ✅ Correct key
+    const storedToken = localStorage.getItem('spotify_access_token'); // Confirm this key matches your auth flow
     if (storedToken) {
+      console.log('✅ Token loaded in ArtistSearch:', storedToken);
       setToken(storedToken);
     } else {
-      console.warn('⚠️ No access token found in localStorage');
+      console.warn('❌ No token found in localStorage');
     }
   }, []);
 
   const handleSearch = async () => {
-    if (!query || !token) return;
+    console.log('🔍 Searching for:', query);
+    console.log('🎟️ Token used:', token);
+
+    if (!query || !token) {
+      setError('Missing search query or token.');
+      return;
+    }
 
     try {
       const artists = await searchArtists(token, query);
-      setResults(artists);
+      console.log('🎯 API results:', artists);
+
+      if (artists.length === 0) {
+        setError('No artists found.');
+        setResults([]);
+      } else {
+        setError('');
+        setResults(artists);
+      }
     } catch (err) {
-      console.error('Search failed:', err);
+      console.error('🚨 Search failed:', err);
+      setError('Search failed. Check console for details.');
     }
   };
 
@@ -46,6 +63,8 @@ const ArtistSearch = () => {
         </button>
       </div>
 
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+
       <div>
         {results.map((artist) => (
           <div key={artist.id} className="border-b py-2 flex items-center">
@@ -62,7 +81,7 @@ const ArtistSearch = () => {
                 Followers: {artist.followers.total.toLocaleString()}
               </div>
               <div className="text-sm text-gray-400">
-                Genres: {artist.genres.slice(0, 2).join(', ')}
+                Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
               </div>
             </div>
           </div>
