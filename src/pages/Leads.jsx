@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
+const STATUS_OPTIONS = ['New', 'Contacted', 'Qualified', 'Rejected'];
+
 const Leads = () => {
   const [unassigned, setUnassigned] = useState([]);
   const [campaigns, setCampaigns] = useState({});
+  const [statuses, setStatuses] = useState({}); // { artistId: status }
 
   useEffect(() => {
     loadLeads();
+    loadStatuses();
   }, []);
 
   const loadLeads = () => {
@@ -28,6 +32,22 @@ const Leads = () => {
     setCampaigns(foundCampaigns);
   };
 
+  const loadStatuses = () => {
+    const newStatuses = {};
+    for (const key in localStorage) {
+      if (key.startsWith('leadStatus_')) {
+        const artistId = key.replace('leadStatus_', '');
+        newStatuses[artistId] = localStorage.getItem(key);
+      }
+    }
+    setStatuses(newStatuses);
+  };
+
+  const updateStatus = (artistId, status) => {
+    localStorage.setItem(`leadStatus_${artistId}`, status);
+    setStatuses((prev) => ({ ...prev, [artistId]: status }));
+  };
+
   const handleDelete = (artistId, source) => {
     if (source === 'unassigned') {
       const updated = unassigned.filter((a) => a.id !== artistId);
@@ -39,6 +59,13 @@ const Leads = () => {
       setCampaigns(updatedCampaigns);
       localStorage.setItem(`leads_${source}`, JSON.stringify(updated));
     }
+
+    localStorage.removeItem(`leadStatus_${artistId}`);
+    setStatuses((prev) => {
+      const updated = { ...prev };
+      delete updated[artistId];
+      return updated;
+    });
   };
 
   const handleMove = (artist, from, to) => {
@@ -67,57 +94,79 @@ const Leads = () => {
       <p className="text-sm text-gray-500 italic">No leads here yet.</p>
     ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        {leads.map((artist) => (
-          <div
-            key={artist.id}
-            className="border p-4 rounded shadow-sm flex flex-col justify-between h-full"
-          >
-            <div className="flex items-center mb-4">
-              {artist.images?.[0]?.url && (
-                <img
-                  src={artist.images[0].url}
-                  alt={artist.name}
-                  className="w-[80px] h-[80px] rounded-full mr-4 object-cover"
-                />
-              )}
-              <div>
-                <div className="font-semibold">{artist.name}</div>
-                <div className="text-sm text-gray-600">
-                  Followers: {artist.followers?.total?.toLocaleString() || 'N/A'}
-                </div>
-                <div className="text-sm text-gray-400">
-                  Genres: {artist.genres?.slice(0, 2).join(', ') || 'N/A'}
+        {leads.map((artist) => {
+          const status = statuses[artist.id] || 'New';
+
+          return (
+            <div
+              key={artist.id}
+              className="border p-4 rounded shadow-sm flex flex-col justify-between h-full"
+            >
+              <div className="flex items-center mb-4">
+                {artist.images?.[0]?.url && (
+                  <img
+                    src={artist.images[0].url}
+                    alt={artist.name}
+                    className="w-[80px] h-[80px] rounded-full mr-4 object-cover"
+                  />
+                )}
+                <div>
+                  <div className="font-semibold">{artist.name}</div>
+                  <div className="text-sm text-gray-600">
+                    Followers: {artist.followers?.total?.toLocaleString() || 'N/A'}
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    Genres: {artist.genres?.slice(0, 2).join(', ') || 'N/A'}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex justify-end gap-2 mt-auto">
-              <button
-                onClick={() => handleDelete(artist.id, source)}
-                className="text-sm text-red-600 hover:text-red-800"
-              >
-                ✕ Delete
-              </button>
+              <div className="flex justify-between items-center mt-auto">
+                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
+                  {status}
+                </span>
 
-              <select
-                className="text-sm border rounded px-2 py-1"
-                defaultValue=""
-                onChange={(e) => handleMove(artist, source, e.target.value)}
-              >
-                <option value="" disabled>
-                  Move to campaign...
-                </option>
-                {Object.keys(campaigns)
-                  .filter((id) => id !== source)
-                  .map((id) => (
-                    <option key={id} value={id}>
-                      {id}
+                <select
+                  value={status}
+                  onChange={(e) => updateStatus(artist.id, e.target.value)}
+                  className="text-sm border rounded px-2 py-1 ml-2"
+                >
+                  {STATUS_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
                     </option>
                   ))}
-              </select>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-3">
+                <button
+                  onClick={() => handleDelete(artist.id, source)}
+                  className="text-sm text-red-600 hover:text-red-800"
+                >
+                  ✕ Delete
+                </button>
+
+                <select
+                  className="text-sm border rounded px-2 py-1"
+                  defaultValue=""
+                  onChange={(e) => handleMove(artist, source, e.target.value)}
+                >
+                  <option value="" disabled>
+                    Move to campaign...
+                  </option>
+                  {Object.keys(campaigns)
+                    .filter((id) => id !== source)
+                    .map((id) => (
+                      <option key={id} value={id}>
+                        {id}
+                      </option>
+                    ))}
+                </select>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   };
