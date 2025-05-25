@@ -1,107 +1,77 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { searchArtists } from '../api/Spotify'; // Make sure this path is correct
 
-function Explorer() {
-  const [input, setInput] = useState('');
-  const [artists, setArtists] = useState([]);
+const Explorer = () => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
   const [error, setError] = useState('');
 
-  const token = localStorage.getItem('spotify_access_token');
+  const token = localStorage.getItem('access_token'); // or your token name
 
   const handleSearch = async () => {
-    setError('');
-    setArtists([]);
-
-    let artistId;
+    if (!query || !token) return;
 
     try {
-      console.log("Using token for API call:", token);
-
-      if (input.includes('spotify.com') || input.toLowerCase().startsWith('spotify:artist:')) {
-        const idMatch = input.match(/(?:artist\/|spotify:artist:)([a-zA-Z0-9]+)/i);
-        artistId = idMatch ? idMatch[1] : null;
+      const artists = await searchArtists(token, query);
+      if (artists.length === 0) {
+        setError('No artists found.');
+        setResults([]);
       } else {
-        const searchRes = await axios.get(`https://api.spotify.com/v1/search?q=${encodeURIComponent(input)}&type=artist&limit=1`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        console.log('Search result artist object:', searchRes.data.artists.items[0]);
-        artistId = searchRes.data.artists.items[0]?.id;
-      }
-
-      if (!artistId) {
-        setError('Artist not found.');
-        return;
-      }
-
-      // Check if artist exists
-      try {
-        await axios.get(`https://api.spotify.com/v1/artists/${artistId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } catch {
-        setError('Artist not found or invalid.');
-        return;
-      }
-
-      // Fetch related artists with 404 handling
-      try {
-        const relatedRes = await axios.get(`https://api.spotify.com/v1/artists/${artistId}/related-artists`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setArtists(relatedRes.data.artists);
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          setError('No related artists found for this artist.');
-          setArtists([]);
-        } else {
-          throw err;
-        }
+        setError('');
+        setResults(artists);
       }
     } catch (err) {
-      console.error(err);
-      setError('Error fetching artists.');
+      console.error('Search failed:', err);
+      setError('Something went wrong while searching.');
     }
   };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Explore Artists</h1>
+      <h2 className="text-2xl font-bold mb-4">Explore Artists</h2>
 
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex gap-2 mb-4">
         <input
           type="text"
-          placeholder="Enter artist name or Spotify URI"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="border border-gray-300 rounded p-2 w-full"
+          placeholder="Type artist name..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="border px-4 py-2 rounded-md w-full"
         />
         <button
           onClick={handleSearch}
-          className="bg-black text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
         >
           Search
         </button>
       </div>
 
-      {error && <div className="text-red-600 mb-4">{error}</div>}
+      {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {artists.map((artist) => (
-          <div key={artist.id} className="border p-4 rounded shadow">
-            <img
-              src={artist.images[0]?.url || 'https://via.placeholder.com/150'}
-              alt={artist.name}
-              className="w-full h-48 object-cover rounded mb-2"
-            />
-            <h2 className="font-semibold">{artist.name}</h2>
-            <p className="text-sm text-gray-600">
-              {artist.followers.total.toLocaleString()} followers
-            </p>
+      <div>
+        {results.map((artist) => (
+          <div key={artist.id} className="border-b py-2 flex items-center">
+            {artist.images[0] && (
+              <img
+                src={artist.images[0].url}
+                alt={artist.name}
+                className="w-12 h-12 rounded-full mr-4 object-cover"
+              />
+            )}
+            <div>
+              <div className="font-semibold">{artist.name}</div>
+              <div className="text-sm text-gray-500">
+                Followers: {artist.followers.total.toLocaleString()}
+              </div>
+              <div className="text-sm text-gray-400">
+                Genres: {artist.genres.slice(0, 2).join(', ')}
+              </div>
+            </div>
           </div>
         ))}
       </div>
     </div>
   );
-}
+};
 
 export default Explorer;
