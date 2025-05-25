@@ -46,16 +46,22 @@ const Leads = () => {
     if (from === to) return;
 
     // Remove from source
-    const updatedSource = campaigns[from].filter((a) => a.id !== artist.id);
-    const updatedFromCampaigns = { ...campaigns, [from]: updatedSource };
+    if (from === 'unassigned') {
+      const updatedUnassigned = unassigned.filter((a) => a.id !== artist.id);
+      setUnassigned(updatedUnassigned);
+      localStorage.setItem('leads_unassigned', JSON.stringify(updatedUnassigned));
+    } else {
+      const updatedSource = campaigns[from].filter((a) => a.id !== artist.id);
+      const updatedCampaigns = { ...campaigns, [from]: updatedSource };
+      setCampaigns(updatedCampaigns);
+      localStorage.setItem(`leads_${from}`, JSON.stringify(updatedSource));
+    }
 
     // Add to destination
     const destination = campaigns[to] || [];
     const updatedDestination = [...destination, artist];
-    updatedFromCampaigns[to] = updatedDestination;
-
-    setCampaigns(updatedFromCampaigns);
-    localStorage.setItem(`leads_${from}`, JSON.stringify(updatedSource));
+    const updatedCampaigns = { ...campaigns, [to]: updatedDestination };
+    setCampaigns(updatedCampaigns);
     localStorage.setItem(`leads_${to}`, JSON.stringify(updatedDestination));
   };
 
@@ -96,22 +102,22 @@ const Leads = () => {
                 ✕ Delete
               </button>
 
-              {source !== 'unassigned' && (
-                <select
-                  className="text-sm border rounded px-2 py-1"
-                  value={source}
-                  onChange={(e) => handleMove(artist, source, e.target.value)}
-                >
-                  <option value={source}>Move to...</option>
-                  {Object.keys(campaigns)
-                    .filter((id) => id !== source)
-                    .map((id) => (
-                      <option key={id} value={id}>
-                        {id}
-                      </option>
-                    ))}
-                </select>
-              )}
+              <select
+                className="text-sm border rounded px-2 py-1"
+                defaultValue=""
+                onChange={(e) => handleMove(artist, source, e.target.value)}
+              >
+                <option value="" disabled>
+                  Move to campaign...
+                </option>
+                {Object.keys(campaigns)
+                  .filter((id) => id !== source)
+                  .map((id) => (
+                    <option key={id} value={id}>
+                      {id}
+                    </option>
+                  ))}
+              </select>
             </div>
           </div>
         ))}
