@@ -16,7 +16,6 @@ const Leads = () => {
 
     for (const key in storage) {
       if (!key.startsWith('leads_')) continue;
-
       const raw = localStorage.getItem(key);
       if (!raw) continue;
 
@@ -45,7 +44,6 @@ const Leads = () => {
   const handleMove = (artist, from, to) => {
     if (from === to) return;
 
-    // Remove from source
     if (from === 'unassigned') {
       const updatedUnassigned = unassigned.filter((a) => a.id !== artist.id);
       setUnassigned(updatedUnassigned);
@@ -57,7 +55,6 @@ const Leads = () => {
       localStorage.setItem(`leads_${from}`, JSON.stringify(updatedSource));
     }
 
-    // Add to destination
     const destination = campaigns[to] || [];
     const updatedDestination = [...destination, artist];
     const updatedCampaigns = { ...campaigns, [to]: updatedDestination };
@@ -73,9 +70,9 @@ const Leads = () => {
         {leads.map((artist) => (
           <div
             key={artist.id}
-            className="border p-4 flex flex-col gap-2 rounded shadow-sm"
+            className="border p-4 rounded shadow-sm flex flex-col justify-between h-full"
           >
-            <div className="flex items-center">
+            <div className="flex items-center mb-4">
               {artist.images?.[0]?.url && (
                 <img
                   src={artist.images[0].url}
@@ -94,7 +91,7 @@ const Leads = () => {
               </div>
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex justify-end gap-2 mt-auto">
               <button
                 onClick={() => handleDelete(artist.id, source)}
                 className="text-sm text-red-600 hover:text-red-800"
