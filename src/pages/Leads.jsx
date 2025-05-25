@@ -9,18 +9,18 @@ const Leads = () => {
     const foundCampaigns = {};
 
     for (const key in storage) {
-      if (key.startsWith('leads_')) {
-        const raw = localStorage.getItem(key);
-        if (!raw) continue;
+      if (!key.startsWith('leads_')) continue;
 
-        const parsed = JSON.parse(raw);
-        const campaignId = key.replace('leads_', '');
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
 
-        if (campaignId === 'unassigned') {
-          setUnassigned(parsed);
-        } else {
-          foundCampaigns[campaignId] = parsed;
-        }
+      const parsed = JSON.parse(raw);
+      const campaignId = key.replace('leads_', '');
+
+      if (campaignId === 'unassigned') {
+        setUnassigned(parsed);
+      } else if (campaignId !== 'inbox') {
+        foundCampaigns[campaignId] = parsed;
       }
     }
 
