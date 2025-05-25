@@ -146,7 +146,7 @@ const Explorer = () => {
 
                 {alreadySaved && (
                   <div className="mt-2 text-xs text-green-700 font-medium">
-                    ✅ Already Saved
+                    ✅ Saved
                   </div>
                 )}
               </div>
