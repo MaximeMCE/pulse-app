@@ -109,19 +109,21 @@ const Leads = () => {
               key={artist.id}
               className="border p-4 rounded shadow-sm flex flex-col justify-between h-full"
             >
-              <div className="flex items-center mb-4">
+              <div className="flex items-center mb-2">
                 {artist.images?.[0]?.url && (
-                  <img
-                    src={artist.images[0].url}
-                    alt={artist.name}
-                    className="w-[80px] h-[80px] rounded-full mr-4 object-cover"
-                  />
+                  <div className="flex flex-col items-center mr-4">
+                    <img
+                      src={artist.images[0].url}
+                      alt={artist.name}
+                      className="w-[80px] h-[80px] rounded-full object-cover"
+                    />
+                    <div className="text-xs mt-1 text-gray-700">
+                      {emoji} {status}
+                    </div>
+                  </div>
                 )}
                 <div>
-                  <div className="font-semibold flex items-center gap-1">
-                    {artist.name}
-                    <span title={status}>{emoji}</span>
-                  </div>
+                  <div className="font-semibold">{artist.name}</div>
                   <div className="text-sm text-gray-600">
                     Followers: {artist.followers?.total?.toLocaleString() || 'N/A'}
                   </div>
@@ -132,14 +134,10 @@ const Leads = () => {
               </div>
 
               <div className="flex justify-between items-center mt-auto">
-                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
-                  {status}
-                </span>
-
                 <select
                   value={status}
                   onChange={(e) => updateStatus(artist.id, e.target.value)}
-                  className="text-sm border rounded px-2 py-1 ml-2"
+                  className="text-sm border rounded px-2 py-1"
                 >
                   {STATUS_OPTIONS.map((option) => (
                     <option key={option} value={option}>
