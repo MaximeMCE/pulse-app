@@ -6,21 +6,22 @@ const Explorer = () => {
   const [results, setResults] = useState([]);
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
+  const [inboxLeads, setInboxLeads] = useState([]);
+  const [campaignLeads, setCampaignLeads] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(null); // artist ID
+  const campaignId = 'demo-campaign-001';
 
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
-    if (storedToken) {
-      console.log('✅ Token loaded in Explorer:', storedToken);
-      setToken(storedToken);
-    } else {
-      console.warn('❌ No token found in localStorage');
-    }
+    if (storedToken) setToken(storedToken);
+
+    const inbox = JSON.parse(localStorage.getItem('leads_inbox')) || [];
+    const campaign = JSON.parse(localStorage.getItem(`leads_${campaignId}`)) || [];
+    setInboxLeads(inbox);
+    setCampaignLeads(campaign);
   }, []);
 
   const handleSearch = async () => {
-    console.log('🔍 Searching for:', query);
-    console.log('🎟️ Token used:', token);
-
     if (!query || !token) {
       setError('Missing search query or token.');
       return;
@@ -28,8 +29,6 @@ const Explorer = () => {
 
     try {
       const artists = await searchArtists(token, query);
-      console.log('🎯 API results:', artists);
-
       if (artists.length === 0) {
         setError('No artists found.');
         setResults([]);
@@ -38,9 +37,30 @@ const Explorer = () => {
         setResults(artists);
       }
     } catch (err) {
-      console.error('🚨 Search failed:', err);
-      setError('Search failed. Check console for details.');
+      console.error('Search failed:', err);
+      setError('Search failed. Check console.');
     }
+  };
+
+  const saveLead = (artist, target) => {
+    if (target === 'inbox') {
+      const updated = [...inboxLeads, artist];
+      setInboxLeads(updated);
+      localStorage.setItem('leads_inbox', JSON.stringify(updated));
+    } else if (target === 'campaign') {
+      const updated = [...campaignLeads, artist];
+      setCampaignLeads(updated);
+      localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
+    }
+
+    setDropdownOpen(null); // close dropdown
+  };
+
+  const isAlreadySaved = (artistId) => {
+    return (
+      inboxLeads.some((a) => a.id === artistId) ||
+      campaignLeads.some((a) => a.id === artistId)
+    );
   };
 
   return (
@@ -72,32 +92,67 @@ const Explorer = () => {
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <div>
-        {results.map((artist) => (
-          <div key={artist.id} className="border-b py-4 flex items-center">
-            {artist.images[0] && (
-              <img
-                src={artist.images[0].url}
-                alt={artist.name}
-                className="w-[100px] h-[100px] rounded-full mr-4 object-cover"
-              />
-            )}
-            <div>
-              <div className="font-semibold">{artist.name}</div>
-              <div className="text-sm text-gray-500">
-                Followers: {artist.followers.total.toLocaleString()}
+        {results.map((artist) => {
+          const alreadySaved = isAlreadySaved(artist.id);
+          const open = dropdownOpen === artist.id;
+
+          return (
+            <div key={artist.id} className="border-b py-4 flex items-center relative">
+              {artist.images[0] && (
+                <img
+                  src={artist.images[0].url}
+                  alt={artist.name}
+                  className="w-[100px] h-[100px] rounded-full mr-4 object-cover"
+                />
+              )}
+              <div className="flex-1">
+                <div className="font-semibold">{artist.name}</div>
+                <div className="text-sm text-gray-500">
+                  Followers: {artist.followers.total.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-400">
+                  Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
+                </div>
+
+                {!alreadySaved && (
+                  <div className="relative mt-2">
+                    <button
+                      onClick={() =>
+                        setDropdownOpen((prev) => (prev === artist.id ? null : artist.id))
+                      }
+                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+                    >
+                      Save to Leads ▼
+                    </button>
+
+                    {open && (
+                      <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm">
+                        <button
+                          onClick={() => saveLead(artist, 'inbox')}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                          Save to Inbox
+                        </button>
+                        <button
+                          onClick={() => saveLead(artist, 'campaign')}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        >
+                          Save to Campaign: {campaignId}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {alreadySaved && (
+                  <div className="mt-2 text-xs text-green-700 font-medium">
+                    ✅ Already in Leads
+                  </div>
+                )}
               </div>
-              <div className="text-sm text-gray-400">
-                Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
-              </div>
-              <button
-                onClick={() => alert(`${artist.name} saved to Leads!`)}
-                className="mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
-              >
-                Save to Leads
-              </button>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
