@@ -122,11 +122,11 @@ const Explorer = () => {
                       }
                       className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
                     >
-                      Save
+                      Save ▼
                     </button>
 
                     {open && (
-                      <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm">
+                      <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm w-64">
                         <button
                           onClick={() => saveLead(artist, 'unassigned')}
                           className="block w-full text-left px-4 py-2 hover:bg-gray-100"
