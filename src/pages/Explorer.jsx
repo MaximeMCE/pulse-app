@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
-import { searchArtists } from '../api/Spotify'; // Make sure this path is correct
+import React, { useState, useEffect } from 'react';
+import { searchArtists } from '../api/Spotify';
 
 const Explorer = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [token, setToken] = useState('');
   const [error, setError] = useState('');
 
-  const token = localStorage.getItem('access_token'); // or your token name
+  useEffect(() => {
+    const storedToken = localStorage.getItem('spotify_access_token');
+    if (storedToken) {
+      console.log('✅ Token loaded in Explorer:', storedToken);
+      setToken(storedToken);
+    } else {
+      console.warn('❌ No token found in localStorage');
+    }
+  }, []);
 
   const handleSearch = async () => {
-    if (!query || !token) return;
+    console.log('🔍 Searching for:', query);
+    console.log('🎟️ Token used:', token);
+
+    if (!query || !token) {
+      setError('Missing search query or token.');
+      return;
+    }
 
     try {
       const artists = await searchArtists(token, query);
+      console.log('🎯 API results:', artists);
+
       if (artists.length === 0) {
         setError('No artists found.');
         setResults([]);
@@ -21,19 +38,19 @@ const Explorer = () => {
         setResults(artists);
       }
     } catch (err) {
-      console.error('Search failed:', err);
-      setError('Something went wrong while searching.');
+      console.error('🚨 Search failed:', err);
+      setError('Search failed. Check console for details.');
     }
   };
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Explore Artists</h2>
+      <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
 
       <div className="flex gap-2 mb-4">
         <input
           type="text"
-          placeholder="Type artist name..."
+          placeholder="Search for an artist"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="border px-4 py-2 rounded-md w-full"
@@ -64,7 +81,7 @@ const Explorer = () => {
                 Followers: {artist.followers.total.toLocaleString()}
               </div>
               <div className="text-sm text-gray-400">
-                Genres: {artist.genres.slice(0, 2).join(', ')}
+                Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
               </div>
             </div>
           </div>
