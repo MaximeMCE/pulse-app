@@ -5,29 +5,43 @@ const Leads = () => {
   const [campaigns, setCampaigns] = useState({}); // { campaignId: [leads] }
 
   useEffect(() => {
+    loadLeads();
+  }, []);
+
+  const loadLeads = () => {
     const storage = { ...localStorage };
     const foundCampaigns = {};
+    const unassignedRaw = localStorage.getItem('leads_unassigned');
+    if (unassignedRaw) setUnassigned(JSON.parse(unassignedRaw));
 
     for (const key in storage) {
       if (!key.startsWith('leads_')) continue;
-
       const raw = localStorage.getItem(key);
       if (!raw) continue;
 
-      const parsed = JSON.parse(raw);
       const campaignId = key.replace('leads_', '');
+      if (campaignId === 'unassigned' || campaignId === 'inbox') continue;
 
-      if (campaignId === 'unassigned') {
-        setUnassigned(parsed);
-      } else if (campaignId !== 'inbox') {
-        foundCampaigns[campaignId] = parsed;
-      }
+      foundCampaigns[campaignId] = JSON.parse(raw);
     }
 
     setCampaigns(foundCampaigns);
-  }, []);
+  };
 
-  const renderLeads = (leads) => {
+  const handleDelete = (artistId, source) => {
+    if (source === 'unassigned') {
+      const updated = unassigned.filter((a) => a.id !== artistId);
+      setUnassigned(updated);
+      localStorage.setItem('leads_unassigned', JSON.stringify(updated));
+    } else {
+      const updated = campaigns[source].filter((a) => a.id !== artistId);
+      const updatedCampaigns = { ...campaigns, [source]: updated };
+      setCampaigns(updatedCampaigns);
+      localStorage.setItem(`leads_${source}`, JSON.stringify(updated));
+    }
+  };
+
+  const renderLeads = (leads, source) => {
     return leads.length === 0 ? (
       <p className="text-sm text-gray-500 italic">No leads here yet.</p>
     ) : (
@@ -35,24 +49,32 @@ const Leads = () => {
         {leads.map((artist) => (
           <div
             key={artist.id}
-            className="border p-4 flex items-center rounded shadow-sm"
+            className="border p-4 flex items-center justify-between rounded shadow-sm"
           >
-            {artist.images?.[0]?.url && (
-              <img
-                src={artist.images[0].url}
-                alt={artist.name}
-                className="w-[80px] h-[80px] rounded-full mr-4 object-cover"
-              />
-            )}
-            <div>
-              <div className="font-semibold">{artist.name}</div>
-              <div className="text-sm text-gray-600">
-                Followers: {artist.followers?.total?.toLocaleString() || 'N/A'}
-              </div>
-              <div className="text-sm text-gray-400">
-                Genres: {artist.genres?.slice(0, 2).join(', ') || 'N/A'}
+            <div className="flex items-center">
+              {artist.images?.[0]?.url && (
+                <img
+                  src={artist.images[0].url}
+                  alt={artist.name}
+                  className="w-[80px] h-[80px] rounded-full mr-4 object-cover"
+                />
+              )}
+              <div>
+                <div className="font-semibold">{artist.name}</div>
+                <div className="text-sm text-gray-600">
+                  Followers: {artist.followers?.total?.toLocaleString() || 'N/A'}
+                </div>
+                <div className="text-sm text-gray-400">
+                  Genres: {artist.genres?.slice(0, 2).join(', ') || 'N/A'}
+                </div>
               </div>
             </div>
+            <button
+              onClick={() => handleDelete(artist.id, source)}
+              className="text-sm text-red-600 hover:text-red-800"
+            >
+              ✕ Delete
+            </button>
           </div>
         ))}
       </div>
@@ -65,7 +87,7 @@ const Leads = () => {
 
       <section className="mb-10">
         <h3 className="text-xl font-semibold mb-2">Unassigned Leads</h3>
-        {renderLeads(unassigned)}
+        {renderLeads(unassigned, 'unassigned')}
       </section>
 
       {Object.entries(campaigns).map(([id, leads]) => (
@@ -73,7 +95,7 @@ const Leads = () => {
           <h3 className="text-xl font-semibold mb-2">
             Campaign: {id}
           </h3>
-          {renderLeads(leads)}
+          {renderLeads(leads, id)}
         </section>
       ))}
     </div>
