@@ -9,14 +9,14 @@ import Campaigns from './pages/Campaigns';
 import CampaignDetails from './pages/CampaignDetails';
 import LeadsLegacy from './pages/LeadsLegacy';
 import ArtistProfile from './pages/ArtistProfile';
-import ArtistSearch from './pages/ArtistSearch'; // NEW
+import ArtistSearch from './pages/ArtistSearch';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Callback from './Callback';
+import Leads from './pages/Leads'; // ✅ new import
 
 function App() {
-  // 👇 This line reads the token saved after login
-  const accessToken = localStorage.getItem('access_token');
+  const accessToken = localStorage.getItem('spotify_access_token');
 
   return (
     <Routes>
@@ -29,10 +29,11 @@ function App() {
         <Route path="/explorer" element={<Explorer />} />
         <Route path="/campaigns" element={<Campaigns />} />
         <Route path="/campaigns/:id" element={<CampaignDetails />} />
-        <Route path="/leads" element={<LeadsLegacy />} />
+        <Route path="/leads" element={<Leads />} /> {/* ✅ new route */}
         <Route path="/artist/:id" element={<ArtistProfile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/search" element={<ArtistSearch token={accessToken} />} />
+        <Route path="/leads-legacy" element={<LeadsLegacy />} />
       </Route>
     </Routes>
   );

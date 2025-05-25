@@ -22,7 +22,6 @@ const Sidebar = () => {
         Explore
       </NavLink>
 
-      {/* Replaced Leads with Campaigns */}
       <NavLink
         to="/campaigns"
         className={({ isActive }) =>
@@ -30,6 +29,15 @@ const Sidebar = () => {
         }
       >
         Campaigns
+      </NavLink>
+
+      <NavLink
+        to="/leads"
+        className={({ isActive }) =>
+          isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
+        }
+      >
+        Leads
       </NavLink>
 
       <NavLink
