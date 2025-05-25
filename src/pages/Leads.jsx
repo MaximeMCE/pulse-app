@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 const STATUS_OPTIONS = ['New', 'Contacted', 'Qualified', 'Rejected'];
+const STATUS_EMOJIS = {
+  New: '👀',
+  Contacted: '📬',
+  Qualified: '✅',
+  Rejected: '❌',
+};
 
 const Leads = () => {
   const [unassigned, setUnassigned] = useState([]);
   const [campaigns, setCampaigns] = useState({});
-  const [statuses, setStatuses] = useState({}); // { artistId: status }
+  const [statuses, setStatuses] = useState({});
 
   useEffect(() => {
     loadLeads();
@@ -96,6 +102,7 @@ const Leads = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         {leads.map((artist) => {
           const status = statuses[artist.id] || 'New';
+          const emoji = STATUS_EMOJIS[status];
 
           return (
             <div
@@ -111,7 +118,10 @@ const Leads = () => {
                   />
                 )}
                 <div>
-                  <div className="font-semibold">{artist.name}</div>
+                  <div className="font-semibold flex items-center gap-1">
+                    {artist.name}
+                    <span title={status}>{emoji}</span>
+                  </div>
                   <div className="text-sm text-gray-600">
                     Followers: {artist.followers?.total?.toLocaleString() || 'N/A'}
                   </div>
