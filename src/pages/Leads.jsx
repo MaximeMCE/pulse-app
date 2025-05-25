@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const Leads = () => {
   const [unassigned, setUnassigned] = useState([]);
-  const [campaigns, setCampaigns] = useState({}); // { campaignId: [leads] }
+  const [campaigns, setCampaigns] = useState({});
 
   useEffect(() => {
     loadLeads();
@@ -16,6 +16,7 @@ const Leads = () => {
 
     for (const key in storage) {
       if (!key.startsWith('leads_')) continue;
+
       const raw = localStorage.getItem(key);
       if (!raw) continue;
 
@@ -41,6 +42,23 @@ const Leads = () => {
     }
   };
 
+  const handleMove = (artist, from, to) => {
+    if (from === to) return;
+
+    // Remove from source
+    const updatedSource = campaigns[from].filter((a) => a.id !== artist.id);
+    const updatedFromCampaigns = { ...campaigns, [from]: updatedSource };
+
+    // Add to destination
+    const destination = campaigns[to] || [];
+    const updatedDestination = [...destination, artist];
+    updatedFromCampaigns[to] = updatedDestination;
+
+    setCampaigns(updatedFromCampaigns);
+    localStorage.setItem(`leads_${from}`, JSON.stringify(updatedSource));
+    localStorage.setItem(`leads_${to}`, JSON.stringify(updatedDestination));
+  };
+
   const renderLeads = (leads, source) => {
     return leads.length === 0 ? (
       <p className="text-sm text-gray-500 italic">No leads here yet.</p>
@@ -49,7 +67,7 @@ const Leads = () => {
         {leads.map((artist) => (
           <div
             key={artist.id}
-            className="border p-4 flex items-center justify-between rounded shadow-sm"
+            className="border p-4 flex flex-col gap-2 rounded shadow-sm"
           >
             <div className="flex items-center">
               {artist.images?.[0]?.url && (
@@ -69,12 +87,32 @@ const Leads = () => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => handleDelete(artist.id, source)}
-              className="text-sm text-red-600 hover:text-red-800"
-            >
-              ✕ Delete
-            </button>
+
+            <div className="flex justify-between items-center">
+              <button
+                onClick={() => handleDelete(artist.id, source)}
+                className="text-sm text-red-600 hover:text-red-800"
+              >
+                ✕ Delete
+              </button>
+
+              {source !== 'unassigned' && (
+                <select
+                  className="text-sm border rounded px-2 py-1"
+                  value={source}
+                  onChange={(e) => handleMove(artist, source, e.target.value)}
+                >
+                  <option value={source}>Move to...</option>
+                  {Object.keys(campaigns)
+                    .filter((id) => id !== source)
+                    .map((id) => (
+                      <option key={id} value={id}>
+                        {id}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </div>
           </div>
         ))}
       </div>
