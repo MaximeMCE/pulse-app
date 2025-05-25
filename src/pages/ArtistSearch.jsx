@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
-import { searchArtists } from '../api/Spotify'; // ✅ Corrected import path
+import React, { useState, useEffect } from 'react';
+import { searchArtists } from '../api/Spotify'; // Make sure this path is correct
 
-const ArtistSearch = ({ token }) => {
+const ArtistSearch = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [token, setToken] = useState('');
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('spotify_access_token'); // ✅ Correct key
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      console.warn('⚠️ No access token found in localStorage');
+    }
+  }, []);
 
   const handleSearch = async () => {
     if (!query || !token) return;
