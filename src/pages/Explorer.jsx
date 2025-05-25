@@ -47,7 +47,13 @@ const Explorer = () => {
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
 
-      <div className="flex gap-2 mb-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
+        className="flex gap-2 mb-4"
+      >
         <input
           type="text"
           placeholder="Search for an artist"
@@ -56,23 +62,23 @@ const Explorer = () => {
           className="border px-4 py-2 rounded-md w-full"
         />
         <button
-          onClick={handleSearch}
+          type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
         >
           Search
         </button>
-      </div>
+      </form>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <div>
         {results.map((artist) => (
-          <div key={artist.id} className="border-b py-2 flex items-center">
+          <div key={artist.id} className="border-b py-4 flex items-center">
             {artist.images[0] && (
               <img
                 src={artist.images[0].url}
                 alt={artist.name}
-                className="w-12 h-12 rounded-full mr-4 object-cover"
+                className="w-[100px] h-[100px] rounded-full mr-4 object-cover"
               />
             )}
             <div>
@@ -83,6 +89,12 @@ const Explorer = () => {
               <div className="text-sm text-gray-400">
                 Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
               </div>
+              <button
+                onClick={() => alert(`${artist.name} saved to Leads!`)}
+                className="mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+              >
+                Save to Leads
+              </button>
             </div>
           </div>
         ))}
