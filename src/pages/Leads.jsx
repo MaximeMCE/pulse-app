@@ -7,19 +7,25 @@ const Leads = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
+  // Normalize casing for internal keys
+  const normalizeKey = (str) => str.toLowerCase();
+  const displayName = (key) => key === 'unassigned' ? 'Unassigned' : key;
+
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('campaigns')) || [];
-    setCampaigns(['Unassigned', ...stored.map(c => c.title)]);
+    const allCampaigns = ['Unassigned', ...stored.map(c => c.title)];
+    setCampaigns(allCampaigns);
 
     const data = {}, sel = {};
     Object.keys(localStorage)
       .filter(k => k.startsWith('leads_'))
       .forEach(k => {
-        const camp = k.replace('leads_', '');
+        const rawCamp = k.replace('leads_', '');
+        const normCamp = normalizeKey(rawCamp);
         const arr  = JSON.parse(localStorage.getItem(k)) || [];
         if (arr.length) {
-          data[camp] = arr;
-          sel[camp]  = [];
+          data[normCamp] = arr;
+          sel[normCamp]  = [];
         }
       });
     setLeadsData(data);
@@ -28,7 +34,7 @@ const Leads = () => {
 
   const updateLS = upd =>
     Object.entries(upd).forEach(([c,arr])=>
-      localStorage.setItem(`leads_${c}`, JSON.stringify(arr))
+      localStorage.setItem(`leads_${normalizeKey(c)}`, JSON.stringify(arr))
     );
 
   const statusEmoji = {
@@ -49,17 +55,18 @@ const Leads = () => {
     const d={...leadsData}; d[c][i].status=s;
     setLeadsData(d); updateLS(d);
   };
-  const moveCampaign = (c,i,to) => {
+  const moveCampaign = (c,i,toLabel) => {
+    const to = normalizeKey(toLabel);
     const d={...leadsData}, item=d[c][i];
     d[c].splice(i,1);
     if (!d[to]) d[to]=[];
     d[to].push(item);
-    if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${c}`); }
+    if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${normalizeKey(c)}`); }
     setLeadsData(d); updateLS(d);
   };
   const deleteLead = (c,i) => {
     const d={...leadsData}; d[c].splice(i,1);
-    if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${c}`); }
+    if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${normalizeKey(c)}`); }
     setLeadsData(d); updateLS(d);
   };
 
@@ -82,7 +89,7 @@ const Leads = () => {
     const d={...leadsData};
     Object.entries(selected).forEach(([c,idxs])=>{
       idxs.sort((a,b)=>b-a).forEach(i=>d[c].splice(i,1));
-      if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${c}`); }
+      if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${normalizeKey(c)}`); }
     });
     setLeadsData(d); updateLS(d); clearAll();
   };
@@ -143,14 +150,14 @@ const Leads = () => {
       </div>
 
       {/* Campaign Lists */}
-      {Object.entries(leadsData).map(([camp,arr])=>{
+      {Object.entries(leadsData).map(([campKey, arr]) => {
         const vis = filtered(arr);
         if (!vis.length) return null;
         return (
-          <div key={camp} className="mb-8">
-            <h2 className="text-xl font-semibold mb-2">{camp}</h2>
+          <div key={campKey} className="mb-8">
+            <h2 className="text-xl font-semibold mb-2">{displayName(campKey)}</h2>
             <div className="space-y-4">
-              {vis.map((lead,i)=>(
+              {vis.map((lead, i) => (
                 <div
                   key={lead.id}
                   className="flex items-center justify-between border p-4 rounded-lg shadow-sm"
@@ -158,29 +165,28 @@ const Leads = () => {
                   <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
-                      checked={selected[camp]?.includes(i)}
-                      onChange={()=>toggle(camp,i)}
+                      checked={selected[campKey]?.includes(i)}
+                      onChange={() => toggle(campKey, i)}
                     />
                     <img
-                      src={lead.image||'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
+                      src={lead.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
                       alt={lead.name}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                     <div>
                       <h3 className="font-medium">{lead.name}</h3>
                       <span className={`inline-block px-2 py-1 mt-1 rounded text-sm ${getColor(lead.status)}`}>
-                        {statusEmoji[lead.status]||lead.status}
+                        {statusEmoji[lead.status] || lead.status}
                       </span>
                     </div>
                   </div>
                   <div className="flex gap-4 items-center">
-                    {/* Labeled selects */}
                     <div className="flex flex-col">
                       <span className="text-xs text-gray-600">Status</span>
                       <select
                         className="border rounded px-2 py-1 text-sm"
                         value={lead.status}
-                        onChange={e=>changeStatus(camp,i,e.target.value)}
+                        onChange={e => changeStatus(campKey, i, e.target.value)}
                       >
                         <option>New</option>
                         <option>Contacted</option>
@@ -192,16 +198,16 @@ const Leads = () => {
                       <span className="text-xs text-gray-600">Campaign</span>
                       <select
                         className="border rounded px-2 py-1 text-sm"
-                        value={camp}
-                        onChange={e=>moveCampaign(camp,i,e.target.value)}
+                        value={displayName(campKey)}
+                        onChange={e => moveCampaign(campKey, i, e.target.value)}
                       >
-                        {campaigns.map(t=>(
+                        {campaigns.map(t => (
                           <option key={t} value={t}>{t}</option>
                         ))}
                       </select>
                     </div>
                     <button
-                      onClick={()=>deleteLead(camp,i)}
+                      onClick={() => deleteLead(campKey, i)}
                       className="text-red-600 text-sm ml-4"
                     >
                       Delete
@@ -218,4 +224,3 @@ const Leads = () => {
 };
 
 export default Leads;
-
