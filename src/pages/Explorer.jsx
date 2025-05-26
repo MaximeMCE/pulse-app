@@ -1,4 +1,4 @@
-// Updated Explorer.jsx with multi-campaign visual + animation feedback
+// Updated Explorer.jsx with popover-style campaign selector after saving
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -16,7 +16,6 @@ const Explorer = () => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (storedToken) setToken(storedToken);
 
-    // Init from all localStorage leads_
     const saved = {};
     campaignList.forEach(title => {
       const raw = JSON.parse(localStorage.getItem(`leads_${title.toLowerCase()}`)) || [];
@@ -134,54 +133,60 @@ const Explorer = () => {
                     Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
                   </div>
 
-                  {already.length > 0 && (
-                    <div className="mt-2 text-sm">
-                      <span className="font-medium">Saved to:</span>
-                      <div className="mt-1 flex gap-2 flex-wrap">
-                        {already.map(c => (
-                          <span
-                            key={c}
-                            className="animate-fadeIn bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full"
+                  <div className="mt-2 text-sm">
+                    {already.length > 0 && (
+                      <>
+                        <span className="font-medium">Saved to:</span>
+                        <div className="mt-1 flex gap-2 flex-wrap">
+                          {already.map(c => (
+                            <span
+                              key={c}
+                              className="animate-fadeIn bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full"
+                            >
+                              ✅ {c}
+                            </span>
+                          ))}
+                          <button
+                            onClick={() => setDropdownOpen(artist.id)}
+                            className="text-sm text-blue-600 hover:underline"
                           >
-                            ✅ {c}
-                          </span>
-                        ))}
-                        <button
-                          onClick={() => setDropdownOpen(artist.id)}
-                          className="text-sm text-blue-600 hover:underline"
-                        >
-                          ➕ Add to another
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                            ➕ Add to another
+                          </button>
+                        </div>
+                      </>
+                    )}
 
-                  {already.length === 0 && (
-                    <div className="relative mt-2 group">
+                    {already.length === 0 && (
                       <button
-                        onClick={() => setDropdownOpen((p) => (p === artist.id ? null : artist.id))}
-                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+                        onClick={() => setDropdownOpen(artist.id)}
+                        className="bg-green-600 text-white px-3 py-1 mt-2 rounded hover:bg-green-700 text-sm"
                       >
-                        Save ▼
+                        Save to campaign
                       </button>
-                      {open && (
-                        <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm w-56">
-                          {campaignList.map((c) => (
+                    )}
+
+                    {open && (
+                      <div className="mt-2 bg-white border p-3 rounded shadow max-w-xs">
+                        <div className="text-xs font-semibold text-gray-600 mb-2">Select campaigns:</div>
+                        <div className="flex flex-wrap gap-2">
+                          {campaignList.map(c => (
                             <button
                               key={c}
                               onClick={() => saveLead(artist, c)}
                               disabled={isSavedTo(artist.id, c)}
-                              className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
-                                isSavedTo(artist.id, c) ? 'text-gray-400 cursor-not-allowed' : ''
+                              className={`px-3 py-1 rounded text-sm border ${
+                                isSavedTo(artist.id, c)
+                                  ? 'text-gray-400 border-gray-300 cursor-not-allowed'
+                                  : 'hover:bg-blue-50 border-gray-400 text-black'
                               }`}
                             >
-                              {isSavedTo(artist.id, c) ? `✅ Already in ${c}` : `Save to ${c}`}
+                              {isSavedTo(artist.id, c) ? `✅ ${c}` : c}
                             </button>
                           ))}
                         </div>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
