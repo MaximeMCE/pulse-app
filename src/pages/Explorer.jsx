@@ -15,10 +15,12 @@ const Explorer = () => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (storedToken) setToken(storedToken);
 
-    const unassigned = JSON.parse(localStorage.getItem('leads_unassigned')) || [];
-    const campaign = JSON.parse(localStorage.getItem(`leads_${campaignId}`)) || [];
-    setUnassignedLeads(unassigned);
-    setCampaignLeads(campaign);
+    setUnassignedLeads(
+      JSON.parse(localStorage.getItem('leads_unassigned')) || []
+    );
+    setCampaignLeads(
+      JSON.parse(localStorage.getItem(`leads_${campaignId}`)) || []
+    );
   }, []);
 
   const handleSearch = async () => {
@@ -26,10 +28,9 @@ const Explorer = () => {
       setError('Missing search query or token.');
       return;
     }
-
     try {
       const artists = await searchArtists(token, query);
-      if (artists.length === 0) {
+      if (!artists.length) {
         setError('No artists found.');
         setResults([]);
       } else {
@@ -42,31 +43,37 @@ const Explorer = () => {
     }
   };
 
+  // ← UPDATED to include image URL
   const saveLead = (artist, target) => {
+    const newLead = {
+      id: artist.id,
+      name: artist.name,
+      image: artist.images?.[0]?.url || '',    // grab first image or blank
+      status: 'New',
+    };
+
     if (target === 'unassigned') {
-      const updated = [...unassignedLeads, artist];
+      const updated = [...unassignedLeads, newLead];
       setUnassignedLeads(updated);
       localStorage.setItem('leads_unassigned', JSON.stringify(updated));
-    } else if (target === 'campaign') {
-      const updated = [...campaignLeads, artist];
+    } else {
+      const updated = [...campaignLeads, newLead];
       setCampaignLeads(updated);
-      localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
+      localStorage.setItem(
+        `leads_${campaignId}`,
+        JSON.stringify(updated)
+      );
     }
-
     setDropdownOpen(null);
   };
 
-  const isAlreadySaved = (artistId) => {
-    return (
-      unassignedLeads.some((a) => a.id === artistId) ||
-      campaignLeads.some((a) => a.id === artistId)
-    );
-  };
+  const isAlreadySaved = (id) =>
+    unassignedLeads.some((a) => a.id === id) ||
+    campaignLeads.some((a) => a.id === id);
 
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
-
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -93,16 +100,18 @@ const Explorer = () => {
 
       <div>
         {results.map((artist) => {
-          const alreadySaved = isAlreadySaved(artist.id);
+          const already = isAlreadySaved(artist.id);
           const open = dropdownOpen === artist.id;
-
           return (
-            <div key={artist.id} className="border-b py-4 flex items-center relative">
+            <div
+              key={artist.id}
+              className="border-b py-4 flex items-center"
+            >
               {artist.images[0] && (
                 <img
                   src={artist.images[0].url}
                   alt={artist.name}
-                  className="w-[100px] h-[100px] rounded-full mr-4 object-cover"
+                  className="w-[80px] h-[80px] rounded-full mr-4 object-cover"
                 />
               )}
               <div className="flex-1">
@@ -111,30 +120,36 @@ const Explorer = () => {
                   Followers: {artist.followers.total.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-400">
-                  Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
+                  Genres:{' '}
+                  {artist.genres.slice(0, 2).join(', ') || 'N/A'}
                 </div>
 
-                {!alreadySaved && (
+                {!already ? (
                   <div className="relative mt-2">
                     <button
                       onClick={() =>
-                        setDropdownOpen((prev) => (prev === artist.id ? null : artist.id))
+                        setDropdownOpen((p) =>
+                          p === artist.id ? null : artist.id
+                        )
                       }
                       className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
                     >
                       Save ▼
                     </button>
-
                     {open && (
-                      <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm w-64">
+                      <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm w-56">
                         <button
-                          onClick={() => saveLead(artist, 'unassigned')}
+                          onClick={() =>
+                            saveLead(artist, 'unassigned')
+                          }
                           className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                         >
                           Save to Unassigned
                         </button>
                         <button
-                          onClick={() => saveLead(artist, 'campaign')}
+                          onClick={() =>
+                            saveLead(artist, 'campaign')
+                          }
                           className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                         >
                           Save to Campaign: {campaignId}
@@ -142,9 +157,7 @@ const Explorer = () => {
                       </div>
                     )}
                   </div>
-                )}
-
-                {alreadySaved && (
+                ) : (
                   <div className="mt-2 text-xs text-green-700 font-medium">
                     ✅ Saved
                   </div>
