@@ -16,7 +16,9 @@ const useLeads = () => {
         const id = key.replace('leads_', '');
         try {
           const leads = JSON.parse(localStorage.getItem(key));
-          if (Array.isArray(leads) && leads.length > 0) {
+
+          // ✅ Always load campaigns even if empty
+          if (Array.isArray(leads)) {
             campaignMap[id] = leads;
           }
         } catch (e) {
