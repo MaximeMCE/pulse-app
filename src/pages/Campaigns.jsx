@@ -1,16 +1,40 @@
-// Updated Campaigns.jsx with card layout, lead count, improved create UX, delete button
+// CampaignsPolished.jsx — includes Enter trigger, live lead counts, and auto-refresh on updates
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
-const Campaigns = () => {
+const CampaignsPolished = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [newTitle, setNewTitle] = useState('');
+  const [leadCounts, setLeadCounts] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = localStorage.getItem('campaigns');
-    if (stored) setCampaigns(JSON.parse(stored));
+    const loadCampaigns = () => {
+      const stored = localStorage.getItem('campaigns');
+      if (stored) setCampaigns(JSON.parse(stored));
+    };
+
+    const loadCounts = () => {
+      const counts = {};
+      const stored = JSON.parse(localStorage.getItem('campaigns') || '[]');
+      stored.forEach(c => {
+        const leads = JSON.parse(localStorage.getItem(`leads_${c.title}`) || '[]');
+        counts[c.title] = leads.length;
+      });
+      setLeadCounts(counts);
+    };
+
+    loadCampaigns();
+    loadCounts();
+
+    const handleUpdate = () => {
+      loadCampaigns();
+      loadCounts();
+    };
+
+    window.addEventListener('campaignsUpdated', handleUpdate);
+    return () => window.removeEventListener('campaignsUpdated', handleUpdate);
   }, []);
 
   useEffect(() => {
@@ -40,11 +64,6 @@ const Campaigns = () => {
     window.dispatchEvent(new Event('campaignsUpdated'));
   };
 
-  const countLeads = (title) => {
-    const raw = JSON.parse(localStorage.getItem(`leads_${title}`)) || [];
-    return raw.length;
-  };
-
   const goToCampaign = (id) => {
     navigate(`/campaigns/${id}`);
   };
@@ -59,6 +78,9 @@ const Campaigns = () => {
           placeholder="New campaign title"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleAddCampaign();
+          }}
           className="border rounded px-3 py-2 w-full"
         />
         <button
@@ -82,7 +104,7 @@ const Campaigns = () => {
             >
               <div className="font-semibold text-lg mb-1">{c.title}</div>
               <div className="text-sm text-gray-600 mb-1">Created: {new Date(c.createdAt).toLocaleDateString()}</div>
-              <div className="text-sm text-gray-800">🎯 {countLeads(c.title)} lead(s)</div>
+              <div className="text-sm text-gray-800">🎯 {leadCounts[c.title] || 0} lead(s)</div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -100,4 +122,4 @@ const Campaigns = () => {
   );
 };
 
-export default Campaigns;
+export default CampaignsPolished;
