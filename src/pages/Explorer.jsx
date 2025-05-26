@@ -1,4 +1,4 @@
-// Updated Explorer.jsx with fixed image scaling constraint
+// Updated Explorer.jsx with enforced image sizing via inline styles
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -178,7 +178,8 @@ const Explorer = () => {
                   <img
                     src={artist.images[0].url}
                     alt={artist.name}
-                    className="w-20 h-20 max-w-[80px] max-h-[80px] rounded-full mr-4 object-cover"
+                    className="rounded-full mr-4 object-cover"
+                    style={{ width: '80px', height: '80px', maxWidth: '80px', maxHeight: '80px', aspectRatio: '1/1', objectFit: 'cover', display: 'block' }}
                   />
                 )}
                 <div className="flex-1">
