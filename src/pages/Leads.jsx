@@ -1,3 +1,4 @@
+// Final fixed Leads.jsx with campaign tracking per lead
 import React, { useEffect, useState } from 'react';
 
 const Leads = () => {
@@ -7,83 +8,95 @@ const Leads = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  const normalizeKey = str => str.toLowerCase();
-  const displayName = key => key === 'unassigned' ? 'Unassigned' : key;
+  const normalizeKey = (str) => str.toLowerCase();
+  const displayName = (key) => key === 'unassigned' ? 'Unassigned' : key;
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('campaigns')) || [];
     const allCampaigns = ['Unassigned', ...stored.map(c => c.title)];
     setCampaigns(allCampaigns);
 
-    const data = {}, sel = {};
+    const allLeads = {};
+    const selectedInit = {};
     Object.keys(localStorage)
       .filter(k => k.startsWith('leads_'))
       .forEach(k => {
         const rawCamp = k.replace('leads_', '');
         const normCamp = normalizeKey(rawCamp);
         const arr = JSON.parse(localStorage.getItem(k)) || [];
-        if (arr.length) {
-          data[normCamp] = arr;
-          sel[normCamp] = [];
-        }
+
+        arr.forEach(lead => {
+          if (!lead.campaign) lead.campaign = displayName(normCamp);
+        });
+
+        allLeads[normCamp] = arr;
+        selectedInit[normCamp] = [];
       });
-    setLeadsData(data);
-    setSelected(sel);
+    setLeadsData(allLeads);
+    setSelected(selectedInit);
   }, []);
 
-  const updateLS = upd =>
-    Object.entries(upd).forEach(([c, arr]) =>
-      localStorage.setItem(`leads_${normalizeKey(c)}`, JSON.stringify(arr))
-    );
+  const updateLS = (updatedData) => {
+    Object.entries(updatedData).forEach(([key, leads]) => {
+      localStorage.setItem(`leads_${normalizeKey(key)}`, JSON.stringify(leads));
+    });
+  };
 
   const statusEmoji = {
     New: '👀 New',
     Contacted: '📞 Contacted',
     Qualified: '✅ Qualified',
-    Rejected: '❌ Rejected',
-  };
-  const getColor = s =>
-    ({
-      New: 'bg-blue-200 text-blue-800',
-      Contacted: 'bg-yellow-200 text-yellow-800',
-      Qualified: 'bg-green-200 text-green-800',
-      Rejected: 'bg-red-200 text-red-800',
-    }[s] || 'bg-gray-200 text-gray-800');
-
-  const changeStatus = (c, i, s) => {
-    const d = { ...leadsData };
-    d[c][i].status = s;
-    setLeadsData(d);
-    updateLS(d);
+    Rejected: '❌ Rejected'
   };
 
-  const moveCampaign = (c, i, toLabel) => {
-    const to = normalizeKey(toLabel);
-    const d = { ...leadsData }, item = d[c][i];
-    d[c].splice(i, 1);
-    if (!d[to]) d[to] = [];
-    d[to].push(item);
-    if (!d[c].length) {
-      delete d[c];
-      localStorage.removeItem(`leads_${normalizeKey(c)}`);
+  const getColor = (status) => ({
+    New: 'bg-blue-200 text-blue-800',
+    Contacted: 'bg-yellow-200 text-yellow-800',
+    Qualified: 'bg-green-200 text-green-800',
+    Rejected: 'bg-red-200 text-red-800'
+  }[status] || 'bg-gray-200 text-gray-800');
+
+  const changeStatus = (campKey, index, newStatus) => {
+    const copy = { ...leadsData };
+    copy[campKey][index].status = newStatus;
+    setLeadsData(copy);
+    updateLS(copy);
+  };
+
+  const moveCampaign = (fromKey, index, toCampaignLabel) => {
+    const toKey = normalizeKey(toCampaignLabel);
+    const copy = { ...leadsData };
+    const lead = copy[fromKey][index];
+
+    lead.campaign = toCampaignLabel;
+
+    copy[fromKey].splice(index, 1);
+    if (!copy[toKey]) copy[toKey] = [];
+    copy[toKey].push(lead);
+
+    if (!copy[fromKey].length) {
+      delete copy[fromKey];
+      localStorage.removeItem(`leads_${normalizeKey(fromKey)}`);
     }
-    setLeadsData(d);
-    updateLS(d);
+
+    setLeadsData(copy);
+    updateLS(copy);
   };
 
-  const deleteLead = (c, i) => {
-    const d = { ...leadsData };
-    d[c].splice(i, 1);
-    if (!d[c].length) {
-      delete d[c];
-      localStorage.removeItem(`leads_${normalizeKey(c)}`);
+  const deleteLead = (campKey, index) => {
+    const copy = { ...leadsData };
+    copy[campKey].splice(index, 1);
+    if (!copy[campKey].length) {
+      delete copy[campKey];
+      localStorage.removeItem(`leads_${normalizeKey(campKey)}`);
     }
-    setLeadsData(d);
-    updateLS(d);
+    setLeadsData(copy);
+    updateLS(copy);
   };
 
   const toggle = (c, i) => {
-    const sel = { ...selected }, idx = sel[c].indexOf(i);
+    const sel = { ...selected };
+    const idx = sel[c].indexOf(i);
     idx > -1 ? sel[c].splice(idx, 1) : sel[c].push(i);
     setSelected(sel);
   };
@@ -123,7 +136,6 @@ const Leads = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">Leads</h1>
-
       <div className="mb-6 flex items-center">
         <input
           type="text"
@@ -135,9 +147,7 @@ const Leads = () => {
         <button
           onClick={() => {}}
           className="ml-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
-        >
-          Search
-        </button>
+        >Search</button>
       </div>
 
       <div className="mb-4">
@@ -147,12 +157,8 @@ const Leads = () => {
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1 border rounded text-sm ${
-                statusFilter === s ? 'bg-black text-white' : ''
-              }`}
-            >
-              {s}
-            </button>
+              className={`px-3 py-1 border rounded text-sm ${statusFilter === s ? 'bg-black text-white' : ''}`}
+            >{s}</button>
           ))}
         </div>
       </div>
@@ -174,10 +180,7 @@ const Leads = () => {
             <h2 className="text-xl font-semibold mb-2">{displayName(campKey)}</h2>
             <div className="space-y-4">
               {vis.map((lead, i) => (
-                <div
-                  key={lead.id}
-                  className="flex items-center justify-between border p-4 rounded-lg shadow-sm"
-                >
+                <div key={lead.id} className="flex items-center justify-between border p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
@@ -191,9 +194,7 @@ const Leads = () => {
                     />
                     <div>
                       <h3 className="font-medium">{lead.name}</h3>
-                      <span className={`inline-block px-2 py-1 mt-1 rounded text-sm ${getColor(lead.status)}`}>
-                        {statusEmoji[lead.status] || lead.status}
-                      </span>
+                      <span className={`inline-block px-2 py-1 mt-1 rounded text-sm ${getColor(lead.status)}`}>{statusEmoji[lead.status]}</span>
                     </div>
                   </div>
                   <div className="flex gap-4 items-center">
@@ -214,7 +215,7 @@ const Leads = () => {
                       <span className="text-xs text-gray-600">Campaign</span>
                       <select
                         className="border rounded px-2 py-1 text-sm"
-                        value={displayName(campKey)}
+                        value={lead.campaign}
                         onChange={e => moveCampaign(campKey, i, e.target.value)}
                       >
                         {campaigns.map(t => (
@@ -225,9 +226,7 @@ const Leads = () => {
                     <button
                       onClick={() => deleteLead(campKey, i)}
                       className="text-red-600 text-sm ml-4"
-                    >
-                      Delete
-                    </button>
+                    >Delete</button>
                   </div>
                 </div>
               ))}
