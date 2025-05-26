@@ -20,6 +20,7 @@ module.exports = {
     'bg-green-500', 'text-green-500',
     'bg-red-500', 'text-red-500',
     'bg-gray-500', 'text-gray-500',
+    'w-20', 'h-20', // ✅ Added to prevent image size classes from being purged
   ],
   theme: {
     extend: {
