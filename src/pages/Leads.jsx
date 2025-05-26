@@ -84,22 +84,30 @@ const Leads = () => {
   const handleMove = (artist, from, to) => {
     if (from === to) return;
 
+    // Remove from current group
     if (from === 'unassigned') {
-      const updatedUnassigned = unassigned.filter((a) => a.id !== artist.id);
-      setUnassigned(updatedUnassigned);
-      localStorage.setItem('leads_unassigned', JSON.stringify(updatedUnassigned));
+      const updated = unassigned.filter((a) => a.id !== artist.id);
+      setUnassigned(updated);
+      localStorage.setItem('leads_unassigned', JSON.stringify(updated));
     } else {
-      const updatedSource = campaigns[from].filter((a) => a.id !== artist.id);
-      const updatedCampaigns = { ...campaigns, [from]: updatedSource };
+      const updated = campaigns[from].filter((a) => a.id !== artist.id);
+      const updatedCampaigns = { ...campaigns, [from]: updated };
       setCampaigns(updatedCampaigns);
-      localStorage.setItem(`leads_${from}`, JSON.stringify(updatedSource));
+      localStorage.setItem(`leads_${from}`, JSON.stringify(updated));
     }
 
-    const destination = campaigns[to] || [];
-    const updatedDestination = [...destination, artist];
-    const updatedCampaigns = { ...campaigns, [to]: updatedDestination };
-    setCampaigns(updatedCampaigns);
-    localStorage.setItem(`leads_${to}`, JSON.stringify(updatedDestination));
+    // Add to new group
+    if (to === 'unassigned') {
+      const updated = [...unassigned, artist];
+      setUnassigned(updated);
+      localStorage.setItem('leads_unassigned', JSON.stringify(updated));
+    } else {
+      const destination = campaigns[to] || [];
+      const updated = [...destination, artist];
+      const updatedCampaigns = { ...campaigns, [to]: updated };
+      setCampaigns(updatedCampaigns);
+      localStorage.setItem(`leads_${to}`, JSON.stringify(updated));
+    }
   };
 
   const bulkDelete = (leads, source) => {
@@ -194,8 +202,9 @@ const Leads = () => {
                   className="border px-2 py-1 rounded"
                 >
                   <option value="" disabled>
-                    Move to campaign
+                    Move
                   </option>
+                  <option value="unassigned">Unassigned</option>
                   {Object.keys(campaigns)
                     .filter((id) => id !== source)
                     .map((id) => (
@@ -211,7 +220,7 @@ const Leads = () => {
                   className="border px-2 py-1 rounded"
                 >
                   <option value="" disabled>
-                    Change status
+                    Status
                   </option>
                   {STATUS_OPTIONS.map((s) => (
                     <option key={s} value={s}>
@@ -285,10 +294,11 @@ const Leads = () => {
 
                   <div className="flex justify-end items-center gap-2 mt-auto">
                     <select
-                      value={status}
                       onChange={(e) => updateStatus(artist.id, e.target.value)}
+                      defaultValue=""
                       className="text-sm border rounded px-2 py-1"
                     >
+                      <option value="" disabled>Status</option>
                       {STATUS_OPTIONS.map((option) => (
                         <option key={option} value={option}>
                           {option}
@@ -301,9 +311,8 @@ const Leads = () => {
                       defaultValue=""
                       onChange={(e) => handleMove(artist, source, e.target.value)}
                     >
-                      <option value="" disabled>
-                        Move to campaign
-                      </option>
+                      <option value="" disabled>Move</option>
+                      <option value="unassigned">Unassigned</option>
                       {Object.keys(campaigns)
                         .filter((id) => id !== source)
                         .map((id) => (
@@ -349,3 +358,5 @@ const Leads = () => {
         };
 
         export default Leads;
+
+      
