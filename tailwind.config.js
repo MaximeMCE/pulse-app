@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './index.html',
@@ -12,6 +13,9 @@ module.exports = {
   ],
   theme: {
     extend: {},
+  },
+  corePlugins: {
+    preflight: true, // Ensures base styles like typography, buttons, etc.
   },
   plugins: [],
 };
