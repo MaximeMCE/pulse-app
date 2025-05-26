@@ -1,4 +1,4 @@
-// Explorer.jsx — Dynamic Campaign Sync + UI Fixes
+// Explorer.jsx — Dynamic Campaign Sync + Auto Metadata Fix
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -25,12 +25,35 @@ const Explorer = () => {
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (storedToken) setToken(storedToken);
-
+    ensureCampaignMetadata();
     refreshCampaignList();
     refreshSavedCampaigns();
     window.addEventListener('leadsUpdated', refreshSavedCampaigns);
     return () => window.removeEventListener('leadsUpdated', refreshSavedCampaigns);
   }, []);
+
+  const ensureCampaignMetadata = () => {
+    const allCampaigns = Object.keys(localStorage)
+      .filter(k => k.startsWith('leads_'))
+      .map(k => k.replace('leads_', ''));
+
+    const existingMeta = JSON.parse(localStorage.getItem('campaigns') || '[]');
+    const metaTitles = existingMeta.map(c => c.title.toLowerCase());
+
+    let updated = [...existingMeta];
+    allCampaigns.forEach(c => {
+      if (!metaTitles.includes(c)) {
+        updated.push({
+          id: `auto-${c}`,
+          title: c.charAt(0).toUpperCase() + c.slice(1),
+          createdAt: new Date().toISOString(),
+        });
+      }
+    });
+
+    localStorage.setItem('campaigns', JSON.stringify(updated));
+    window.dispatchEvent(new Event('campaignsUpdated'));
+  };
 
   const refreshCampaignList = () => {
     const all = Object.keys(localStorage)
