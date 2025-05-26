@@ -1,4 +1,4 @@
-// Explorer.jsx — Dual Save Buttons (Talent Pool & Campaign) + Proper Image Sizing
+// Explorer.jsx — Dual Save Buttons (Talent Pool & Campaign) + Fixed Image Size & Pool Button Visibility
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -136,7 +136,7 @@ const Explorer = () => {
         return (
           <div key={artist.id} className="border-b py-4 flex items-center">
             {artist.images[0] && (
-              <img src={artist.images[0].url} alt={artist.name} className="w-[80px] h-[80px] rounded-full mr-4 object-cover" />
+              <img src={artist.images[0].url} alt={artist.name} className="w-[64px] h-[64px] rounded-full mr-4 object-cover" />
             )}
             <div className="flex-1">
               <div className="font-semibold">{artist.name}</div>
@@ -144,7 +144,7 @@ const Explorer = () => {
               <div className="text-sm text-gray-400">Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}</div>
 
               <div className="mt-2 flex gap-2 flex-wrap">
-                <button onClick={() => saveLead(artist, 'Talent Pool')} className="bg-gray-800 text-white text-xs px-3 py-1 rounded hover:bg-black">
+                <button onClick={() => saveLead(artist, 'Talent Pool')} className="bg-gray-700 text-white text-xs px-3 py-1 rounded hover:bg-black">
                   + Pool
                 </button>
                 <button onClick={() => setDropdownOpen(artist.id)} className="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">
