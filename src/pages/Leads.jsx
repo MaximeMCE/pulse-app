@@ -7,9 +7,8 @@ const Leads = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  // Normalize casing for internal keys
-  const normalizeKey = (str) => str.toLowerCase();
-  const displayName = (key) => key === 'unassigned' ? 'Unassigned' : key;
+  const normalizeKey = str => str.toLowerCase();
+  const displayName = key => key === 'unassigned' ? 'Unassigned' : key;
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('campaigns')) || [];
@@ -22,10 +21,10 @@ const Leads = () => {
       .forEach(k => {
         const rawCamp = k.replace('leads_', '');
         const normCamp = normalizeKey(rawCamp);
-        const arr  = JSON.parse(localStorage.getItem(k)) || [];
+        const arr = JSON.parse(localStorage.getItem(k)) || [];
         if (arr.length) {
           data[normCamp] = arr;
-          sel[normCamp]  = [];
+          sel[normCamp] = [];
         }
       });
     setLeadsData(data);
@@ -33,7 +32,7 @@ const Leads = () => {
   }, []);
 
   const updateLS = upd =>
-    Object.entries(upd).forEach(([c,arr])=>
+    Object.entries(upd).forEach(([c, arr]) =>
       localStorage.setItem(`leads_${normalizeKey(c)}`, JSON.stringify(arr))
     );
 
@@ -51,52 +50,73 @@ const Leads = () => {
       Rejected: 'bg-red-200 text-red-800',
     }[s] || 'bg-gray-200 text-gray-800');
 
-  const changeStatus = (c,i,s) => {
-    const d={...leadsData}; d[c][i].status=s;
-    setLeadsData(d); updateLS(d);
-  };
-  const moveCampaign = (c,i,toLabel) => {
-    const to = normalizeKey(toLabel);
-    const d={...leadsData}, item=d[c][i];
-    d[c].splice(i,1);
-    if (!d[to]) d[to]=[];
-    d[to].push(item);
-    if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${normalizeKey(c)}`); }
-    setLeadsData(d); updateLS(d);
-  };
-  const deleteLead = (c,i) => {
-    const d={...leadsData}; d[c].splice(i,1);
-    if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${normalizeKey(c)}`); }
-    setLeadsData(d); updateLS(d);
+  const changeStatus = (c, i, s) => {
+    const d = { ...leadsData };
+    d[c][i].status = s;
+    setLeadsData(d);
+    updateLS(d);
   };
 
-  const toggle = (c,i) => {
-    const sel={...selected}, idx=sel[c].indexOf(i);
-    idx>-1 ? sel[c].splice(idx,1) : sel[c].push(i);
+  const moveCampaign = (c, i, toLabel) => {
+    const to = normalizeKey(toLabel);
+    const d = { ...leadsData }, item = d[c][i];
+    d[c].splice(i, 1);
+    if (!d[to]) d[to] = [];
+    d[to].push(item);
+    if (!d[c].length) {
+      delete d[c];
+      localStorage.removeItem(`leads_${normalizeKey(c)}`);
+    }
+    setLeadsData(d);
+    updateLS(d);
+  };
+
+  const deleteLead = (c, i) => {
+    const d = { ...leadsData };
+    d[c].splice(i, 1);
+    if (!d[c].length) {
+      delete d[c];
+      localStorage.removeItem(`leads_${normalizeKey(c)}`);
+    }
+    setLeadsData(d);
+    updateLS(d);
+  };
+
+  const toggle = (c, i) => {
+    const sel = { ...selected }, idx = sel[c].indexOf(i);
+    idx > -1 ? sel[c].splice(idx, 1) : sel[c].push(i);
     setSelected(sel);
   };
+
   const selectAll = () => {
-    const sel={};
-    Object.entries(leadsData).forEach(([c,arr])=> sel[c]=arr.map((_,i)=>i));
+    const sel = {};
+    Object.entries(leadsData).forEach(([c, arr]) => sel[c] = arr.map((_, i) => i));
     setSelected(sel);
   };
+
   const clearAll = () => {
-    const sel={};
-    Object.keys(leadsData).forEach(c=>sel[c]=[]);
+    const sel = {};
+    Object.keys(leadsData).forEach(c => sel[c] = []);
     setSelected(sel);
   };
+
   const bulkDelete = () => {
-    const d={...leadsData};
-    Object.entries(selected).forEach(([c,idxs])=>{
-      idxs.sort((a,b)=>b-a).forEach(i=>d[c].splice(i,1));
-      if (!d[c].length) { delete d[c]; localStorage.removeItem(`leads_${normalizeKey(c)}`); }
+    const d = { ...leadsData };
+    Object.entries(selected).forEach(([c, idxs]) => {
+      idxs.sort((a, b) => b - a).forEach(i => d[c].splice(i, 1));
+      if (!d[c].length) {
+        delete d[c];
+        localStorage.removeItem(`leads_${normalizeKey(c)}`);
+      }
     });
-    setLeadsData(d); updateLS(d); clearAll();
+    setLeadsData(d);
+    updateLS(d);
+    clearAll();
   };
 
   const filtered = arr =>
-    arr.filter(l=>
-      (statusFilter==='All'||l.status===statusFilter) &&
+    arr.filter(l =>
+      (statusFilter === 'All' || l.status === statusFilter) &&
       l.name.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -104,33 +124,31 @@ const Leads = () => {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">Leads</h1>
 
-      {/* Search */}
       <div className="mb-6 flex items-center">
         <input
           type="text"
           placeholder="Search lead..."
           value={search}
-          onChange={e=>setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           className="border px-3 py-1 w-full md:w-1/3 rounded"
         />
         <button
-          onClick={()=>{}}
+          onClick={() => {}}
           className="ml-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
         >
           Search
         </button>
       </div>
 
-      {/* Filters */}
       <div className="mb-4">
         <h2 className="font-semibold mb-2">Filters</h2>
         <div className="flex gap-2 flex-wrap">
-          {['All','New','Contacted','Qualified','Rejected'].map(s=>(
+          {['All', 'New', 'Contacted', 'Qualified', 'Rejected'].map(s => (
             <button
               key={s}
-              onClick={()=>setStatusFilter(s)}
+              onClick={() => setStatusFilter(s)}
               className={`px-3 py-1 border rounded text-sm ${
-                statusFilter===s ? 'bg-black text-white' : ''
+                statusFilter === s ? 'bg-black text-white' : ''
               }`}
             >
               {s}
@@ -139,17 +157,15 @@ const Leads = () => {
         </div>
       </div>
 
-      {/* Actions */}
       <div className="mb-8">
         <h2 className="font-semibold mb-2">Actions</h2>
         <div className="flex gap-4">
           <button onClick={selectAll} className="text-blue-600 text-sm">Select All</button>
-          <button onClick={clearAll}  className="text-gray-600 text-sm">Clear</button>
+          <button onClick={clearAll} className="text-gray-600 text-sm">Clear</button>
           <button onClick={bulkDelete} className="text-red-600 text-sm">Delete Selected</button>
         </div>
       </div>
 
-      {/* Campaign Lists */}
       {Object.entries(leadsData).map(([campKey, arr]) => {
         const vis = filtered(arr);
         if (!vis.length) return null;
