@@ -1,4 +1,4 @@
-// CampaignsPolished.jsx — includes Enter trigger, live lead counts, and auto-refresh on updates
+// CampaignsPolished.jsx — fixed localStorage key casing for lead counts
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,7 +19,7 @@ const CampaignsPolished = () => {
       const counts = {};
       const stored = JSON.parse(localStorage.getItem('campaigns') || '[]');
       stored.forEach(c => {
-        const leads = JSON.parse(localStorage.getItem(`leads_${c.title}`) || '[]');
+        const leads = JSON.parse(localStorage.getItem(`leads_${c.title.toLowerCase()}`) || '[]');
         counts[c.title] = leads.length;
       });
       setLeadCounts(counts);
@@ -51,7 +51,7 @@ const CampaignsPolished = () => {
       createdAt: new Date().toISOString(),
     };
 
-    localStorage.setItem(`leads_${title}`, JSON.stringify([]));
+    localStorage.setItem(`leads_${title.toLowerCase()}`, JSON.stringify([]));
     setCampaigns(prev => [...prev, newCampaign]);
     setNewTitle('');
     window.dispatchEvent(new Event('campaignsUpdated'));
@@ -60,7 +60,7 @@ const CampaignsPolished = () => {
   const handleDelete = (title) => {
     if (!confirm(`Delete campaign '${title}' and all its leads?`)) return;
     setCampaigns(prev => prev.filter(c => c.title !== title));
-    localStorage.removeItem(`leads_${title}`);
+    localStorage.removeItem(`leads_${title.toLowerCase()}`);
     window.dispatchEvent(new Event('campaignsUpdated'));
   };
 
