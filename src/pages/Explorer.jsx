@@ -1,4 +1,4 @@
-// Explorer.jsx — Dual Save Buttons (Talent Pool & Campaign) + Proper Image Sizing + Button Color Fix
+// Explorer.jsx — Fixed Image Size + Visible +Pool Button
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -136,7 +136,7 @@ const Explorer = () => {
         return (
           <div key={artist.id} className="border-b py-4 flex items-center">
             {artist.images[0] && (
-              <img src={artist.images[0].url} alt={artist.name} className="w-[64px] h-[64px] rounded-full mr-4 object-cover" />
+              <img src={artist.images[0].url} alt={artist.name} className="w-16 h-16 rounded-full mr-4 object-cover" />
             )}
             <div className="flex-1">
               <div className="font-semibold">{artist.name}</div>
