@@ -1,4 +1,4 @@
-// Updated Explorer.jsx with fixed handleSearch function
+// Updated Explorer.jsx with remove-from-campaign functionality
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -86,6 +86,20 @@ const Explorer = () => {
     setDropdownOpen(null);
   };
 
+  const removeLead = (artistId, campaign) => {
+    const key = `leads_${campaign.toLowerCase()}`;
+    const current = JSON.parse(localStorage.getItem(key)) || [];
+    const filtered = current.filter(l => l.id !== artistId);
+    localStorage.setItem(key, JSON.stringify(filtered));
+
+    setSavedCampaigns(prev => {
+      const updated = { ...prev };
+      updated[artistId] = (updated[artistId] || []).filter(c => c !== campaign);
+      if (updated[artistId].length === 0) delete updated[artistId];
+      return updated;
+    });
+  };
+
   const isSavedTo = (artistId, campaign) => {
     return savedCampaigns[artistId]?.includes(campaign);
   };
@@ -153,12 +167,10 @@ const Explorer = () => {
                         <span className="font-medium">Saved to:</span>
                         <div className="mt-1 flex gap-2 flex-wrap">
                           {already.map(c => (
-                            <span
-                              key={c}
-                              className="animate-fadeIn bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full"
-                            >
+                            <div key={c} className="flex items-center gap-1 bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full animate-fadeIn">
                               ✅ {c}
-                            </span>
+                              <button onClick={() => removeLead(artist.id, c)} className="text-red-500 ml-1 hover:text-red-700">✕</button>
+                            </div>
                           ))}
                           <button
                             onClick={() => setDropdownOpen(artist.id)}
