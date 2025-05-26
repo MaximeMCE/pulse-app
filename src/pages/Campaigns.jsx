@@ -30,14 +30,14 @@ const Campaigns = () => {
       createdAt: new Date().toISOString(),
     };
 
-    // Create corresponding leads bucket
+    // ✅ Create empty lead list for new campaign
     localStorage.setItem(`leads_${title}`, JSON.stringify([]));
 
-    // Save campaign metadata
+    // ✅ Save campaign metadata
     setCampaigns((prev) => [...prev, newCampaign]);
     setNewTitle('');
 
-    // Trigger reload in Leads.jsx
+    // ✅ Trigger reload for dropdowns (used by Leads.jsx)
     window.dispatchEvent(new Event('campaignsUpdated'));
   };
 
