@@ -13,26 +13,26 @@ import ArtistSearch from './pages/ArtistSearch';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Callback from './Callback';
-import Leads from './pages/Leads'; // ✅ new import
+import Leads from './pages/Leads';
 
 function App() {
-  const accessToken = localStorage.getItem('spotify_access_token');
-
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<Login />} />
       <Route path="/callback" element={<Callback />} />
 
+      {/* Protected routes */}
       <Route element={<ProtectedLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/explorer" element={<Explorer />} />
         <Route path="/campaigns" element={<Campaigns />} />
         <Route path="/campaigns/:id" element={<CampaignDetails />} />
-        <Route path="/leads" element={<Leads />} /> {/* ✅ new route */}
+        <Route path="/leads" element={<Leads />} />
         <Route path="/artist/:id" element={<ArtistProfile />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/search" element={<ArtistSearch token={accessToken} />} />
+        <Route path="/search" element={<ArtistSearch />} />
         <Route path="/leads-legacy" element={<LeadsLegacy />} />
       </Route>
     </Routes>
