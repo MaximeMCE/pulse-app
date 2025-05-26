@@ -1,4 +1,4 @@
-// CampaignsPolished.jsx — fixed localStorage key casing for lead counts
+// CampaignsPolished.jsx — now also listens to 'leadsUpdated' to refresh counts on any change
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,16 +25,21 @@ const CampaignsPolished = () => {
       setLeadCounts(counts);
     };
 
-    loadCampaigns();
-    loadCounts();
-
     const handleUpdate = () => {
       loadCampaigns();
       loadCounts();
     };
 
+    loadCampaigns();
+    loadCounts();
+
     window.addEventListener('campaignsUpdated', handleUpdate);
-    return () => window.removeEventListener('campaignsUpdated', handleUpdate);
+    window.addEventListener('leadsUpdated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('campaignsUpdated', handleUpdate);
+      window.removeEventListener('leadsUpdated', handleUpdate);
+    };
   }, []);
 
   useEffect(() => {
