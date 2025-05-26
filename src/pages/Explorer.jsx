@@ -1,4 +1,4 @@
-// Updated Explorer.jsx with remove-from-campaign functionality
+// Updated Explorer.jsx with search inspiration tiles
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -11,6 +11,14 @@ const Explorer = () => {
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const campaignList = ['Madrid', 'Paris', 'Berlin', 'Unassigned'];
+
+  const searchSuggestions = [
+    "Techno artists under 10K listeners",
+    "Unsigned female vocalists",
+    "Rising Afrobeat acts in Europe",
+    "Amsterdam-based DJs",
+    "Recently dropped EPs",
+  ];
 
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
@@ -107,6 +115,27 @@ const Explorer = () => {
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
+
+      {searchSuggestions.length > 0 && (
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-600 mb-2">Try one of these:</h3>
+          <div className="flex flex-wrap gap-2">
+            {searchSuggestions.map((suggestion, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setQuery(suggestion);
+                  handleSearch();
+                }}
+                className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-800"
+              >
+                🔍 {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
