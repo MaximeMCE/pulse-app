@@ -21,11 +21,19 @@ const Leads = () => {
   const [statuses, setStatuses] = useState({});
   const [selected, setSelected] = useState({});
   const [statusFilters, setStatusFilters] = useState({});
-  const [searchTerms, setSearchTerms] = useState({}); // ← search bar logic
+  const [searchTerms, setSearchTerms] = useState({});
 
   useEffect(() => {
     loadLeads();
     loadStatuses();
+
+    // 🔁 Listen for new campaign creation
+    const handleUpdate = () => loadLeads();
+    window.addEventListener("campaignsUpdated", handleUpdate);
+
+    return () => {
+      window.removeEventListener("campaignsUpdated", handleUpdate);
+    };
   }, []);
 
   const loadStatuses = () => {
@@ -93,9 +101,10 @@ const Leads = () => {
       const updatedCampaigns = { ...campaigns, [to]: updated };
       setCampaigns(updatedCampaigns);
       localStorage.setItem(`leads_${to}`, JSON.stringify(updated));
-    }  // ✅ ADD THIS BLOCK:
+    }
+
     setSelected({});
-    loadLeads();
+    loadLeads(); // sync with latest campaign data
   };
 
   const bulkDelete = (leads, source) => {
@@ -128,6 +137,7 @@ const Leads = () => {
     leads.forEach((a) => delete update[a.id]);
     setSelected(update);
   };
+
   const renderStatusFilterBar = (groupId) => {
     const current = statusFilters[groupId] || 'All';
 
@@ -151,7 +161,6 @@ const Leads = () => {
       </div>
     );
   };
-
   const renderSearchInput = (groupId) => {
     return (
       <input
@@ -288,8 +297,8 @@ const Leads = () => {
                             status === 'Qualified' ? 'bg-green-200 text-green-800' :
                             status === 'Rejected' ? 'bg-gray-200 text-gray-800' :
                             ''
-                          }
-                        `}>
+                          }`}
+                        >
                           {emoji} {status}
                         </div>
                       </div>

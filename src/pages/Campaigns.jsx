@@ -18,6 +18,7 @@ const Campaigns = () => {
   // Save campaigns to localStorage
   useEffect(() => {
     localStorage.setItem('campaigns', JSON.stringify(campaigns));
+    window.dispatchEvent(new Event("campaignsUpdated"));
   }, [campaigns]);
 
   const handleAddCampaign = () => {
