@@ -1,4 +1,4 @@
-// Updated Explorer.jsx with search inspiration tiles
+// Updated Explorer.jsx with search inspiration tiles and fixed image size
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -178,7 +178,7 @@ const Explorer = () => {
                   <img
                     src={artist.images[0].url}
                     alt={artist.name}
-                    className="w-[80px] h-[80px] rounded-full mr-4 object-cover"
+                    className="w-20 h-20 rounded-full mr-4 object-cover"
                   />
                 )}
                 <div className="flex-1">
