@@ -1,3 +1,4 @@
+// Updated Campaigns.jsx with card layout, lead count, improved create UX, delete button
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,38 +8,41 @@ const Campaigns = () => {
   const [newTitle, setNewTitle] = useState('');
   const navigate = useNavigate();
 
-  // Load campaigns from localStorage
   useEffect(() => {
     const stored = localStorage.getItem('campaigns');
-    if (stored) {
-      setCampaigns(JSON.parse(stored));
-    }
+    if (stored) setCampaigns(JSON.parse(stored));
   }, []);
 
-  // Save metadata to localStorage
   useEffect(() => {
     localStorage.setItem('campaigns', JSON.stringify(campaigns));
   }, [campaigns]);
 
   const handleAddCampaign = () => {
-    if (!newTitle.trim()) return;
-
     const title = newTitle.trim();
+    if (!title || campaigns.some(c => c.title.toLowerCase() === title.toLowerCase())) return;
+
     const newCampaign = {
       id: uuidv4(),
       title,
       createdAt: new Date().toISOString(),
     };
 
-    // ✅ Create empty lead list for new campaign
     localStorage.setItem(`leads_${title}`, JSON.stringify([]));
-
-    // ✅ Save campaign metadata
-    setCampaigns((prev) => [...prev, newCampaign]);
+    setCampaigns(prev => [...prev, newCampaign]);
     setNewTitle('');
-
-    // ✅ Trigger reload for dropdowns (used by Leads.jsx)
     window.dispatchEvent(new Event('campaignsUpdated'));
+  };
+
+  const handleDelete = (title) => {
+    if (!confirm(`Delete campaign '${title}' and all its leads?`)) return;
+    setCampaigns(prev => prev.filter(c => c.title !== title));
+    localStorage.removeItem(`leads_${title}`);
+    window.dispatchEvent(new Event('campaignsUpdated'));
+  };
+
+  const countLeads = (title) => {
+    const raw = JSON.parse(localStorage.getItem(`leads_${title}`)) || [];
+    return raw.length;
   };
 
   const goToCampaign = (id) => {
@@ -59,29 +63,38 @@ const Campaigns = () => {
         />
         <button
           onClick={handleAddCampaign}
-          className="bg-black text-white px-4 py-2 rounded"
+          className="bg-black text-white px-4 py-2 rounded disabled:opacity-40"
+          disabled={!newTitle.trim() || campaigns.some(c => c.title.toLowerCase() === newTitle.trim().toLowerCase())}
         >
           Create
         </button>
       </div>
 
       {campaigns.length === 0 ? (
-        <p>No campaigns yet.</p>
+        <p className="text-gray-500">No campaigns yet.</p>
       ) : (
-        <ul className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {campaigns.map((c) => (
-            <li
+            <div
               key={c.id}
-              className="border rounded p-4 cursor-pointer hover:bg-gray-100"
+              className="border rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer relative"
               onClick={() => goToCampaign(c.id)}
             >
-              <div className="font-semibold">{c.title}</div>
-              <div className="text-sm text-gray-500">
-                Created: {new Date(c.createdAt).toLocaleDateString()}
-              </div>
-            </li>
+              <div className="font-semibold text-lg mb-1">{c.title}</div>
+              <div className="text-sm text-gray-600 mb-1">Created: {new Date(c.createdAt).toLocaleDateString()}</div>
+              <div className="text-sm text-gray-800">🎯 {countLeads(c.title)} lead(s)</div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(c.title);
+                }}
+                className="absolute top-2 right-2 text-red-600 text-xs hover:underline"
+              >
+                Delete
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
