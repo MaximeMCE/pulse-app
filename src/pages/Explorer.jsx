@@ -1,15 +1,17 @@
-// Updated Explorer.jsx with fixed suggestion-triggered search
+// Final Explorer.jsx update with persistent search, improved CTA logic, dropdown fix, and save animation
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
 const Explorer = () => {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const [query, setQuery] = useState(localStorage.getItem('explorer_query') || '');
+  const [results, setResults] = useState(JSON.parse(localStorage.getItem('explorer_results') || '[]'));
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [recentlySaved, setRecentlySaved] = useState({});
+
   const campaignList = ['Madrid', 'Paris', 'Berlin', 'Unassigned'];
 
   const searchSuggestions = [
@@ -47,10 +49,13 @@ const Explorer = () => {
       if (!artists.length) {
         setError('No artists found.');
         setResults([]);
+        localStorage.setItem('explorer_results', JSON.stringify([]));
       } else {
         setError('');
         setResults(artists);
+        localStorage.setItem('explorer_results', JSON.stringify(artists));
       }
+      localStorage.setItem('explorer_query', searchTerm);
     } catch (err) {
       console.error('Search failed:', err);
       setError('Search failed. Check console.');
@@ -92,6 +97,9 @@ const Explorer = () => {
       updated[artistId] = Array.from(existing).filter(c => c !== 'Unassigned' || existing.size === 1);
       return updated;
     });
+
+    setRecentlySaved({ id: artistId, campaign: targetCampaign });
+    setTimeout(() => setRecentlySaved({}), 1500);
     setDropdownOpen(null);
   };
 
@@ -107,6 +115,10 @@ const Explorer = () => {
       if (updated[artistId].length === 0) delete updated[artistId];
       return updated;
     });
+
+    if (dropdownOpen === artistId && campaignList.every(c => !isSavedTo(artistId, c))) {
+      setDropdownOpen(null);
+    }
   };
 
   const isSavedTo = (artistId, campaign) => {
@@ -172,6 +184,9 @@ const Explorer = () => {
             const already = savedCampaigns[artist.id] || [];
             const open = dropdownOpen === artist.id;
             const disableUnassigned = already.length > 0 && already.some(c => c !== 'Unassigned');
+            const isNewlySaved = recentlySaved.id === artist.id;
+            const realCampaigns = already.filter(c => c !== 'Unassigned');
+            const ctaLabel = realCampaigns.length === 0 ? '➕ Add to a campaign' : '➕ Add to another';
 
             return (
               <div key={artist.id} className="border-b py-4 flex items-center">
@@ -198,16 +213,22 @@ const Explorer = () => {
                         <span className="font-medium">Saved to:</span>
                         <div className="mt-1 flex gap-2 flex-wrap">
                           {already.map(c => (
-                            <div key={c} className="flex items-center gap-1 bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full animate-fadeIn">
+                            <div
+                              key={c}
+                              className={`flex items-center gap-1 bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full ${isNewlySaved && recentlySaved.campaign === c ? 'animate-pulse' : ''}`}
+                            >
                               ✅ {c}
-                              <button onClick={() => removeLead(artist.id, c)} className="text-red-500 ml-1 hover:text-red-700">✕</button>
+                              <button
+                                onClick={() => removeLead(artist.id, c)}
+                                className="text-red-500 ml-1 hover:text-red-700"
+                              >✕</button>
                             </div>
                           ))}
                           <button
                             onClick={() => setDropdownOpen(artist.id)}
                             className="text-sm text-blue-600 hover:underline"
                           >
-                            ➕ Add to another
+                            {ctaLabel}
                           </button>
                         </div>
                       </>
@@ -218,7 +239,7 @@ const Explorer = () => {
                         onClick={() => setDropdownOpen(artist.id)}
                         className="bg-green-600 text-white px-3 py-1 mt-2 rounded hover:bg-green-700 text-sm"
                       >
-                        Save to campaign
+                        Save
                       </button>
                     )}
 
