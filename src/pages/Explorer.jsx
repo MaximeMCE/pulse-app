@@ -1,4 +1,4 @@
-// Updated Explorer.jsx with popover-style campaign selector after saving
+// Updated Explorer.jsx with logic to enforce either Unassigned OR campaign(s)
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -27,30 +27,23 @@ const Explorer = () => {
     setSavedCampaigns(saved);
   }, []);
 
-  const handleSearch = async () => {
-    if (!query || !token) {
-      setError('Missing search query or token.');
-      return;
-    }
-    setLoading(true);
-    try {
-      const artists = await searchArtists(token, query);
-      if (!artists.length) {
-        setError('No artists found.');
-        setResults([]);
-      } else {
-        setError('');
-        setResults(artists);
-      }
-    } catch (err) {
-      console.error('Search failed:', err);
-      setError('Search failed. Check console.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const saveLead = (artist, targetCampaign) => {
+    const artistId = artist.id;
+    const key = `leads_${targetCampaign.toLowerCase()}`;
+    const current = JSON.parse(localStorage.getItem(key)) || [];
+
+    // Prevent saving to Unassigned if saved elsewhere
+    const currentCampaigns = savedCampaigns[artistId] || [];
+    if (targetCampaign === 'Unassigned' && currentCampaigns.length > 0) return;
+
+    // Remove from Unassigned if saving to a real campaign
+    if (targetCampaign !== 'Unassigned') {
+      const unassignedKey = 'leads_unassigned';
+      const unassigned = JSON.parse(localStorage.getItem(unassignedKey)) || [];
+      const filtered = unassigned.filter(l => l.id !== artistId);
+      localStorage.setItem(unassignedKey, JSON.stringify(filtered));
+    }
+
     const newLead = {
       id: artist.id,
       name: artist.name,
@@ -59,15 +52,14 @@ const Explorer = () => {
       campaign: targetCampaign,
     };
 
-    const key = `leads_${targetCampaign.toLowerCase()}`;
-    const current = JSON.parse(localStorage.getItem(key)) || [];
     const updated = [...current, newLead];
     localStorage.setItem(key, JSON.stringify(updated));
 
     setSavedCampaigns(prev => {
       const updated = { ...prev };
-      if (!updated[artist.id]) updated[artist.id] = [];
-      updated[artist.id].push(targetCampaign);
+      const existing = new Set(updated[artistId] || []);
+      existing.add(targetCampaign);
+      updated[artistId] = Array.from(existing).filter(c => c !== 'Unassigned' || existing.size === 1);
       return updated;
     });
     setDropdownOpen(null);
@@ -114,6 +106,7 @@ const Explorer = () => {
           {results.map((artist) => {
             const already = savedCampaigns[artist.id] || [];
             const open = dropdownOpen === artist.id;
+            const disableUnassigned = already.length > 0 && already.some(c => c !== 'Unassigned');
 
             return (
               <div key={artist.id} className="border-b py-4 flex items-center">
@@ -173,9 +166,9 @@ const Explorer = () => {
                             <button
                               key={c}
                               onClick={() => saveLead(artist, c)}
-                              disabled={isSavedTo(artist.id, c)}
+                              disabled={isSavedTo(artist.id, c) || (c === 'Unassigned' && disableUnassigned)}
                               className={`px-3 py-1 rounded text-sm border ${
-                                isSavedTo(artist.id, c)
+                                isSavedTo(artist.id, c) || (c === 'Unassigned' && disableUnassigned)
                                   ? 'text-gray-400 border-gray-300 cursor-not-allowed'
                                   : 'hover:bg-blue-50 border-gray-400 text-black'
                               }`}
