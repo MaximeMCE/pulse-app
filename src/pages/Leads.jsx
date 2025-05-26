@@ -55,7 +55,6 @@ const Leads = () => {
     localStorage.setItem(`leadStatus_${artistId}`, status);
     setStatuses((prev) => ({ ...prev, [artistId]: status }));
   };
-
   const handleDelete = (artistId, source) => {
     if (source === 'unassigned') {
       const updated = unassigned.filter((a) => a.id !== artistId);
@@ -103,6 +102,18 @@ const Leads = () => {
     localStorage.setItem(`leads_${to}`, JSON.stringify(updatedDestination));
   };
 
+  const bulkDelete = (leads, source) => {
+    leads.forEach((a) => handleDelete(a.id, source));
+  };
+
+  const bulkMove = (leads, source, target) => {
+    leads.forEach((a) => handleMove(a, source, target));
+  };
+
+  const bulkStatus = (leads, status) => {
+    leads.forEach((a) => updateStatus(a.id, status));
+  };
+
   const toggleSelect = (artistId) => {
     setSelected((prev) => ({
       ...prev,
@@ -110,6 +121,17 @@ const Leads = () => {
     }));
   };
 
+  const selectAll = (leads) => {
+    const update = {};
+    leads.forEach((a) => (update[a.id] = true));
+    setSelected((prev) => ({ ...prev, ...update }));
+  };
+
+  const clearAll = (leads) => {
+    const update = { ...selected };
+    leads.forEach((a) => delete update[a.id]);
+    setSelected(update);
+  };
   const renderStatusFilterBar = (groupId) => {
     const current = statusFilters[groupId] || 'All';
 
@@ -139,13 +161,87 @@ const Leads = () => {
     const visible = filter === 'All'
       ? leads
       : leads.filter((a) => (statuses[a.id] || 'New') === filter);
+    const selectedLeads = visible.filter((a) => selected[a.id]);
 
     return (
       <>
         {renderStatusFilterBar(source)}
 
+        <div className="flex justify-between items-center mb-2">
+          <div className="text-sm text-gray-600">
+            {selectedLeads.length > 0 ? (
+              <span>{selectedLeads.length} selected</span>
+            ) : (
+              <span>{visible.length} total</span>
+            )}
+          </div>
+
+          <div className="flex gap-2 text-sm">
+            {selectedLeads.length > 0 ? (
+              <>
+                <button
+                  onClick={() => bulkDelete(selectedLeads, source)}
+                  className="bg-red-100 text-red-700 px-2 py-1 rounded"
+                >
+                  Delete
+                </button>
+
+                <select
+                  onChange={(e) =>
+                    bulkMove(selectedLeads, source, e.target.value)
+                  }
+                  defaultValue=""
+                  className="border px-2 py-1 rounded"
+                >
+                  <option value="" disabled>
+                    Move to campaign
+                  </option>
+                  {Object.keys(campaigns)
+                    .filter((id) => id !== source)
+                    .map((id) => (
+                      <option key={id} value={id}>
+                        {id}
+                      </option>
+                    ))}
+                </select>
+
+                <select
+                  onChange={(e) => bulkStatus(selectedLeads, e.target.value)}
+                  defaultValue=""
+                  className="border px-2 py-1 rounded"
+                >
+                  <option value="" disabled>
+                    Change status
+                  </option>
+                  {STATUS_OPTIONS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => selectAll(visible)}
+                  className="text-blue-600 hover:underline"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={() => clearAll(visible)}
+                  className="text-gray-500 hover:underline"
+                >
+                  Clear
+                </button>
+              </>
+            )}
+          </div>
+        </div>
         {visible.length === 0 ? (
-          <p className="text-sm text-gray-500 italic mb-4">No leads matching this filter.</p>
+          <p className="text-sm text-gray-500 italic mb-4">
+            No leads matching this filter.
+          </p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
             {visible.map((artist) => {
@@ -158,6 +254,12 @@ const Leads = () => {
                   className="border p-4 rounded shadow-sm flex flex-col justify-between h-full"
                 >
                   <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      checked={!!selected[artist.id]}
+                      onChange={() => toggleSelect(artist.id)}
+                      className="mr-2"
+                    />
                     {artist.images?.[0]?.url && (
                       <div className="flex flex-col items-center mr-4">
                         <img
@@ -180,52 +282,32 @@ const Leads = () => {
                       </div>
                     </div>
                   </div>
-
-                  <div className="flex justify-between items-center mt-auto">
-                    <select
-                      value={status}
-                      onChange={(e) => updateStatus(artist.id, e.target.value)}
-                      className="text-sm border rounded px-2 py-1"
-                    >
-                      {STATUS_OPTIONS.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      onClick={() => handleDelete(artist.id, source)}
-                      className="text-sm text-red-600 hover:text-red-800 ml-2"
-                    >
-                      ✕ Delete
-                    </button>
-                  </div>
                 </div>
               );
             })}
           </div>
         )}
-      </>
-    );
-  };
+        </>
+        );
+        };
 
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">All Saved Leads</h2>
+        return (
+        <div className="p-6">
+        <h2 className="text-2xl font-bold mb-6">All Saved Leads</h2>
 
-      <section className="mb-10">
+        <section className="mb-10">
         <h3 className="text-xl font-semibold mb-2">Unassigned Leads</h3>
         {renderLeads(unassigned, 'unassigned')}
-      </section>
+        </section>
 
-      {Object.entries(campaigns).map(([id, leads]) => (
+        {Object.entries(campaigns).map(([id, leads]) => (
         <section key={id} className="mb-10">
           <h3 className="text-xl font-semibold mb-2">Campaign: {id}</h3>
           {renderLeads(leads, id)}
         </section>
-      ))}
-    </div>
-  );
-};
+        ))}
+        </div>
+        );
+        };
 
-export default Leads;
+        export default Leads;
