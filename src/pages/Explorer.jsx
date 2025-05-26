@@ -145,7 +145,15 @@ const Explorer = () => {
               <img
                 src={artist.images[0].url}
                 alt={artist.name}
-                className="w-20 h-20 min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px] rounded-full mr-4 object-cover"
+                className="rounded-full mr-4 object-cover"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  minWidth: '80px',
+                  minHeight: '80px',
+                  maxWidth: '80px',
+                  maxHeight: '80px',
+                }}
               />
             )}
             <div className="flex-1">
