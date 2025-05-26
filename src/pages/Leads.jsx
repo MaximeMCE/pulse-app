@@ -13,7 +13,7 @@ const Leads = () => {
   const [campaigns, setCampaigns] = useState({});
   const [statuses, setStatuses] = useState({});
   const [selected, setSelected] = useState({});
-  const [statusFilters, setStatusFilters] = useState({}); // e.g. { unassigned: 'All', campaignId: 'New' }
+  const [statusFilters, setStatusFilters] = useState({});
 
   useEffect(() => {
     loadLeads();
@@ -132,6 +132,7 @@ const Leads = () => {
     leads.forEach((a) => delete update[a.id]);
     setSelected(update);
   };
+
   const renderStatusFilterBar = (groupId) => {
     const current = statusFilters[groupId] || 'All';
 
@@ -155,7 +156,6 @@ const Leads = () => {
       </div>
     );
   };
-
   const renderLeads = (leads, source) => {
     const filter = statusFilters[source] || 'All';
     const visible = filter === 'All'
@@ -281,6 +281,44 @@ const Leads = () => {
                         Genres: {artist.genres?.slice(0, 2).join(', ') || 'N/A'}
                       </div>
                     </div>
+                  </div>
+
+                  <div className="flex justify-end items-center gap-2 mt-auto">
+                    <select
+                      value={status}
+                      onChange={(e) => updateStatus(artist.id, e.target.value)}
+                      className="text-sm border rounded px-2 py-1"
+                    >
+                      {STATUS_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      className="text-sm border rounded px-2 py-1"
+                      defaultValue=""
+                      onChange={(e) => handleMove(artist, source, e.target.value)}
+                    >
+                      <option value="" disabled>
+                        Move to campaign
+                      </option>
+                      {Object.keys(campaigns)
+                        .filter((id) => id !== source)
+                        .map((id) => (
+                          <option key={id} value={id}>
+                            {id}
+                          </option>
+                        ))}
+                    </select>
+
+                    <button
+                      onClick={() => handleDelete(artist.id, source)}
+                      className="text-sm text-red-600 hover:text-red-800"
+                    >
+                      ✕
+                    </button>
                   </div>
                 </div>
               );
