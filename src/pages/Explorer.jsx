@@ -109,7 +109,14 @@ const Explorer = () => {
         <h3 className="text-sm font-semibold text-gray-600 mb-2">Try one of these:</h3>
         <div className="flex flex-wrap gap-2">
           {searchSuggestions.map((s, i) => (
-            <button key={i} onClick={() => { setQuery(s); handleSearch(s); }} className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full">
+            <button
+              key={i}
+              onClick={() => {
+                setQuery(s);
+                handleSearch(s);
+              }}
+              className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full"
+            >
               🔍 {s}
             </button>
           ))}
@@ -138,13 +145,17 @@ const Explorer = () => {
               <img
                 src={artist.images[0].url}
                 alt={artist.name}
-                className="w-20 h-20 rounded-full mr-4 object-cover"
+                className="w-20 h-20 min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px] rounded-full mr-4 object-cover"
               />
             )}
             <div className="flex-1">
               <div className="font-semibold">{artist.name}</div>
-              <div className="text-sm text-gray-500">Followers: {artist.followers.total.toLocaleString()}</div>
-              <div className="text-sm text-gray-400">Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}</div>
+              <div className="text-sm text-gray-500">
+                Followers: {artist.followers.total.toLocaleString()}
+              </div>
+              <div className="text-sm text-gray-400">
+                Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
+              </div>
               <div className="mt-2 flex gap-2 flex-wrap">
                 <button
                   onClick={() => saveLead(artist, 'Talent Pool')}
