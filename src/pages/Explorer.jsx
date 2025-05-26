@@ -1,3 +1,4 @@
+// Updated Explorer.jsx with multi-campaign visual + animation feedback
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -7,22 +8,24 @@ const Explorer = () => {
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [unassignedLeads, setUnassignedLeads] = useState([]);
-  const [campaignLeads, setCampaignLeads] = useState([]);
+  const [savedCampaigns, setSavedCampaigns] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(null);
-  const campaignId = 'demo-campaign-001';
-  const campaignTitle = 'Madrid'; // This is the real display name
+  const campaignList = ['Madrid', 'Paris', 'Berlin', 'Unassigned'];
 
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (storedToken) setToken(storedToken);
 
-    setUnassignedLeads(
-      JSON.parse(localStorage.getItem('leads_unassigned')) || []
-    );
-    setCampaignLeads(
-      JSON.parse(localStorage.getItem(`leads_${campaignId}`)) || []
-    );
+    // Init from all localStorage leads_
+    const saved = {};
+    campaignList.forEach(title => {
+      const raw = JSON.parse(localStorage.getItem(`leads_${title.toLowerCase()}`)) || [];
+      raw.forEach(lead => {
+        if (!saved[lead.id]) saved[lead.id] = [];
+        saved[lead.id].push(title);
+      });
+    });
+    setSavedCampaigns(saved);
   }, []);
 
   const handleSearch = async () => {
@@ -48,37 +51,32 @@ const Explorer = () => {
     }
   };
 
-  const saveLead = (artist, target, displayName) => {
+  const saveLead = (artist, targetCampaign) => {
     const newLead = {
       id: artist.id,
       name: artist.name,
       image: artist.images?.[0]?.url || '',
       status: 'New',
-      savedTo: displayName, // ← new field
+      campaign: targetCampaign,
     };
 
-    if (target === 'unassigned') {
-      const updated = [...unassignedLeads, newLead];
-      setUnassignedLeads(updated);
-      localStorage.setItem('leads_unassigned', JSON.stringify(updated));
-    } else {
-      const updated = [...campaignLeads, newLead];
-      setCampaignLeads(updated);
-      localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
-    }
+    const key = `leads_${targetCampaign.toLowerCase()}`;
+    const current = JSON.parse(localStorage.getItem(key)) || [];
+    const updated = [...current, newLead];
+    localStorage.setItem(key, JSON.stringify(updated));
+
+    setSavedCampaigns(prev => {
+      const updated = { ...prev };
+      if (!updated[artist.id]) updated[artist.id] = [];
+      updated[artist.id].push(targetCampaign);
+      return updated;
+    });
     setDropdownOpen(null);
   };
 
-  const findSavedLocation = (id) => {
-    const match =
-      unassignedLeads.find((a) => a.id === id) ||
-      campaignLeads.find((a) => a.id === id);
-    return match?.savedTo || null;
+  const isSavedTo = (artistId, campaign) => {
+    return savedCampaigns[artistId]?.includes(campaign);
   };
-
-  const isAlreadySaved = (id) =>
-    unassignedLeads.some((a) => a.id === id) ||
-    campaignLeads.some((a) => a.id === id);
 
   return (
     <div className="p-6">
@@ -115,15 +113,11 @@ const Explorer = () => {
       ) : (
         <div>
           {results.map((artist) => {
-            const already = isAlreadySaved(artist.id);
+            const already = savedCampaigns[artist.id] || [];
             const open = dropdownOpen === artist.id;
-            const savedWhere = findSavedLocation(artist.id);
 
             return (
-              <div
-                key={artist.id}
-                className="border-b py-4 flex items-center"
-              >
+              <div key={artist.id} className="border-b py-4 flex items-center">
                 {artist.images[0] && (
                   <img
                     src={artist.images[0].url}
@@ -140,41 +134,52 @@ const Explorer = () => {
                     Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
                   </div>
 
-                  {!already ? (
+                  {already.length > 0 && (
+                    <div className="mt-2 text-sm">
+                      <span className="font-medium">Saved to:</span>
+                      <div className="mt-1 flex gap-2 flex-wrap">
+                        {already.map(c => (
+                          <span
+                            key={c}
+                            className="animate-fadeIn bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full"
+                          >
+                            ✅ {c}
+                          </span>
+                        ))}
+                        <button
+                          onClick={() => setDropdownOpen(artist.id)}
+                          className="text-sm text-blue-600 hover:underline"
+                        >
+                          ➕ Add to another
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {already.length === 0 && (
                     <div className="relative mt-2 group">
                       <button
-                        onClick={() =>
-                          setDropdownOpen((p) =>
-                            p === artist.id ? null : artist.id
-                          )
-                        }
+                        onClick={() => setDropdownOpen((p) => (p === artist.id ? null : artist.id))}
                         className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
                       >
                         Save ▼
                       </button>
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
-                        Save this artist to a campaign
-                      </div>
                       {open && (
                         <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm w-56">
-                          <button
-                            onClick={() => saveLead(artist, 'unassigned', 'Unassigned')}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                          >
-                            Save to Unassigned
-                          </button>
-                          <button
-                            onClick={() => saveLead(artist, 'campaign', campaignTitle)}
-                            className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                          >
-                            Save to Campaign: {campaignTitle}
-                          </button>
+                          {campaignList.map((c) => (
+                            <button
+                              key={c}
+                              onClick={() => saveLead(artist, c)}
+                              disabled={isSavedTo(artist.id, c)}
+                              className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                                isSavedTo(artist.id, c) ? 'text-gray-400 cursor-not-allowed' : ''
+                              }`}
+                            >
+                              {isSavedTo(artist.id, c) ? `✅ Already in ${c}` : `Save to ${c}`}
+                            </button>
+                          ))}
                         </div>
                       )}
-                    </div>
-                  ) : (
-                    <div className="mt-2 text-xs text-green-700 font-medium">
-                      ✅ Saved to {savedWhere}
                     </div>
                   )}
                 </div>
