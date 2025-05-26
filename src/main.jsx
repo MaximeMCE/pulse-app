@@ -1,4 +1,5 @@
-import './index.css';
+import './generated.css'; // ✅ Use the precompiled Tailwind file
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
