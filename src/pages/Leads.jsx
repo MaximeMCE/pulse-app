@@ -1,241 +1,195 @@
-// Final fixed Leads.jsx with campaign tracking per lead
-import React, { useEffect, useState } from 'react';
+// Updated Explorer.jsx with multi-campaign visual + animation feedback
+import React, { useState, useEffect } from 'react';
+import { searchArtists } from '../api/Spotify';
 
-const Leads = () => {
-  const [leadsData, setLeadsData] = useState({});
-  const [campaigns, setCampaigns] = useState([]);
-  const [selected, setSelected] = useState({});
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
-
-  const normalizeKey = (str) => str.toLowerCase();
-  const displayName = (key) => key === 'unassigned' ? 'Unassigned' : key;
+const Explorer = () => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [token, setToken] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [savedCampaigns, setSavedCampaigns] = useState({});
+  const [dropdownOpen, setDropdownOpen] = useState(null);
+  const campaignList = ['Madrid', 'Paris', 'Berlin', 'Unassigned'];
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('campaigns')) || [];
-    const allCampaigns = ['Unassigned', ...stored.map(c => c.title)];
-    setCampaigns(allCampaigns);
+    const storedToken = localStorage.getItem('spotify_access_token');
+    if (storedToken) setToken(storedToken);
 
-    const allLeads = {};
-    const selectedInit = {};
-    Object.keys(localStorage)
-      .filter(k => k.startsWith('leads_'))
-      .forEach(k => {
-        const rawCamp = k.replace('leads_', '');
-        const normCamp = normalizeKey(rawCamp);
-        const arr = JSON.parse(localStorage.getItem(k)) || [];
-
-        arr.forEach(lead => {
-          if (!lead.campaign) lead.campaign = displayName(normCamp);
-        });
-
-        allLeads[normCamp] = arr;
-        selectedInit[normCamp] = [];
+    // Init from all localStorage leads_
+    const saved = {};
+    campaignList.forEach(title => {
+      const raw = JSON.parse(localStorage.getItem(`leads_${title.toLowerCase()}`)) || [];
+      raw.forEach(lead => {
+        if (!saved[lead.id]) saved[lead.id] = [];
+        saved[lead.id].push(title);
       });
-    setLeadsData(allLeads);
-    setSelected(selectedInit);
+    });
+    setSavedCampaigns(saved);
   }, []);
 
-  const updateLS = (updatedData) => {
-    Object.entries(updatedData).forEach(([key, leads]) => {
-      localStorage.setItem(`leads_${normalizeKey(key)}`, JSON.stringify(leads));
-    });
-  };
-
-  const statusEmoji = {
-    New: '👀 New',
-    Contacted: '📞 Contacted',
-    Qualified: '✅ Qualified',
-    Rejected: '❌ Rejected'
-  };
-
-  const getColor = (status) => ({
-    New: 'bg-blue-200 text-blue-800',
-    Contacted: 'bg-yellow-200 text-yellow-800',
-    Qualified: 'bg-green-200 text-green-800',
-    Rejected: 'bg-red-200 text-red-800'
-  }[status] || 'bg-gray-200 text-gray-800');
-
-  const changeStatus = (campKey, index, newStatus) => {
-    const copy = { ...leadsData };
-    copy[campKey][index].status = newStatus;
-    setLeadsData(copy);
-    updateLS(copy);
-  };
-
-  const moveCampaign = (fromKey, index, toCampaignLabel) => {
-    const toKey = normalizeKey(toCampaignLabel);
-    const copy = { ...leadsData };
-    const lead = copy[fromKey][index];
-
-    lead.campaign = toCampaignLabel;
-
-    copy[fromKey].splice(index, 1);
-    if (!copy[toKey]) copy[toKey] = [];
-    copy[toKey].push(lead);
-
-    if (!copy[fromKey].length) {
-      delete copy[fromKey];
-      localStorage.removeItem(`leads_${normalizeKey(fromKey)}`);
+  const handleSearch = async () => {
+    if (!query || !token) {
+      setError('Missing search query or token.');
+      return;
     }
-
-    setLeadsData(copy);
-    updateLS(copy);
-  };
-
-  const deleteLead = (campKey, index) => {
-    const copy = { ...leadsData };
-    copy[campKey].splice(index, 1);
-    if (!copy[campKey].length) {
-      delete copy[campKey];
-      localStorage.removeItem(`leads_${normalizeKey(campKey)}`);
-    }
-    setLeadsData(copy);
-    updateLS(copy);
-  };
-
-  const toggle = (c, i) => {
-    const sel = { ...selected };
-    const idx = sel[c].indexOf(i);
-    idx > -1 ? sel[c].splice(idx, 1) : sel[c].push(i);
-    setSelected(sel);
-  };
-
-  const selectAll = () => {
-    const sel = {};
-    Object.entries(leadsData).forEach(([c, arr]) => sel[c] = arr.map((_, i) => i));
-    setSelected(sel);
-  };
-
-  const clearAll = () => {
-    const sel = {};
-    Object.keys(leadsData).forEach(c => sel[c] = []);
-    setSelected(sel);
-  };
-
-  const bulkDelete = () => {
-    const d = { ...leadsData };
-    Object.entries(selected).forEach(([c, idxs]) => {
-      idxs.sort((a, b) => b - a).forEach(i => d[c].splice(i, 1));
-      if (!d[c].length) {
-        delete d[c];
-        localStorage.removeItem(`leads_${normalizeKey(c)}`);
+    setLoading(true);
+    try {
+      const artists = await searchArtists(token, query);
+      if (!artists.length) {
+        setError('No artists found.');
+        setResults([]);
+      } else {
+        setError('');
+        setResults(artists);
       }
-    });
-    setLeadsData(d);
-    updateLS(d);
-    clearAll();
+    } catch (err) {
+      console.error('Search failed:', err);
+      setError('Search failed. Check console.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const filtered = arr =>
-    arr.filter(l =>
-      (statusFilter === 'All' || l.status === statusFilter) &&
-      l.name.toLowerCase().includes(search.toLowerCase())
-    );
+  const saveLead = (artist, targetCampaign) => {
+    const newLead = {
+      id: artist.id,
+      name: artist.name,
+      image: artist.images?.[0]?.url || '',
+      status: 'New',
+      campaign: targetCampaign,
+    };
+
+    const key = `leads_${targetCampaign.toLowerCase()}`;
+    const current = JSON.parse(localStorage.getItem(key)) || [];
+    const updated = [...current, newLead];
+    localStorage.setItem(key, JSON.stringify(updated));
+
+    setSavedCampaigns(prev => {
+      const updated = { ...prev };
+      if (!updated[artist.id]) updated[artist.id] = [];
+      updated[artist.id].push(targetCampaign);
+      return updated;
+    });
+    setDropdownOpen(null);
+  };
+
+  const isSavedTo = (artistId, campaign) => {
+    return savedCampaigns[artistId]?.includes(campaign);
+  };
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Leads</h1>
-      <div className="mb-6 flex items-center">
+      <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
+        className="flex gap-2 mb-4"
+      >
         <input
           type="text"
-          placeholder="Search lead..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="border px-3 py-1 w-full md:w-1/3 rounded"
+          placeholder="Search for an artist"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="border px-4 py-2 rounded-md w-full"
         />
         <button
-          onClick={() => {}}
-          className="ml-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
-        >Search</button>
-      </div>
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+        >
+          Search
+        </button>
+      </form>
 
-      <div className="mb-4">
-        <h2 className="font-semibold mb-2">Filters</h2>
-        <div className="flex gap-2 flex-wrap">
-          {['All', 'New', 'Contacted', 'Qualified', 'Rejected'].map(s => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1 border rounded text-sm ${statusFilter === s ? 'bg-black text-white' : ''}`}
-            >{s}</button>
-          ))}
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+
+      {loading ? (
+        <div className="text-center p-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 mx-auto" />
+          <p className="mt-2 text-sm text-gray-600">Searching...</p>
         </div>
-      </div>
+      ) : (
+        <div>
+          {results.map((artist) => {
+            const already = savedCampaigns[artist.id] || [];
+            const open = dropdownOpen === artist.id;
 
-      <div className="mb-8">
-        <h2 className="font-semibold mb-2">Actions</h2>
-        <div className="flex gap-4">
-          <button onClick={selectAll} className="text-blue-600 text-sm">Select All</button>
-          <button onClick={clearAll} className="text-gray-600 text-sm">Clear</button>
-          <button onClick={bulkDelete} className="text-red-600 text-sm">Delete Selected</button>
-        </div>
-      </div>
-
-      {Object.entries(leadsData).map(([campKey, arr]) => {
-        const vis = filtered(arr);
-        if (!vis.length) return null;
-        return (
-          <div key={campKey} className="mb-8">
-            <h2 className="text-xl font-semibold mb-2">{displayName(campKey)}</h2>
-            <div className="space-y-4">
-              {vis.map((lead, i) => (
-                <div key={lead.id} className="flex items-center justify-between border p-4 rounded-lg shadow-sm">
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="checkbox"
-                      checked={selected[campKey]?.includes(i)}
-                      onChange={() => toggle(campKey, i)}
-                    />
-                    <img
-                      src={lead.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
-                      alt={lead.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div>
-                      <h3 className="font-medium">{lead.name}</h3>
-                      <span className={`inline-block px-2 py-1 mt-1 rounded text-sm ${getColor(lead.status)}`}>{statusEmoji[lead.status]}</span>
-                    </div>
+            return (
+              <div key={artist.id} className="border-b py-4 flex items-center">
+                {artist.images[0] && (
+                  <img
+                    src={artist.images[0].url}
+                    alt={artist.name}
+                    className="w-[80px] h-[80px] rounded-full mr-4 object-cover"
+                  />
+                )}
+                <div className="flex-1">
+                  <div className="font-semibold">{artist.name}</div>
+                  <div className="text-sm text-gray-500">
+                    Followers: {artist.followers.total.toLocaleString()}
                   </div>
-                  <div className="flex gap-4 items-center">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-gray-600">Status</span>
-                      <select
-                        className="border rounded px-2 py-1 text-sm"
-                        value={lead.status}
-                        onChange={e => changeStatus(campKey, i, e.target.value)}
-                      >
-                        <option>New</option>
-                        <option>Contacted</option>
-                        <option>Qualified</option>
-                        <option>Rejected</option>
-                      </select>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-xs text-gray-600">Campaign</span>
-                      <select
-                        className="border rounded px-2 py-1 text-sm"
-                        value={lead.campaign}
-                        onChange={e => moveCampaign(campKey, i, e.target.value)}
-                      >
-                        {campaigns.map(t => (
-                          <option key={t} value={t}>{t}</option>
+                  <div className="text-sm text-gray-400">
+                    Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
+                  </div>
+
+                  {already.length > 0 && (
+                    <div className="mt-2 text-sm">
+                      <span className="font-medium">Saved to:</span>
+                      <div className="mt-1 flex gap-2 flex-wrap">
+                        {already.map(c => (
+                          <span
+                            key={c}
+                            className="animate-fadeIn bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full"
+                          >
+                            ✅ {c}
+                          </span>
                         ))}
-                      </select>
+                        <button
+                          onClick={() => setDropdownOpen(artist.id)}
+                          className="text-sm text-blue-600 hover:underline"
+                        >
+                          ➕ Add to another
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => deleteLead(campKey, i)}
-                      className="text-red-600 text-sm ml-4"
-                    >Delete</button>
-                  </div>
+                  )}
+
+                  {already.length === 0 && (
+                    <div className="relative mt-2 group">
+                      <button
+                        onClick={() => setDropdownOpen((p) => (p === artist.id ? null : artist.id))}
+                        className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+                      >
+                        Save ▼
+                      </button>
+                      {open && (
+                        <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm w-56">
+                          {campaignList.map((c) => (
+                            <button
+                              key={c}
+                              onClick={() => saveLead(artist, c)}
+                              disabled={isSavedTo(artist.id, c)}
+                              className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                                isSavedTo(artist.id, c) ? 'text-gray-400 cursor-not-allowed' : ''
+                              }`}
+                            >
+                              {isSavedTo(artist.id, c) ? `✅ Already in ${c}` : `Save to ${c}`}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
 
-export default Leads;
+export default Explorer;
