@@ -1,10 +1,10 @@
-// Explorer.jsx — Fixed Image Size + Visible +Pool Button
+// Explorer.jsx — Dual Save Buttons, Refined UX, Reset Landing
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
 const Explorer = () => {
-  const [query, setQuery] = useState(localStorage.getItem('explorer_query') || '');
-  const [results, setResults] = useState(JSON.parse(localStorage.getItem('explorer_results') || '[]'));
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -136,22 +136,20 @@ const Explorer = () => {
         return (
           <div key={artist.id} className="border-b py-4 flex items-center">
             {artist.images[0] && (
-              <img src={artist.images[0].url} alt={artist.name} className="w-16 h-16 rounded-full mr-4 object-cover" />
+              <img src={artist.images[0].url} alt={artist.name} className="w-[64px] h-[64px] rounded-full mr-4 object-cover" />
             )}
             <div className="flex-1">
               <div className="font-semibold">{artist.name}</div>
               <div className="text-sm text-gray-500">Followers: {artist.followers.total.toLocaleString()}</div>
               <div className="text-sm text-gray-400">Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}</div>
-
               <div className="mt-2 flex gap-2 flex-wrap">
-                <button onClick={() => saveLead(artist, 'Talent Pool')} className="bg-gray-700 text-white text-xs px-3 py-1 rounded hover:bg-gray-900">
+                <button onClick={() => saveLead(artist, 'Talent Pool')} className="bg-gray-800 text-white text-xs px-3 py-1 rounded hover:bg-gray-900">
                   + Pool
                 </button>
                 <button onClick={() => setDropdownOpen(artist.id)} className="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">
                   + Campaign
                 </button>
               </div>
-
               {open && (
                 <div className="mt-2 bg-white border p-3 rounded shadow max-w-xs">
                   <div className="text-xs font-semibold text-gray-600 mb-2">Choose campaign:</div>
