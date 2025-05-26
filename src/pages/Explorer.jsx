@@ -15,8 +15,8 @@ const Explorer = () => {
     setLoading(true);
     setResults([]); // Clear previous results
     try {
-      // Simulate async API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simulate async API call delay (3s for visual test)
+      await new Promise(resolve => setTimeout(resolve, 3000));
       const filtered = mockSearchResults.filter(artist =>
         artist.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -62,9 +62,12 @@ const Explorer = () => {
                 className="border p-4 rounded flex justify-between items-center"
               >
                 <span>{artist.name}</span>
-                <button className="text-green-600 hover:underline">
-                  ✅ Save
-                </button>
+                <div className="relative group">
+                  <button className="text-green-600 hover:underline">✅ Save</button>
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                    Save this artist to a campaign
+                  </div>
+                </div>
               </div>
             ))
           )}
