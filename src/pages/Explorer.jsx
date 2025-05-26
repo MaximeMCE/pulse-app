@@ -1,4 +1,4 @@
-// Explorer.jsx — Dual Save Buttons (Talent Pool & Campaign) + Fixed Image Size & Pool Button Visibility
+// Explorer.jsx — Dual Save Buttons (Talent Pool & Campaign) + Proper Image Sizing + Button Color Fix
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -144,7 +144,7 @@ const Explorer = () => {
               <div className="text-sm text-gray-400">Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}</div>
 
               <div className="mt-2 flex gap-2 flex-wrap">
-                <button onClick={() => saveLead(artist, 'Talent Pool')} className="bg-gray-700 text-white text-xs px-3 py-1 rounded hover:bg-black">
+                <button onClick={() => saveLead(artist, 'Talent Pool')} className="bg-gray-700 text-white text-xs px-3 py-1 rounded hover:bg-gray-900">
                   + Pool
                 </button>
                 <button onClick={() => setDropdownOpen(artist.id)} className="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">
