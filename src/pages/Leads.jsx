@@ -39,16 +39,13 @@ const Leads = () => {
     const leadToMove = leadsData[currentCampaign][index];
     const updated = { ...leadsData };
 
-    // Remove from old
     updated[currentCampaign].splice(index, 1);
 
-    // If empty after removal, delete key
     if (updated[currentCampaign].length === 0) {
       delete updated[currentCampaign];
       localStorage.removeItem(`leads_${currentCampaign}`);
     }
 
-    // Add to new
     if (!updated[newCampaign]) updated[newCampaign] = [];
     updated[newCampaign].push(leadToMove);
 
@@ -100,11 +97,18 @@ const Leads = () => {
                   key={lead.id}
                   className="border p-4 rounded-lg shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
                 >
-                  <div>
-                    <h3 className="text-lg font-medium">{lead.name}</h3>
-                    <p className={`inline-block px-2 py-1 mt-1 rounded text-sm ${getStatusColor(lead.status)}`}>
-                      {lead.status}
-                    </p>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={lead.image || 'https://via.placeholder.com/48?text=🎵'}
+                      alt={lead.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div>
+                      <h3 className="text-lg font-medium">{lead.name}</h3>
+                      <p className={`inline-block px-2 py-1 mt-1 rounded text-sm ${getStatusColor(lead.status)}`}>
+                        {lead.status}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="flex gap-2 flex-wrap">
