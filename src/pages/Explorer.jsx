@@ -1,4 +1,4 @@
-// Updated Explorer.jsx with logic to enforce either Unassigned OR campaign(s)
+// Updated Explorer.jsx with fixed handleSearch function
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -27,16 +27,37 @@ const Explorer = () => {
     setSavedCampaigns(saved);
   }, []);
 
+  const handleSearch = async () => {
+    if (!query || !token) {
+      setError('Missing search query or token.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const artists = await searchArtists(token, query);
+      if (!artists.length) {
+        setError('No artists found.');
+        setResults([]);
+      } else {
+        setError('');
+        setResults(artists);
+      }
+    } catch (err) {
+      console.error('Search failed:', err);
+      setError('Search failed. Check console.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const saveLead = (artist, targetCampaign) => {
     const artistId = artist.id;
     const key = `leads_${targetCampaign.toLowerCase()}`;
     const current = JSON.parse(localStorage.getItem(key)) || [];
 
-    // Prevent saving to Unassigned if saved elsewhere
     const currentCampaigns = savedCampaigns[artistId] || [];
     if (targetCampaign === 'Unassigned' && currentCampaigns.length > 0) return;
 
-    // Remove from Unassigned if saving to a real campaign
     if (targetCampaign !== 'Unassigned') {
       const unassignedKey = 'leads_unassigned';
       const unassigned = JSON.parse(localStorage.getItem(unassignedKey)) || [];
