@@ -93,7 +93,9 @@ const Leads = () => {
       const updatedCampaigns = { ...campaigns, [to]: updated };
       setCampaigns(updatedCampaigns);
       localStorage.setItem(`leads_${to}`, JSON.stringify(updated));
-    }
+    }  // ✅ ADD THIS BLOCK:
+    setSelected({});
+    loadLeads();
   };
 
   const bulkDelete = (leads, source) => {
@@ -279,7 +281,15 @@ const Leads = () => {
                           alt={artist.name}
                           className="w-[80px] h-[80px] rounded-full object-cover"
                         />
-                        <div className="text-xs mt-1 text-gray-700">
+                        <div className={`text-xs mt-1 inline-block px-2 py-1 rounded-full font-medium
+                          ${
+                            status === 'New' ? 'bg-blue-200 text-blue-800' :
+                            status === 'Contacted' ? 'bg-yellow-200 text-yellow-800' :
+                            status === 'Qualified' ? 'bg-green-200 text-green-800' :
+                            status === 'Rejected' ? 'bg-gray-200 text-gray-800' :
+                            ''
+                          }
+                        `}>
                           {emoji} {status}
                         </div>
                       </div>
