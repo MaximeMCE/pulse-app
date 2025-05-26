@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import useLeads from '../hooks/useLeads';
 
 const STATUS_OPTIONS = ['New', 'Contacted', 'Qualified', 'Rejected'];
 const STATUS_EMOJIS = {
@@ -9,36 +10,23 @@ const STATUS_EMOJIS = {
 };
 
 const Leads = () => {
-  const [unassigned, setUnassigned] = useState([]);
-  const [campaigns, setCampaigns] = useState({});
+  const {
+    unassigned,
+    setUnassigned,
+    campaigns,
+    setCampaigns,
+    loadLeads
+  } = useLeads();
+
   const [statuses, setStatuses] = useState({});
   const [selected, setSelected] = useState({});
   const [statusFilters, setStatusFilters] = useState({});
+  const [searchTerms, setSearchTerms] = useState({}); // ← search bar logic
 
   useEffect(() => {
     loadLeads();
     loadStatuses();
   }, []);
-
-  const loadLeads = () => {
-    const storage = { ...localStorage };
-    const foundCampaigns = {};
-    const unassignedRaw = localStorage.getItem('leads_unassigned');
-    if (unassignedRaw) setUnassigned(JSON.parse(unassignedRaw));
-
-    for (const key in storage) {
-      if (!key.startsWith('leads_')) continue;
-      const raw = localStorage.getItem(key);
-      if (!raw) continue;
-
-      const campaignId = key.replace('leads_', '');
-      if (campaignId === 'unassigned' || campaignId === 'inbox') continue;
-
-      foundCampaigns[campaignId] = JSON.parse(raw);
-    }
-
-    setCampaigns(foundCampaigns);
-  };
 
   const loadStatuses = () => {
     const newStatuses = {};
@@ -84,7 +72,6 @@ const Leads = () => {
   const handleMove = (artist, from, to) => {
     if (from === to) return;
 
-    // Remove from current group
     if (from === 'unassigned') {
       const updated = unassigned.filter((a) => a.id !== artist.id);
       setUnassigned(updated);
@@ -96,7 +83,6 @@ const Leads = () => {
       localStorage.setItem(`leads_${from}`, JSON.stringify(updated));
     }
 
-    // Add to new group
     if (to === 'unassigned') {
       const updated = [...unassigned, artist];
       setUnassigned(updated);
@@ -140,12 +126,11 @@ const Leads = () => {
     leads.forEach((a) => delete update[a.id]);
     setSelected(update);
   };
-
   const renderStatusFilterBar = (groupId) => {
     const current = statusFilters[groupId] || 'All';
 
     return (
-      <div className="flex gap-2 mb-2 text-sm">
+      <div className="flex flex-wrap gap-2 mb-2 text-sm">
         {['All', ...STATUS_OPTIONS].map((status) => (
           <button
             key={status}
@@ -164,17 +149,38 @@ const Leads = () => {
       </div>
     );
   };
+
+  const renderSearchInput = (groupId) => {
+    return (
+      <input
+        type="text"
+        placeholder="Search artist..."
+        className="w-full mb-2 p-2 border rounded"
+        value={searchTerms[groupId] || ''}
+        onChange={(e) =>
+          setSearchTerms((prev) => ({ ...prev, [groupId]: e.target.value }))
+        }
+      />
+    );
+  };
+
   const renderLeads = (leads, source) => {
     const filter = statusFilters[source] || 'All';
-    const visible = filter === 'All'
-      ? leads
-      : leads.filter((a) => (statuses[a.id] || 'New') === filter);
+    const search = (searchTerms[source] || '').toLowerCase();
+
+    const visible = leads.filter((a) => {
+      const matchesStatus =
+        filter === 'All' || (statuses[a.id] || 'New') === filter;
+      const matchesSearch = a.name.toLowerCase().includes(search);
+      return matchesStatus && matchesSearch;
+    });
+
     const selectedLeads = visible.filter((a) => selected[a.id]);
 
     return (
       <>
         {renderStatusFilterBar(source)}
-
+        {renderSearchInput(source)}
         <div className="flex justify-between items-center mb-2">
           <div className="text-sm text-gray-600">
             {selectedLeads.length > 0 ? (
@@ -201,9 +207,7 @@ const Leads = () => {
                   defaultValue=""
                   className="border px-2 py-1 rounded"
                 >
-                  <option value="" disabled>
-                    Move
-                  </option>
+                  <option value="" disabled>Move</option>
                   <option value="unassigned">Unassigned</option>
                   {Object.keys(campaigns)
                     .filter((id) => id !== source)
@@ -219,9 +223,7 @@ const Leads = () => {
                   defaultValue=""
                   className="border px-2 py-1 rounded"
                 >
-                  <option value="" disabled>
-                    Status
-                  </option>
+                  <option value="" disabled>Status</option>
                   {STATUS_OPTIONS.map((s) => (
                     <option key={s} value={s}>
                       {s}
@@ -247,6 +249,7 @@ const Leads = () => {
             )}
           </div>
         </div>
+
         {visible.length === 0 ? (
           <p className="text-sm text-gray-500 italic mb-4">
             No leads matching this filter.
@@ -358,5 +361,3 @@ const Leads = () => {
         };
 
         export default Leads;
-
-      
