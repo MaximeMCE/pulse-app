@@ -11,6 +11,7 @@ const Explorer = () => {
   const [campaignLeads, setCampaignLeads] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const campaignId = 'demo-campaign-001';
+  const campaignTitle = 'Madrid'; // This is the real display name
 
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
@@ -47,12 +48,13 @@ const Explorer = () => {
     }
   };
 
-  const saveLead = (artist, target) => {
+  const saveLead = (artist, target, displayName) => {
     const newLead = {
       id: artist.id,
       name: artist.name,
       image: artist.images?.[0]?.url || '',
       status: 'New',
+      savedTo: displayName, // ← new field
     };
 
     if (target === 'unassigned') {
@@ -62,12 +64,16 @@ const Explorer = () => {
     } else {
       const updated = [...campaignLeads, newLead];
       setCampaignLeads(updated);
-      localStorage.setItem(
-        `leads_${campaignId}`,
-        JSON.stringify(updated)
-      );
+      localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
     }
     setDropdownOpen(null);
+  };
+
+  const findSavedLocation = (id) => {
+    const match =
+      unassignedLeads.find((a) => a.id === id) ||
+      campaignLeads.find((a) => a.id === id);
+    return match?.savedTo || null;
   };
 
   const isAlreadySaved = (id) =>
@@ -111,6 +117,8 @@ const Explorer = () => {
           {results.map((artist) => {
             const already = isAlreadySaved(artist.id);
             const open = dropdownOpen === artist.id;
+            const savedWhere = findSavedLocation(artist.id);
+
             return (
               <div
                 key={artist.id}
@@ -150,23 +158,23 @@ const Explorer = () => {
                       {open && (
                         <div className="absolute z-10 mt-1 bg-white border shadow rounded text-sm w-56">
                           <button
-                            onClick={() => saveLead(artist, 'unassigned')}
+                            onClick={() => saveLead(artist, 'unassigned', 'Unassigned')}
                             className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                           >
                             Save to Unassigned
                           </button>
                           <button
-                            onClick={() => saveLead(artist, 'campaign')}
+                            onClick={() => saveLead(artist, 'campaign', campaignTitle)}
                             className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                           >
-                            Save to Campaign: {campaignId}
+                            Save to Campaign: {campaignTitle}
                           </button>
                         </div>
                       )}
                     </div>
                   ) : (
                     <div className="mt-2 text-xs text-green-700 font-medium">
-                      ✅ Saved
+                      ✅ Saved to {savedWhere}
                     </div>
                   )}
                 </div>
