@@ -15,21 +15,30 @@ const Campaigns = () => {
     }
   }, []);
 
-  // Save campaigns to localStorage
+  // Save metadata to localStorage
   useEffect(() => {
     localStorage.setItem('campaigns', JSON.stringify(campaigns));
-    window.dispatchEvent(new Event("campaignsUpdated"));
   }, [campaigns]);
 
   const handleAddCampaign = () => {
     if (!newTitle.trim()) return;
+
+    const title = newTitle.trim();
     const newCampaign = {
       id: uuidv4(),
-      title: newTitle.trim(),
+      title,
       createdAt: new Date().toISOString(),
     };
-    setCampaigns(prev => [...prev, newCampaign]);
+
+    // Create corresponding leads bucket
+    localStorage.setItem(`leads_${title}`, JSON.stringify([]));
+
+    // Save campaign metadata
+    setCampaigns((prev) => [...prev, newCampaign]);
     setNewTitle('');
+
+    // Trigger reload in Leads.jsx
+    window.dispatchEvent(new Event('campaignsUpdated'));
   };
 
   const goToCampaign = (id) => {

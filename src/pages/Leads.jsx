@@ -27,13 +27,9 @@ const Leads = () => {
     loadLeads();
     loadStatuses();
 
-    // 🔁 Listen for new campaign creation
     const handleUpdate = () => loadLeads();
     window.addEventListener("campaignsUpdated", handleUpdate);
-
-    return () => {
-      window.removeEventListener("campaignsUpdated", handleUpdate);
-    };
+    return () => window.removeEventListener("campaignsUpdated", handleUpdate);
   }, []);
 
   const loadStatuses = () => {
@@ -51,6 +47,7 @@ const Leads = () => {
     localStorage.setItem(`leadStatus_${artistId}`, status);
     setStatuses((prev) => ({ ...prev, [artistId]: status }));
   };
+
   const handleDelete = (artistId, source) => {
     if (source === 'unassigned') {
       const updated = unassigned.filter((a) => a.id !== artistId);
@@ -104,7 +101,7 @@ const Leads = () => {
     }
 
     setSelected({});
-    loadLeads(); // sync with latest campaign data
+    loadLeads();
   };
 
   const bulkDelete = (leads, source) => {
@@ -161,6 +158,7 @@ const Leads = () => {
       </div>
     );
   };
+
   const renderSearchInput = (groupId) => {
     return (
       <input
@@ -174,7 +172,6 @@ const Leads = () => {
       />
     );
   };
-
   const renderLeads = (leads, source) => {
     const filter = statusFilters[source] || 'All';
     const search = (searchTerms[source] || '').toLowerCase();
@@ -192,6 +189,7 @@ const Leads = () => {
       <>
         {renderStatusFilterBar(source)}
         {renderSearchInput(source)}
+
         <div className="flex justify-between items-center mb-2">
           <div className="text-sm text-gray-600">
             {selectedLeads.length > 0 ? (
@@ -220,7 +218,7 @@ const Leads = () => {
                 >
                   <option value="" disabled>Move</option>
                   <option value="unassigned">Unassigned</option>
-                  {Object.keys(campaigns)
+                  {Object.keys(campaigns || {})
                     .filter((id) => id !== source)
                     .map((id) => (
                       <option key={id} value={id}>
@@ -290,15 +288,11 @@ const Leads = () => {
                           alt={artist.name}
                           className="w-[80px] h-[80px] rounded-full object-cover"
                         />
-                        <div className={`text-xs mt-1 inline-block px-2 py-1 rounded-full font-medium
-                          ${
-                            status === 'New' ? 'bg-blue-200 text-blue-800' :
-                            status === 'Contacted' ? 'bg-yellow-200 text-yellow-800' :
-                            status === 'Qualified' ? 'bg-green-200 text-green-800' :
-                            status === 'Rejected' ? 'bg-gray-200 text-gray-800' :
-                            ''
-                          }`}
-                        >
+                        <div className={`text-xs mt-1 inline-block px-2 py-1 rounded-full font-medium ${
+                          status === 'New' && 'bg-blue-200 text-blue-800'
+                        } ${status === 'Contacted' && 'bg-yellow-200 text-yellow-800'}
+                        ${status === 'Qualified' && 'bg-green-200 text-green-800'}
+                        ${status === 'Rejected' && 'bg-gray-200 text-gray-800'}`}>
                           {emoji} {status}
                         </div>
                       </div>
@@ -335,7 +329,7 @@ const Leads = () => {
                     >
                       <option value="" disabled>Move</option>
                       <option value="unassigned">Unassigned</option>
-                      {Object.keys(campaigns)
+                      {Object.keys(campaigns || {})
                         .filter((id) => id !== source)
                         .map((id) => (
                           <option key={id} value={id}>
@@ -356,27 +350,27 @@ const Leads = () => {
             })}
           </div>
         )}
-        </>
-        );
-        };
+      </>
+    );
+  };
 
-        return (
-        <div className="p-6">
-        <h2 className="text-2xl font-bold mb-6">All Saved Leads</h2>
+  return (
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-6">All Saved Leads</h2>
 
-        <section className="mb-10">
+      <section className="mb-10">
         <h3 className="text-xl font-semibold mb-2">Unassigned Leads</h3>
         {renderLeads(unassigned, 'unassigned')}
-        </section>
+      </section>
 
-        {Object.entries(campaigns).map(([id, leads]) => (
+      {Object.entries(campaigns).map(([id, leads]) => (
         <section key={id} className="mb-10">
           <h3 className="text-xl font-semibold mb-2">Campaign: {id}</h3>
           {renderLeads(leads, id)}
         </section>
-        ))}
-        </div>
-        );
-        };
+      ))}
+    </div>
+  );
+  };
 
-        export default Leads;
+  export default Leads;
