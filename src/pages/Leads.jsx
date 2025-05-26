@@ -12,7 +12,8 @@ const Leads = () => {
   const [unassigned, setUnassigned] = useState([]);
   const [campaigns, setCampaigns] = useState({});
   const [statuses, setStatuses] = useState({});
-  const [selected, setSelected] = useState({}); // { artistId: true }
+  const [selected, setSelected] = useState({});
+  const [statusFilters, setStatusFilters] = useState({}); // e.g. { unassigned: 'All', campaignId: 'New' }
 
   useEffect(() => {
     loadLeads();
@@ -102,18 +103,6 @@ const Leads = () => {
     localStorage.setItem(`leads_${to}`, JSON.stringify(updatedDestination));
   };
 
-  const bulkDelete = (leads, source) => {
-    leads.forEach((a) => handleDelete(a.id, source));
-  };
-
-  const bulkMove = (leads, source, target) => {
-    leads.forEach((a) => handleMove(a, source, target));
-  };
-
-  const bulkStatus = (leads, status) => {
-    leads.forEach((a) => updateStatus(a.id, status));
-  };
-
   const toggleSelect = (artistId) => {
     setSelected((prev) => ({
       ...prev,
@@ -121,138 +110,101 @@ const Leads = () => {
     }));
   };
 
-  const selectAll = (leads) => {
-    const update = {};
-    leads.forEach((a) => (update[a.id] = true));
-    setSelected((prev) => ({ ...prev, ...update }));
-  };
+  const renderStatusFilterBar = (groupId) => {
+    const current = statusFilters[groupId] || 'All';
 
-  const clearAll = (leads) => {
-    const update = { ...selected };
-    leads.forEach((a) => delete update[a.id]);
-    setSelected(update);
+    return (
+      <div className="flex gap-2 mb-2 text-sm">
+        {['All', ...STATUS_OPTIONS].map((status) => (
+          <button
+            key={status}
+            onClick={() =>
+              setStatusFilters((prev) => ({ ...prev, [groupId]: status }))
+            }
+            className={`px-2 py-1 rounded ${
+              current === status
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            {status}
+          </button>
+        ))}
+      </div>
+    );
   };
 
   const renderLeads = (leads, source) => {
-    const selectedLeads = leads.filter((a) => selected[a.id]);
+    const filter = statusFilters[source] || 'All';
+    const visible = filter === 'All'
+      ? leads
+      : leads.filter((a) => (statuses[a.id] || 'New') === filter);
 
     return (
       <>
-        <div className="flex justify-between items-center mb-2">
-          <div className="text-sm text-gray-600">
-            {selectedLeads.length > 0 ? (
-              <span>{selectedLeads.length} selected</span>
-            ) : (
-              <span>{leads.length} total</span>
-            )}
-          </div>
+        {renderStatusFilterBar(source)}
 
-          <div className="flex gap-2 text-sm">
-            {selectedLeads.length > 0 ? (
-              <>
-                <button
-                  onClick={() => bulkDelete(selectedLeads, source)}
-                  className="bg-red-100 text-red-700 px-2 py-1 rounded"
-                >
-                  Delete
-                </button>
+        {visible.length === 0 ? (
+          <p className="text-sm text-gray-500 italic mb-4">No leads matching this filter.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            {visible.map((artist) => {
+              const status = statuses[artist.id] || 'New';
+              const emoji = STATUS_EMOJIS[status];
 
-                <select
-                  onChange={(e) =>
-                    bulkMove(selectedLeads, source, e.target.value)
-                  }
-                  defaultValue=""
-                  className="border px-2 py-1 rounded"
+              return (
+                <div
+                  key={artist.id}
+                  className="border p-4 rounded shadow-sm flex flex-col justify-between h-full"
                 >
-                  <option value="" disabled>
-                    Move to campaign
-                  </option>
-                  {Object.keys(campaigns)
-                    .filter((id) => id !== source)
-                    .map((id) => (
-                      <option key={id} value={id}>
-                        {id}
-                      </option>
-                    ))}
-                </select>
-
-                <select
-                  onChange={(e) => bulkStatus(selectedLeads, e.target.value)}
-                  defaultValue=""
-                  className="border px-2 py-1 rounded"
-                >
-                  <option value="" disabled>
-                    Change status
-                  </option>
-                  {STATUS_OPTIONS.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => selectAll(leads)}
-                  className="text-blue-600 hover:underline"
-                >
-                  Select All
-                </button>
-                <button
-                  onClick={() => clearAll(leads)}
-                  className="text-gray-500 hover:underline"
-                >
-                  Clear
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-          {leads.map((artist) => {
-            const status = statuses[artist.id] || 'New';
-            const emoji = STATUS_EMOJIS[status];
-
-            return (
-              <div
-                key={artist.id}
-                className="border p-4 rounded shadow-sm flex flex-col justify-between h-full"
-              >
-                <div className="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    checked={!!selected[artist.id]}
-                    onChange={() => toggleSelect(artist.id)}
-                    className="mr-2"
-                  />
-                  {artist.images?.[0]?.url && (
-                    <div className="flex flex-col items-center mr-4">
-                      <img
-                        src={artist.images[0].url}
-                        alt={artist.name}
-                        className="w-[80px] h-[80px] rounded-full object-cover"
-                      />
-                      <div className="text-xs mt-1 text-gray-700">
-                        {emoji} {status}
+                  <div className="flex items-center mb-2">
+                    {artist.images?.[0]?.url && (
+                      <div className="flex flex-col items-center mr-4">
+                        <img
+                          src={artist.images[0].url}
+                          alt={artist.name}
+                          className="w-[80px] h-[80px] rounded-full object-cover"
+                        />
+                        <div className="text-xs mt-1 text-gray-700">
+                          {emoji} {status}
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-semibold">{artist.name}</div>
+                      <div className="text-sm text-gray-600">
+                        Followers: {artist.followers?.total?.toLocaleString() || 'N/A'}
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        Genres: {artist.genres?.slice(0, 2).join(', ') || 'N/A'}
                       </div>
                     </div>
-                  )}
-                  <div>
-                    <div className="font-semibold">{artist.name}</div>
-                    <div className="text-sm text-gray-600">
-                      Followers: {artist.followers?.total?.toLocaleString() || 'N/A'}
-                    </div>
-                    <div className="text-sm text-gray-400">
-                      Genres: {artist.genres?.slice(0, 2).join(', ') || 'N/A'}
-                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center mt-auto">
+                    <select
+                      value={status}
+                      onChange={(e) => updateStatus(artist.id, e.target.value)}
+                      className="text-sm border rounded px-2 py-1"
+                    >
+                      {STATUS_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => handleDelete(artist.id, source)}
+                      className="text-sm text-red-600 hover:text-red-800 ml-2"
+                    >
+                      ✕ Delete
+                    </button>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </>
     );
   };
@@ -268,9 +220,7 @@ const Leads = () => {
 
       {Object.entries(campaigns).map(([id, leads]) => (
         <section key={id} className="mb-10">
-          <h3 className="text-xl font-semibold mb-2">
-            Campaign: {id}
-          </h3>
+          <h3 className="text-xl font-semibold mb-2">Campaign: {id}</h3>
           {renderLeads(leads, id)}
         </section>
       ))}
