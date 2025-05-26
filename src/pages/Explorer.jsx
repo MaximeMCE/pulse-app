@@ -1,4 +1,4 @@
-// Explorer.jsx — Fully Restored UI with Suggestions, Artist Images, and Bulk Removal
+// Explorer.jsx — Dynamic Campaign Sync + UI Fixes
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -12,8 +12,7 @@ const Explorer = () => {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [recentlySaved, setRecentlySaved] = useState({});
   const [confirmRemove, setConfirmRemove] = useState(null);
-
-  const campaignList = ['Madrid', 'Paris', 'Berlin', 'Unassigned'];
+  const [campaignList, setCampaignList] = useState([]);
 
   const searchSuggestions = [
     'Techno artists under 10K listeners',
@@ -27,19 +26,34 @@ const Explorer = () => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (storedToken) setToken(storedToken);
 
+    refreshCampaignList();
     refreshSavedCampaigns();
+    window.addEventListener('leadsUpdated', refreshSavedCampaigns);
+    return () => window.removeEventListener('leadsUpdated', refreshSavedCampaigns);
   }, []);
+
+  const refreshCampaignList = () => {
+    const all = Object.keys(localStorage)
+      .filter(k => k.startsWith('leads_'))
+      .map(k => k.replace('leads_', ''))
+      .map(k => k.charAt(0).toUpperCase() + k.slice(1));
+    const unique = Array.from(new Set(all));
+    setCampaignList(unique);
+  };
 
   const refreshSavedCampaigns = () => {
     const saved = {};
-    campaignList.forEach(title => {
-      const raw = JSON.parse(localStorage.getItem(`leads_${title.toLowerCase()}`) || '[]');
+    const all = Object.keys(localStorage).filter(k => k.startsWith('leads_'));
+    all.forEach(key => {
+      const raw = JSON.parse(localStorage.getItem(key) || '[]');
+      const campaign = key.replace('leads_', '').charAt(0).toUpperCase() + key.replace('leads_', '').slice(1);
       raw.forEach(lead => {
         if (!saved[lead.id]) saved[lead.id] = [];
-        saved[lead.id].push(title);
+        saved[lead.id].push(campaign);
       });
     });
     setSavedCampaigns(saved);
+    refreshCampaignList();
   };
 
   const handleSearch = async (overrideQuery) => {
@@ -151,7 +165,7 @@ const Explorer = () => {
               <img
                 src={artist.images[0].url}
                 alt={artist.name}
-                className="w-20 h-20 rounded-full object-cover"
+                className="w-12 h-12 rounded-full object-cover"
               />
             )}
             <div className="flex-1">
