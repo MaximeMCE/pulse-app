@@ -1,4 +1,4 @@
-// Updated Explorer.jsx with enforced image sizing via inline styles
+// Updated Explorer.jsx with fixed suggestion-triggered search
 import React, { useState, useEffect } from 'react';
 import { searchArtists } from '../api/Spotify';
 
@@ -35,14 +35,15 @@ const Explorer = () => {
     setSavedCampaigns(saved);
   }, []);
 
-  const handleSearch = async () => {
-    if (!query || !token) {
+  const handleSearch = async (overrideQuery) => {
+    const searchTerm = overrideQuery || query;
+    if (!searchTerm || !token) {
       setError('Missing search query or token.');
       return;
     }
     setLoading(true);
     try {
-      const artists = await searchArtists(token, query);
+      const artists = await searchArtists(token, searchTerm);
       if (!artists.length) {
         setError('No artists found.');
         setResults([]);
@@ -125,7 +126,7 @@ const Explorer = () => {
                 key={idx}
                 onClick={() => {
                   setQuery(suggestion);
-                  handleSearch();
+                  handleSearch(suggestion);
                 }}
                 className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-gray-800"
               >
