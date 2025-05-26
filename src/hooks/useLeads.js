@@ -1,28 +1,31 @@
 import { useState } from 'react';
 
-export default function useLeads() {
+const useLeads = () => {
   const [unassigned, setUnassigned] = useState([]);
   const [campaigns, setCampaigns] = useState({});
 
   const loadLeads = () => {
-    const storage = { ...localStorage };
-    const foundCampaigns = {};
-    const unassignedRaw = localStorage.getItem('leads_unassigned');
-    if (unassignedRaw) setUnassigned(JSON.parse(unassignedRaw));
-    else setUnassigned([]);
+    const storedUnassigned = localStorage.getItem('leads_unassigned');
+    const parsedUnassigned = storedUnassigned ? JSON.parse(storedUnassigned) : [];
+    setUnassigned(parsedUnassigned);
 
-    for (const key in storage) {
-      if (!key.startsWith('leads_')) continue;
-      const raw = localStorage.getItem(key);
-      if (!raw) continue;
+    const campaignMap = {};
 
-      const campaignId = key.replace('leads_', '');
-      if (campaignId === 'unassigned' || campaignId === 'inbox') continue;
-
-      foundCampaigns[campaignId] = JSON.parse(raw);
+    for (const key in localStorage) {
+      if (key.startsWith('leads_') && key !== 'leads_unassigned') {
+        const id = key.replace('leads_', '');
+        try {
+          const leads = JSON.parse(localStorage.getItem(key));
+          if (Array.isArray(leads) && leads.length > 0) {
+            campaignMap[id] = leads;
+          }
+        } catch (e) {
+          console.error(`Failed to parse leads for ${id}`);
+        }
+      }
     }
 
-    setCampaigns(foundCampaigns);
+    setCampaigns(campaignMap);
   };
 
   return {
@@ -30,6 +33,8 @@ export default function useLeads() {
     setUnassigned,
     campaigns,
     setCampaigns,
-    loadLeads
+    loadLeads,
   };
-}
+};
+
+export default useLeads;
