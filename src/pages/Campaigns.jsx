@@ -1,26 +1,15 @@
-// CampaignsDebug.jsx — adds hardcoded test data and debug logs
+// Campaigns.jsx — Final export aligned with route import
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 const toKey = (title) => `leads_${title.trim().toLowerCase()}`;
 
-const CampaignsDebug = () => {
+const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [newTitle, setNewTitle] = useState('');
   const [leadCounts, setLeadCounts] = useState({});
   const navigate = useNavigate();
-
-  // DEBUG: Inject test campaign and lead on load
-  useEffect(() => {
-    const testCampaigns = [
-      { id: 'test-1', title: 'Berlin', createdAt: new Date().toISOString() }
-    ];
-    localStorage.setItem('campaigns', JSON.stringify(testCampaigns));
-    localStorage.setItem('leads_berlin', JSON.stringify([
-      { id: 'lead-1', name: 'Test Lead', status: 'New' }
-    ]));
-  }, []);
 
   useEffect(() => {
     const loadCampaigns = () => {
@@ -84,7 +73,7 @@ const CampaignsDebug = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Campaigns (Debug)</h1>
+      <h1 className="text-2xl font-bold mb-4">Campaigns</h1>
 
       <div className="mb-6 flex gap-2">
         <input
@@ -133,4 +122,4 @@ const CampaignsDebug = () => {
   );
 };
 
-export default CampaignsDebug;
+export default Campaigns;
