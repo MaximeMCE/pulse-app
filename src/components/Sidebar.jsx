@@ -5,33 +5,13 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleExplorerClick = (e) => {
+  const handleReloadClick = (path) => (e) => {
     e.preventDefault();
-    if (location.pathname === '/explorer') {
-      console.log('🔁 Reloading Explorer...');
+    if (location.pathname === path) {
+      console.log(`🔁 Reloading ${path}...`);
       window.location.reload();
     } else {
-      navigate('/explorer');
-    }
-  };
-
-  const handleCampaignsClick = (e) => {
-    e.preventDefault();
-    if (location.pathname === '/campaigns') {
-      console.log('🔁 Reloading Campaigns...');
-      window.location.reload();
-    } else {
-      navigate('/campaigns');
-    }
-  };
-
-  const handleLeadsClick = (e) => {
-    e.preventDefault();
-    if (location.pathname === '/leads') {
-      console.log('🔁 Reloading Leads...');
-      window.location.reload();
-    } else {
-      navigate('/leads');
+      navigate(path);
     }
   };
 
@@ -39,6 +19,7 @@ const Sidebar = () => {
     <nav className="flex flex-col space-y-4 p-4 border-r h-full">
       <NavLink
         to="/dashboard"
+        onClick={handleReloadClick('/dashboard')}
         className={({ isActive }) =>
           isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
         }
@@ -48,7 +29,7 @@ const Sidebar = () => {
 
       <NavLink
         to="/explorer"
-        onClick={handleExplorerClick}
+        onClick={handleReloadClick('/explorer')}
         className={({ isActive }) =>
           isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
         }
@@ -58,7 +39,7 @@ const Sidebar = () => {
 
       <NavLink
         to="/campaigns"
-        onClick={handleCampaignsClick}
+        onClick={handleReloadClick('/campaigns')}
         className={({ isActive }) =>
           isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
         }
@@ -68,7 +49,7 @@ const Sidebar = () => {
 
       <NavLink
         to="/leads"
-        onClick={handleLeadsClick}
+        onClick={handleReloadClick('/leads')}
         className={({ isActive }) =>
           isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
         }
@@ -78,6 +59,7 @@ const Sidebar = () => {
 
       <NavLink
         to="/settings"
+        onClick={handleReloadClick('/settings')}
         className={({ isActive }) =>
           isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
         }
