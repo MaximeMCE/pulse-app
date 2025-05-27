@@ -1,8 +1,9 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const links = [
     { label: 'Dashboard', path: '/dashboard' },
@@ -13,8 +14,12 @@ const Sidebar = () => {
   ];
 
   const handleClick = (path) => {
-    // 🔁 Always force a full reload
-    window.location.href = path;
+    if (location.pathname === path) {
+      // Only reload if already on the same page
+      window.location.reload();
+    } else {
+      navigate(path); // Smooth single-page navigation
+    }
   };
 
   return (
