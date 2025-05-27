@@ -81,10 +81,10 @@ const ArtistCard = ({
         </div>
       )}
 
-      {/* === Visually Detached Button Section with Forced Spacing === */}
-      <div className="mt-6">
-        <div className="h-6" />
-        <div className="pt-4 border-t flex gap-3 flex-wrap">
+      {/* === DEBUG: Visually Forced Button Section === */}
+      <div className="mt-6 border border-red-500 bg-yellow-100">
+        <div className="h-10 bg-blue-100" />
+        <div className="pt-4 border-t flex gap-3 flex-wrap bg-green-100">
           <button
             onClick={handlePoolToggle}
             className={`text-xs px-3 py-1 rounded border ${
