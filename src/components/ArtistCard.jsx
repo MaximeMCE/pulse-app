@@ -83,14 +83,14 @@ const ArtistCard = ({
         )}
       </div>
 
-      {/* === Button Section Cleanly Separated === */}
+      {/* === Button Section === */}
       <div className="pt-4 border-t mt-4 flex gap-3 flex-wrap">
         <button
           onClick={handlePoolToggle}
           className={`text-xs px-3 py-1 rounded border ${
             isInPool(artist.id)
               ? 'border-red-400 text-red-600 hover:bg-red-50'
-              : 'border-gray-400 text-gray-800 hover:bg-gray-100'
+              : 'border-blue-600 text-blue-600 hover:bg-blue-50'
           }`}
         >
           {isInPool(artist.id) ? '❌ Pool' : '+ Pool'}
@@ -98,7 +98,7 @@ const ArtistCard = ({
 
         <button
           onClick={() => onToggleDropdown(artist.id)}
-          className="text-xs px-3 py-1 rounded border border-blue-600 text-blue-600 hover:bg-blue-50"
+          className="text-xs px-3 py-1 rounded border border-green-600 text-green-600 hover:bg-green-50"
         >
           + Campaign
         </button>
