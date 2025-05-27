@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import CampaignManager from '../components/CampaignManager'; // ✅ NEW
+import CampaignManager from '../components/CampaignManager';
 
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();
@@ -61,9 +61,15 @@ const CampaignDetails = () => {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
+      {/* ✅ Breadcrumb */}
+      <div className="text-sm text-gray-500 mb-2">
+        <a href="/campaigns" className="text-blue-600 hover:underline">Campaigns</a>
+        <span className="mx-1">›</span>
+        <span>{campaign.title}</span>
+      </div>
+
       <h1 className="text-3xl font-bold mb-4">{campaign.title} - Leads</h1>
 
-      {/* ✅ Injected Campaign Manager */}
       <CampaignManager />
 
       <div className="flex gap-2 mb-6">
