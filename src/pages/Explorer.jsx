@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
-import FilterBar from '../components/FilterBar';
+import FilterBlock from '../components/FilterBlock';
+import SearchBlock from '../components/SearchBlock';
 import useRecentSearches from '../hooks/useRecentSearches';
 import useTalentPool from '../hooks/useTalentPool';
 
@@ -120,22 +121,9 @@ const Explorer = () => {
 
       const filtered = artists.filter((artist) => {
         const listeners = artist.listeners ?? 0;
-        const listenerCheck =
-          listeners >= filters.minListeners &&
-          listeners <= filters.maxListeners;
-
-        const releaseCheck =
-          filters.recentRelease === 'off' ||
-          (artist.releaseDaysAgo !== undefined &&
-            artist.releaseDaysAgo <= parseInt(filters.recentRelease));
-
-        const genreCheck =
-          filters.genres.length === 0 ||
-          (artist.genres &&
-            filters.genres.some((g) =>
-              artist.genres.map((x) => x.toLowerCase()).includes(g.toLowerCase())
-            ));
-
+        const listenerCheck = listeners >= filters.minListeners && listeners <= filters.maxListeners;
+        const releaseCheck = filters.recentRelease === 'off' || (artist.releaseDaysAgo !== undefined && artist.releaseDaysAgo <= parseInt(filters.recentRelease));
+        const genreCheck = filters.genres.length === 0 || (artist.genres && filters.genres.some((g) => artist.genres.map((x) => x.toLowerCase()).includes(g.toLowerCase())));
         return listenerCheck && releaseCheck && genreCheck;
       });
 
@@ -185,44 +173,13 @@ const Explorer = () => {
       <div className="flex-1 p-6 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
 
-        <FilterBar onFilterChange={setFilters} />
-
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-600 mb-2">Suggestions</h3>
-          <div className="flex flex-wrap gap-2">
-            {searchSuggestions.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setQuery(s);
-                  handleSearch(s);
-                }}
-                className="text-sm bg-white border border-gray-300 hover:bg-blue-50 px-3 py-1 rounded-full shadow-sm transition"
-              >
-                🔍 {s}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSearch();
-          }}
-          className="flex gap-2 mb-6"
-        >
-          <input
-            type="text"
-            placeholder="Search for an artist"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="border border-gray-300 px-4 py-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-            Search
-          </button>
-        </form>
+        <FilterBlock onFilterChange={setFilters} />
+        <SearchBlock
+          query={query}
+          setQuery={setQuery}
+          onSearch={handleSearch}
+          suggestions={searchSuggestions}
+        />
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
@@ -233,9 +190,7 @@ const Explorer = () => {
               key={artist.id}
               artist={artist}
               isOpen={dropdownOpen === artist.id}
-              onToggleDropdown={(id) =>
-                setDropdownOpen((prev) => (prev === id ? null : id))
-              }
+              onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
               onSaveLead={saveLead}
               campaignList={campaignList}
               isSavedTo={isSavedTo}
@@ -246,7 +201,6 @@ const Explorer = () => {
         </div>
       </div>
 
-      {/* Sidebar: reduced width */}
       <div className="w-64 border-l bg-white shadow-inner">
         <ExploreManager
           recentSearches={recentSearches}
