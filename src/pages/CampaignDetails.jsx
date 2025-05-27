@@ -11,7 +11,8 @@ const CampaignDetails = () => {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadStatus, setNewLeadStatus] = useState('New');
-  const [moveTarget, setMoveTarget] = useState('');
+  const [pendingStatusChange, setPendingStatusChange] = useState('');
+  const [pendingCampaignMove, setPendingCampaignMove] = useState('');
 
   useEffect(() => {
     const storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || [];
@@ -89,27 +90,23 @@ const CampaignDetails = () => {
     }
   };
 
-  const bulkDelete = () => {
-    if (window.confirm(`Delete ${selectedLeads.length} selected leads?`)) {
-      setLeads(prev => prev.filter(l => !selectedLeads.includes(l.id)));
-      setSelectedLeads([]);
-      window.dispatchEvent(new Event('lead-deleted'));
-    }
-  };
-
-  const bulkUpdateStatus = (status) => {
+  const applyStatusChange = () => {
+    if (!pendingStatusChange) return;
     setLeads(prev =>
-      prev.map(l => selectedLeads.includes(l.id) ? { ...l, status } : l)
+      prev.map(l =>
+        selectedLeads.includes(l.id) ? { ...l, status: pendingStatusChange } : l
+      )
     );
+    setPendingStatusChange('');
   };
 
-  const bulkMoveToCampaign = () => {
-    if (!moveTarget) return;
+  const applyMoveToCampaign = () => {
+    if (!pendingCampaignMove) return;
 
-    const targetCampaign = campaigns.find(c => c.title === moveTarget);
+    const targetCampaign = campaigns.find(c => c.title === pendingCampaignMove);
     if (!targetCampaign) return;
 
-    const targetKey = `leads_${moveTarget.toLowerCase()}`;
+    const targetKey = `leads_${pendingCampaignMove.toLowerCase()}`;
     const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
     const leadsToMove = leads.filter(l => selectedLeads.includes(l.id));
 
@@ -121,9 +118,17 @@ const CampaignDetails = () => {
     const updatedLeads = leads.filter(l => !selectedLeads.includes(l.id));
     setLeads(updatedLeads);
     setSelectedLeads([]);
-    setMoveTarget('');
+    setPendingCampaignMove('');
     window.dispatchEvent(new Event('lead-deleted'));
     window.dispatchEvent(new Event('leadsUpdated'));
+  };
+
+  const bulkDelete = () => {
+    if (window.confirm(`Delete ${selectedLeads.length} selected leads?`)) {
+      setLeads(prev => prev.filter(l => !selectedLeads.includes(l.id)));
+      setSelectedLeads([]);
+      window.dispatchEvent(new Event('lead-deleted'));
+    }
   };
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -185,13 +190,12 @@ const CampaignDetails = () => {
         </div>
       </div>
 
-      {/* 🔁 Bulk Actions */}
       {selectedLeads.length > 0 && (
-        <div className="mt-6 p-4 bg-yellow-50 border rounded shadow-sm flex flex-col gap-2 md:flex-row md:justify-between md:items-center">
-          <span className="text-sm">{selectedLeads.length} selected</span>
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="mt-6 p-4 bg-yellow-50 border rounded shadow-sm space-y-3">
+          <div className="flex items-center gap-4">
             <select
-              onChange={(e) => bulkUpdateStatus(e.target.value)}
+              value={pendingStatusChange}
+              onChange={(e) => setPendingStatusChange(e.target.value)}
               className="border rounded px-2 py-1"
             >
               <option value="">Change status</option>
@@ -200,28 +204,37 @@ const CampaignDetails = () => {
               <option>Qualified</option>
               <option>Lost</option>
             </select>
-
-            <select
-              value={moveTarget}
-              onChange={(e) => setMoveTarget(e.target.value)}
-              className="border rounded px-2 py-1"
-            >
-              <option value="">Move to campaign</option>
-              {campaigns
-                .filter(c => c.id !== campaignId)
-                .map(c => (
-                  <option key={c.id} value={c.title}>
-                    {c.title}
-                  </option>
-                ))}
-            </select>
-
             <button
-              onClick={bulkMoveToCampaign}
+              onClick={applyStatusChange}
               className="text-blue-600 hover:underline text-sm"
             >
-              Move selected
+              Apply status
             </button>
+          </div>
+
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex gap-4 items-center">
+              <select
+                value={pendingCampaignMove}
+                onChange={(e) => setPendingCampaignMove(e.target.value)}
+                className="border rounded px-2 py-1"
+              >
+                <option value="">Move to campaign</option>
+                {campaigns
+                  .filter(c => c.id !== campaignId)
+                  .map(c => (
+                    <option key={c.id} value={c.title}>
+                      {c.title}
+                    </option>
+                  ))}
+              </select>
+              <button
+                onClick={applyMoveToCampaign}
+                className="text-blue-600 hover:underline text-sm"
+              >
+                Move leads
+              </button>
+            </div>
 
             <button
               onClick={bulkDelete}
@@ -233,7 +246,6 @@ const CampaignDetails = () => {
         </div>
       )}
 
-      {/* Lead List */}
       <div className="mt-8">
         {leads.length === 0 ? (
           <p>No leads yet.</p>
