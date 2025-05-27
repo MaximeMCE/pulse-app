@@ -1,6 +1,9 @@
+// CampaignsPolished.jsx — fixed delete by sanitizing localStorage key access
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+
+const toKey = (title) => `leads_${title.trim().toLowerCase()}`;
 
 const CampaignsPolished = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -20,7 +23,7 @@ const CampaignsPolished = () => {
       const counts = {};
       const stored = JSON.parse(localStorage.getItem('campaigns') || '[]');
       stored.forEach(c => {
-        const leads = JSON.parse(localStorage.getItem(`leads_${c.title.toLowerCase()}`) || '[]');
+        const leads = JSON.parse(localStorage.getItem(toKey(c.title)) || '[]');
         counts[c.title] = leads.length;
       });
       setLeadCounts(counts);
@@ -50,7 +53,7 @@ const CampaignsPolished = () => {
     const title = newTitle.trim();
     if (!title || campaigns.some(c => c.title.toLowerCase() === title.toLowerCase())) return;
     const newCampaign = { id: uuidv4(), title, createdAt: new Date().toISOString() };
-    localStorage.setItem(`leads_${title.toLowerCase()}`, JSON.stringify([]));
+    localStorage.setItem(toKey(title), JSON.stringify([]));
     setCampaigns(prev => [...prev, newCampaign]);
     setNewTitle('');
     window.dispatchEvent(new Event('campaignsUpdated'));
@@ -59,15 +62,15 @@ const CampaignsPolished = () => {
   const handleDelete = (title) => {
     if (!confirm(`Delete campaign '${title}' and all its leads?`)) return;
     setCampaigns(prev => prev.filter(c => c.title !== title));
-    localStorage.removeItem(`leads_${title.toLowerCase()}`);
+    localStorage.removeItem(toKey(title));
     window.dispatchEvent(new Event('campaignsUpdated'));
   };
 
   const handleRename = (id, newTitleTrimmed) => {
     const existing = campaigns.find(c => c.id === id);
     if (!existing || !newTitleTrimmed) return;
-    const oldKey = `leads_${existing.title.toLowerCase()}`;
-    const newKey = `leads_${newTitleTrimmed.toLowerCase()}`;
+    const oldKey = toKey(existing.title);
+    const newKey = toKey(newTitleTrimmed);
     const leads = localStorage.getItem(oldKey);
     if (leads) {
       localStorage.setItem(newKey, leads);
