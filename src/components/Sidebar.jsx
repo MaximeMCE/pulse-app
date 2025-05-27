@@ -1,8 +1,7 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const links = [
@@ -14,12 +13,8 @@ const Sidebar = () => {
   ];
 
   const handleClick = (path) => {
-    if (location.pathname === path) {
-      // ✅ Force full reload even if route is already active
-      window.location.href = path;
-    } else {
-      navigate(path);
-    }
+    // 🔁 Always force a full reload
+    window.location.href = path;
   };
 
   return (
