@@ -4,41 +4,41 @@ import { v4 as uuidv4 } from 'uuid';
 
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();
-
   const [campaigns, setCampaigns] = useState([]);
   const [leads, setLeads] = useState([]);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadStatus, setNewLeadStatus] = useState('New');
 
-  // Load campaigns and leads from localStorage
   useEffect(() => {
     const storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || [];
     setCampaigns(storedCampaigns);
-
-    const storedLeads = JSON.parse(localStorage.getItem('leads')) || [];
-    setLeads(storedLeads);
   }, []);
 
-  // Save leads when updated
-  useEffect(() => {
-    localStorage.setItem('leads', JSON.stringify(leads));
-  }, [leads]);
-
-  // Find current campaign
   const campaign = campaigns.find(c => c.id === campaignId);
+  const campaignKey = campaign ? `leads_${campaign.title.toLowerCase()}` : null;
+
+  useEffect(() => {
+    if (campaignKey) {
+      const storedLeads = JSON.parse(localStorage.getItem(campaignKey)) || [];
+      setLeads(storedLeads);
+    }
+  }, [campaignKey]);
+
+  useEffect(() => {
+    if (campaignKey) {
+      localStorage.setItem(campaignKey, JSON.stringify(leads));
+      window.dispatchEvent(new Event('leadsUpdated'));
+    }
+  }, [leads, campaignKey]);
+
   if (!campaign) return <div className="p-6">Campaign not found.</div>;
 
-  // Filter leads for this campaign
-  const filteredLeads = leads.filter(lead => lead.campaignId === campaignId);
-
-  // Add new lead
   const addLead = () => {
     if (!newLeadName.trim()) return;
     const newLead = {
       id: uuidv4(),
       name: newLeadName.trim(),
       status: newLeadStatus,
-      campaignId,
       createdAt: new Date().toISOString(),
     };
     setLeads(prev => [...prev, newLead]);
@@ -46,14 +46,12 @@ const CampaignDetails = () => {
     setNewLeadStatus('New');
   };
 
-  // Delete lead
   const deleteLead = (id) => {
     if (window.confirm('Delete this lead?')) {
       setLeads(prev => prev.filter(l => l.id !== id));
     }
   };
 
-  // Update lead status
   const updateLeadStatus = (id, status) => {
     setLeads(prev =>
       prev.map(l => (l.id === id ? { ...l, status } : l))
@@ -64,7 +62,6 @@ const CampaignDetails = () => {
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">{campaign.title} - Leads</h1>
 
-      {/* Add New Lead */}
       <div className="flex gap-2 mb-6">
         <input
           type="text"
@@ -91,12 +88,11 @@ const CampaignDetails = () => {
         </button>
       </div>
 
-      {/* Leads List */}
-      {filteredLeads.length === 0 ? (
+      {leads.length === 0 ? (
         <p>No leads yet.</p>
       ) : (
         <ul className="space-y-3">
-          {filteredLeads.map((lead) => (
+          {leads.map((lead) => (
             <li
               key={lead.id}
               className="border rounded p-4 flex justify-between items-center"

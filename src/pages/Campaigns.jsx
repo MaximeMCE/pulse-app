@@ -1,4 +1,3 @@
-// CampaignsPolished.jsx — now also listens to 'leadsUpdated' to refresh counts on any change
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,6 +6,8 @@ const CampaignsPolished = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [newTitle, setNewTitle] = useState('');
   const [leadCounts, setLeadCounts] = useState({});
+  const [editingId, setEditingId] = useState(null);
+  const [editedTitle, setEditedTitle] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +36,6 @@ const CampaignsPolished = () => {
 
     window.addEventListener('campaignsUpdated', handleUpdate);
     window.addEventListener('leadsUpdated', handleUpdate);
-
     return () => {
       window.removeEventListener('campaignsUpdated', handleUpdate);
       window.removeEventListener('leadsUpdated', handleUpdate);
@@ -49,13 +49,7 @@ const CampaignsPolished = () => {
   const handleAddCampaign = () => {
     const title = newTitle.trim();
     if (!title || campaigns.some(c => c.title.toLowerCase() === title.toLowerCase())) return;
-
-    const newCampaign = {
-      id: uuidv4(),
-      title,
-      createdAt: new Date().toISOString(),
-    };
-
+    const newCampaign = { id: uuidv4(), title, createdAt: new Date().toISOString() };
     localStorage.setItem(`leads_${title.toLowerCase()}`, JSON.stringify([]));
     setCampaigns(prev => [...prev, newCampaign]);
     setNewTitle('');
@@ -66,6 +60,25 @@ const CampaignsPolished = () => {
     if (!confirm(`Delete campaign '${title}' and all its leads?`)) return;
     setCampaigns(prev => prev.filter(c => c.title !== title));
     localStorage.removeItem(`leads_${title.toLowerCase()}`);
+    window.dispatchEvent(new Event('campaignsUpdated'));
+  };
+
+  const handleRename = (id, newTitleTrimmed) => {
+    const existing = campaigns.find(c => c.id === id);
+    if (!existing || !newTitleTrimmed) return;
+    const oldKey = `leads_${existing.title.toLowerCase()}`;
+    const newKey = `leads_${newTitleTrimmed.toLowerCase()}`;
+    const leads = localStorage.getItem(oldKey);
+    if (leads) {
+      localStorage.setItem(newKey, leads);
+      localStorage.removeItem(oldKey);
+    }
+    const updated = campaigns.map(c =>
+      c.id === id ? { ...c, title: newTitleTrimmed } : c
+    );
+    setCampaigns(updated);
+    setEditingId(null);
+    setEditedTitle('');
     window.dispatchEvent(new Event('campaignsUpdated'));
   };
 
@@ -83,9 +96,7 @@ const CampaignsPolished = () => {
           placeholder="New campaign title"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') handleAddCampaign();
-          }}
+          onKeyDown={(e) => e.key === 'Enter' && handleAddCampaign()}
           className="border rounded px-3 py-2 w-full"
         />
         <button
@@ -104,10 +115,33 @@ const CampaignsPolished = () => {
           {campaigns.map((c) => (
             <div
               key={c.id}
-              className="border rounded-lg p-4 shadow-sm hover:shadow-md transition cursor-pointer relative"
+              className="border rounded-lg p-4 shadow-sm hover:shadow-md transition relative"
               onClick={() => goToCampaign(c.id)}
             >
-              <div className="font-semibold text-lg mb-1">{c.title}</div>
+              {editingId === c.id ? (
+                <input
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onBlur={() => handleRename(c.id, editedTitle.trim())}
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleRename(c.id, editedTitle.trim());
+                  }}
+                  className="font-semibold text-lg mb-1 w-full border px-2 py-1 rounded"
+                  autoFocus
+                />
+              ) : (
+                <div
+                  className="font-semibold text-lg mb-1"
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    setEditingId(c.id);
+                    setEditedTitle(c.title);
+                  }}
+                >
+                  {c.title}
+                </div>
+              )}
               <div className="text-sm text-gray-600 mb-1">Created: {new Date(c.createdAt).toLocaleDateString()}</div>
               <div className="text-sm text-gray-800">🎯 {leadCounts[c.title] || 0} lead(s)</div>
               <button
