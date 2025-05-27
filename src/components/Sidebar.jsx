@@ -1,14 +1,20 @@
 import React from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleReloadClick = (path) => (e) => {
-    e.preventDefault();
+  const links = [
+    { label: 'Dashboard', path: '/dashboard' },
+    { label: 'Explore', path: '/explorer' },
+    { label: 'Campaigns', path: '/campaigns' },
+    { label: 'Leads', path: '/leads' },
+    { label: 'Settings', path: '/settings' },
+  ];
+
+  const handleClick = (path) => {
     if (location.pathname === path) {
-      console.log(`🔁 Reloading ${path}...`);
       window.location.reload();
     } else {
       navigate(path);
@@ -17,55 +23,19 @@ const Sidebar = () => {
 
   return (
     <nav className="flex flex-col space-y-4 p-4 border-r h-full">
-      <NavLink
-        to="/dashboard"
-        onClick={handleReloadClick('/dashboard')}
-        className={({ isActive }) =>
-          isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
-        }
-      >
-        Dashboard
-      </NavLink>
-
-      <NavLink
-        to="/explorer"
-        onClick={handleReloadClick('/explorer')}
-        className={({ isActive }) =>
-          isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
-        }
-      >
-        Explore
-      </NavLink>
-
-      <NavLink
-        to="/campaigns"
-        onClick={handleReloadClick('/campaigns')}
-        className={({ isActive }) =>
-          isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
-        }
-      >
-        Campaigns
-      </NavLink>
-
-      <NavLink
-        to="/leads"
-        onClick={handleReloadClick('/leads')}
-        className={({ isActive }) =>
-          isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
-        }
-      >
-        Leads
-      </NavLink>
-
-      <NavLink
-        to="/settings"
-        onClick={handleReloadClick('/settings')}
-        className={({ isActive }) =>
-          isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
-        }
-      >
-        Settings
-      </NavLink>
+      {links.map(({ label, path }) => (
+        <button
+          key={path}
+          onClick={() => handleClick(path)}
+          className={`text-left ${
+            location.pathname === path
+              ? 'font-bold text-black'
+              : 'text-gray-600 hover:text-black'
+          }`}
+        >
+          {label}
+        </button>
+      ))}
     </nav>
   );
 };
