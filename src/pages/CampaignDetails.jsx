@@ -61,7 +61,7 @@ const CampaignDetails = () => {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      {/* ✅ Breadcrumb */}
+      {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-2">
         <a href="/campaigns" className="text-blue-600 hover:underline">Campaigns</a>
         <span className="mx-1">›</span>
@@ -72,7 +72,28 @@ const CampaignDetails = () => {
 
       <CampaignManager />
 
-      <div className="flex gap-2 mb-6">
+      {/* 🔍 Need More Leads Section */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold mb-2">Need more leads?</h2>
+        <p className="text-sm text-gray-600 mb-4">
+          Based on your campaign, we’ll suggest relevant artists here — or you can explore manually.
+        </p>
+
+        {/* Placeholder for future recommendations */}
+        <div className="bg-gray-100 p-4 rounded mb-4">
+          <p className="text-sm text-gray-500">🎯 Smart recommendations coming soon...</p>
+        </div>
+
+        <a
+          href="/explorer"
+          className="inline-block bg-black text-white text-sm px-4 py-2 rounded hover:bg-gray-800"
+        >
+          Go to Explorer
+        </a>
+      </div>
+
+      {/* Lead Input + List */}
+      <div className="flex gap-2 my-6">
         <input
           type="text"
           placeholder="New lead name"
