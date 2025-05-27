@@ -1,4 +1,3 @@
-// MockRecommendations.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -24,15 +23,14 @@ const MockRecommendations = () => {
     if (!found) return;
     setCampaign(found);
 
-    // Generate mock suggestions based on goal or region
     const keywords = (found.goal || '').toLowerCase();
     const region = (found.region || '').toLowerCase();
 
-    const results = mockArtists.filter(
-      (artist) =>
-        artist.region.toLowerCase().includes(region) ||
-        keywords.includes(artist.genre.toLowerCase())
-    );
+    const results = mockArtists.filter((artist) => {
+      const genreMatch = keywords.includes(artist.genre.toLowerCase());
+      const regionMatch = region && artist.region.toLowerCase().includes(region);
+      return genreMatch || regionMatch;
+    });
 
     setSuggested(results.slice(0, 3));
   }, [id]);
