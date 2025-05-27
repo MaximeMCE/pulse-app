@@ -72,9 +72,7 @@ const CampaignDetails = () => {
   };
 
   const updateLeadStatus = (id, status) => {
-    setLeads(prev =>
-      prev.map(l => (l.id === id ? { ...l, status } : l))
-    );
+    setLeads(prev => prev.map(l => (l.id === id ? { ...l, status } : l)));
   };
 
   const toggleSelectLead = (id) => {
@@ -142,71 +140,58 @@ const CampaignDetails = () => {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="p-6 bg-gray-50 min-h-screen text-gray-800">
       <div className="text-sm text-gray-500 mb-2">
         <a href="/campaigns" className="text-blue-600 hover:underline">Campaigns</a>
         <span className="mx-1">›</span>
         <span>{campaign.title}</span>
       </div>
 
-      {/* ⬇️ Campaign title + switcher */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold">{campaign.title} - Leads</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">🎯 {campaign.title} - Leads</h1>
         <CampaignSwitcher campaigns={campaigns} currentCampaignId={campaignId} />
       </div>
 
-      <CampaignManager />
+      <div className="mb-6">
+        <CampaignManager />
+      </div>
 
-      <div className="mt-8 p-4 border rounded shadow-sm bg-white">
-        <h2 className="text-lg font-semibold mb-4">Need new leads?</h2>
+      <div className="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 className="text-lg font-semibold mb-4">🧠 Smart Recommendations</h2>
+        <MockRecommendations />
+      </div>
 
-        <div className="mb-6">
-          <p className="text-sm font-medium mb-1">🎯 Get suggestions based on your campaign</p>
-          <MockRecommendations />
-        </div>
-
-        <div className="mb-6">
-          <p className="text-sm font-medium mb-2">🔍 Explore artists manually</p>
-          <a
-            href="/explorer"
-            className="inline-block bg-black text-white text-sm px-4 py-2 rounded hover:bg-gray-800"
+      <div className="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 className="text-lg font-semibold mb-4">📝 Add Lead Manually</h2>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="New lead name"
+            value={newLeadName}
+            onChange={(e) => setNewLeadName(e.target.value)}
+            className="border rounded px-3 py-2 flex-grow"
+          />
+          <select
+            value={newLeadStatus}
+            onChange={(e) => setNewLeadStatus(e.target.value)}
+            className="border rounded px-2 py-2"
           >
-            Go to Explorer
-          </a>
-        </div>
-
-        <div>
-          <p className="text-sm font-medium mb-2">📝 Add an artist manually</p>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="New lead name"
-              value={newLeadName}
-              onChange={(e) => setNewLeadName(e.target.value)}
-              className="border rounded px-3 py-2 flex-grow"
-            />
-            <select
-              value={newLeadStatus}
-              onChange={(e) => setNewLeadStatus(e.target.value)}
-              className="border rounded px-2 py-2"
-            >
-              <option>New</option>
-              <option>Contacted</option>
-              <option>Qualified</option>
-              <option>Lost</option>
-            </select>
-            <button
-              onClick={addLead}
-              className="bg-black text-white px-4 py-2 rounded"
-            >
-              Add Lead
-            </button>
-          </div>
+            <option>New</option>
+            <option>Contacted</option>
+            <option>Qualified</option>
+            <option>Lost</option>
+          </select>
+          <button
+            onClick={addLead}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Add Lead
+          </button>
         </div>
       </div>
 
       {selectedLeads.length > 0 && (
-        <div className="mt-6 p-4 bg-yellow-50 border rounded shadow-sm space-y-3">
+        <div className="p-4 bg-yellow-50 border rounded shadow mb-6 space-y-3">
           <div className="flex items-center gap-4">
             <select
               value={pendingStatusChange}
@@ -261,23 +246,24 @@ const CampaignDetails = () => {
         </div>
       )}
 
-      <div className="mt-8">
+      <div className="space-y-4">
         {leads.length === 0 ? (
-          <p>No leads yet.</p>
+          <p className="text-gray-500">No leads yet.</p>
         ) : (
-          <ul className="space-y-3">
-            <li className="flex items-center gap-2">
+          <>
+            <div className="flex items-center gap-2 mb-2">
               <input
                 type="checkbox"
                 checked={selectedLeads.length === leads.length}
                 onChange={toggleSelectAll}
               />
               <span className="text-sm font-medium">Select all</span>
-            </li>
+            </div>
+
             {leads.map((lead) => (
-              <li
+              <div
                 key={lead.id}
-                className="border rounded p-4 flex justify-between items-center"
+                className="bg-white rounded shadow p-4 flex justify-between items-center"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -285,13 +271,13 @@ const CampaignDetails = () => {
                     checked={selectedLeads.includes(lead.id)}
                     onChange={() => toggleSelectLead(lead.id)}
                   />
-                  <span>{lead.name}</span>
+                  <span className="font-medium">{lead.name}</span>
                 </div>
                 <div className="flex items-center gap-4">
                   <select
                     value={lead.status}
                     onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
-                    className="border rounded px-2 py-1"
+                    className="border rounded px-2 py-1 text-sm"
                   >
                     <option>New</option>
                     <option>Contacted</option>
@@ -300,14 +286,14 @@ const CampaignDetails = () => {
                   </select>
                   <button
                     onClick={() => deleteLead(lead.id)}
-                    className="text-red-600 hover:underline"
+                    className="text-red-600 hover:underline text-sm"
                   >
                     Delete
                   </button>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </>
         )}
       </div>
     </div>
