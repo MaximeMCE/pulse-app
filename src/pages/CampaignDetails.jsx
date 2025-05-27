@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import CampaignManager from '../components/CampaignManager';
 import MockRecommendations from '../components/MockRecommendations';
+import CampaignSwitcher from '../components/CampaignSwitcher';
 
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();
@@ -148,7 +149,11 @@ const CampaignDetails = () => {
         <span>{campaign.title}</span>
       </div>
 
-      <h1 className="text-3xl font-bold mb-4">{campaign.title} - Leads</h1>
+      {/* ⬇️ Campaign title + switcher */}
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-bold">{campaign.title} - Leads</h1>
+        <CampaignSwitcher campaigns={campaigns} currentCampaignId={campaignId} />
+      </div>
 
       <CampaignManager />
 
