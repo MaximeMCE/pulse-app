@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -15,7 +15,8 @@ const Sidebar = () => {
 
   const handleClick = (path) => {
     if (location.pathname === path) {
-      window.location.reload();
+      // ✅ Force full reload even if route is already active
+      window.location.href = path;
     } else {
       navigate(path);
     }
