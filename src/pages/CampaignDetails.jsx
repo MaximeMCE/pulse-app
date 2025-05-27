@@ -108,7 +108,16 @@ const CampaignDetails = () => {
 
     const targetKey = `leads_${pendingCampaignMove.toLowerCase()}`;
     const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
-    const leadsToMove = leads.filter(l => selectedLeads.includes(l.id));
+
+    const leadsToMove = leads.filter(l => {
+      const alreadyExists = targetLeads.some(t => t.id === l.id);
+      return selectedLeads.includes(l.id) && !alreadyExists;
+    });
+
+    if (leadsToMove.length === 0) {
+      setPendingCampaignMove('');
+      return;
+    }
 
     localStorage.setItem(
       targetKey,
@@ -130,6 +139,7 @@ const CampaignDetails = () => {
       window.dispatchEvent(new Event('lead-deleted'));
     }
   };
+
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <div className="text-sm text-gray-500 mb-2">
@@ -297,6 +307,6 @@ const CampaignDetails = () => {
       </div>
     </div>
   );
-  };
+};
 
-  export default CampaignDetails;
+export default CampaignDetails;
