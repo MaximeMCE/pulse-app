@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
+import FilterBar from '../components/FilterBar';
 import useRecentSearches from '../hooks/useRecentSearches';
 import useTalentPool from '../hooks/useTalentPool';
 
@@ -17,6 +18,11 @@ const Explorer = () => {
   const [campaignList, setCampaignList] = useState([]);
   const [editingQuery, setEditingQuery] = useState(null);
   const [labelInput, setLabelInput] = useState('');
+  const [filters, setFilters] = useState({
+    minListeners: 0,
+    maxListeners: 100000,
+    recentRelease: '30',
+  });
 
   const { recent: recentSearches, addSearch, clearSearches, togglePin, renameSearch } = useRecentSearches();
   const navigate = useNavigate();
@@ -109,7 +115,7 @@ const Explorer = () => {
     if (!searchTerm || !token) return;
     setLoading(true);
     try {
-      const artists = await searchArtists(token, searchTerm);
+      const artists = await searchArtists(token, searchTerm, filters);
       setResults(artists);
       localStorage.setItem('explorer_results', JSON.stringify(artists));
       localStorage.setItem('explorer_query', searchTerm);
@@ -155,6 +161,9 @@ const Explorer = () => {
     <div className="flex h-screen bg-gray-50 text-gray-800">
       <div className="flex-1 p-6 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
+
+        {/* ✅ Filter bar now visible */}
+        <FilterBar onFilterChange={setFilters} />
 
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-gray-600 mb-2">Suggestions</h3>
@@ -214,7 +223,6 @@ const Explorer = () => {
           ))}
         </div>
 
-        {/* 🔒 Force Tailwind to include dynamic styles */}
         <div className="hidden">
           <div className="text-blue-600 border-blue-600 hover:bg-blue-50"></div>
           <div className="text-green-600 border-green-600 hover:bg-green-50"></div>
@@ -224,7 +232,8 @@ const Explorer = () => {
         </div>
       </div>
 
-      <div className="w-80 border-l bg-white shadow-inner">
+      {/* ✅ Sidebar width reduced */}
+      <div className="w-64 border-l bg-white shadow-inner">
         <ExploreManager
           recentSearches={recentSearches}
           onSearch={(q) => {
