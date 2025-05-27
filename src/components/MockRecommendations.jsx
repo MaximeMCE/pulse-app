@@ -43,16 +43,19 @@ const MockRecommendations = () => {
     refreshAssignedLeads(found.title);
   }, [id]);
 
-  // 🔁 Listen for deletions
+  // 🔁 Listen for deletions or updates and re-sync
   useEffect(() => {
     if (!campaign) return;
 
-    const handler = () => {
-      refreshAssignedLeads(campaign.title);
-    };
+    const sync = () => refreshAssignedLeads(campaign.title);
 
-    window.addEventListener('lead-deleted', handler);
-    return () => window.removeEventListener('lead-deleted', handler);
+    window.addEventListener('leadsUpdated', sync);
+    window.addEventListener('lead-deleted', sync);
+
+    return () => {
+      window.removeEventListener('leadsUpdated', sync);
+      window.removeEventListener('lead-deleted', sync);
+    };
   }, [campaign]);
 
   const addToCampaign = (artist) => {
