@@ -1,6 +1,6 @@
 import React from 'react';
 import useTalentPool from '../hooks/useTalentPool';
-import useCampaigns from '../hooks/useCampaigns'; // already exists
+import useCampaigns from '../hooks/useCampaigns';
 import ArtistCard from '../components/ArtistCard';
 
 const TalentPool = () => {
@@ -29,9 +29,13 @@ const TalentPool = () => {
                   defaultValue=""
                   className="border rounded p-1 text-sm"
                 >
-                  <option value="" disabled>Move to Campaign</option>
+                  <option value="" disabled>
+                    Move to Campaign
+                  </option>
                   {campaigns.map((c) => (
-                    <option key={c.id} value={c.id}>{c.title}</option>
+                    <option key={c.id} value={c.title}>
+                      {c.title}
+                    </option>
                   ))}
                 </select>
                 <button
