@@ -5,23 +5,6 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleClick = (path) => {
-    if (location.pathname === path) {
-      // ⚠️ Only reload if user is already on the same route
-      window.location.reload();
-    } else {
-      setTimeout(() => {
-        // If navigate fails silently (React Router quirk), fallback:
-        const watchdog = setTimeout(() => {
-          window.location.href = path; // 🔁 Last resort
-        }, 300);
-
-        navigate(path);
-        clearTimeout(watchdog); // cancel fallback if it worked
-      }, 0);
-    }
-  };
-
   const links = [
     { label: 'Dashboard', path: '/dashboard' },
     { label: 'Explore', path: '/explorer' },
@@ -29,6 +12,19 @@ const Sidebar = () => {
     { label: 'Leads', path: '/leads' },
     { label: 'Settings', path: '/settings' },
   ];
+
+  const handleClick = (path) => {
+    const currentPath = location.pathname;
+    const isInCampaignDetail = currentPath.startsWith('/campaigns/') && currentPath.split('/').length > 2;
+
+    if (currentPath === path) {
+      window.location.reload(); // 🌀 Refresh same route
+    } else if (isInCampaignDetail) {
+      window.location.href = path; // 🔁 Escape dynamic route
+    } else {
+      navigate(path); // ⚡ Smooth SPA nav
+    }
+  };
 
   return (
     <nav className="flex flex-col space-y-4 p-4 border-r h-full">
