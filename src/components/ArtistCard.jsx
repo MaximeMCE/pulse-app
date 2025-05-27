@@ -81,25 +81,28 @@ const ArtistCard = ({
         </div>
       )}
 
-      {/* === Visually Detached Button Section === */}
-      <div className="mt-10 pt-6 border-t flex gap-3 flex-wrap">
-        <button
-          onClick={handlePoolToggle}
-          className={`text-xs px-3 py-1 rounded border ${
-            isInPool(artist.id)
-              ? 'border-red-400 text-red-600 hover:bg-red-50'
-              : 'border-gray-400 text-gray-800 hover:bg-gray-100'
-          }`}
-        >
-          {isInPool(artist.id) ? '❌ Pool' : '+ Pool'}
-        </button>
+      {/* === Visually Detached Button Section with Forced Spacing === */}
+      <div className="mt-6">
+        <div className="h-6" />
+        <div className="pt-4 border-t flex gap-3 flex-wrap">
+          <button
+            onClick={handlePoolToggle}
+            className={`text-xs px-3 py-1 rounded border ${
+              isInPool(artist.id)
+                ? 'border-red-400 text-red-600 hover:bg-red-50'
+                : 'border-gray-400 text-gray-800 hover:bg-gray-100'
+            }`}
+          >
+            {isInPool(artist.id) ? '❌ Pool' : '+ Pool'}
+          </button>
 
-        <button
-          onClick={() => onToggleDropdown(artist.id)}
-          className="text-xs px-3 py-1 rounded border border-blue-600 text-blue-600 hover:bg-blue-50"
-        >
-          + Campaign
-        </button>
+          <button
+            onClick={() => onToggleDropdown(artist.id)}
+            className="text-xs px-3 py-1 rounded border border-blue-600 text-blue-600 hover:bg-blue-50"
+          >
+            + Campaign
+          </button>
+        </div>
       </div>
 
       {/* === Dropdown Campaign Selector === */}
