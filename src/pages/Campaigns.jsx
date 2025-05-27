@@ -1,4 +1,4 @@
-// Campaigns.jsx — Final export aligned with route import
+// Campaigns.jsx — With metadata support (goal, region, deadline)
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,6 +8,9 @@ const toKey = (title) => `leads_${title.trim().toLowerCase()}`;
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [newTitle, setNewTitle] = useState('');
+  const [goal, setGoal] = useState('');
+  const [region, setRegion] = useState('');
+  const [deadline, setDeadline] = useState('');
   const [leadCounts, setLeadCounts] = useState({});
   const navigate = useNavigate();
 
@@ -49,11 +52,23 @@ const Campaigns = () => {
   const handleAddCampaign = () => {
     const title = newTitle.trim();
     if (!title || campaigns.some(c => c.title.toLowerCase() === title.toLowerCase())) return;
-    const newCampaign = { id: uuidv4(), title, createdAt: new Date().toISOString() };
+
+    const newCampaign = {
+      id: uuidv4(),
+      title,
+      goal: goal.trim(),
+      region: region.trim(),
+      deadline: deadline ? new Date(deadline).toISOString() : null,
+      createdAt: new Date().toISOString(),
+    };
+
     localStorage.setItem(toKey(title), JSON.stringify([]));
     const updated = [...campaigns, newCampaign];
     setCampaigns(updated);
     setNewTitle('');
+    setGoal('');
+    setRegion('');
+    setDeadline('');
     localStorage.setItem('campaigns', JSON.stringify(updated));
   };
 
@@ -75,18 +90,37 @@ const Campaigns = () => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Campaigns</h1>
 
-      <div className="mb-6 flex gap-2">
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
         <input
           type="text"
           placeholder="New campaign title"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleAddCampaign()}
+          className="border rounded px-3 py-2 w-full"
+        />
+        <input
+          type="text"
+          placeholder="Goal (optional)"
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
+          className="border rounded px-3 py-2 w-full"
+        />
+        <input
+          type="text"
+          placeholder="Region (optional)"
+          value={region}
+          onChange={(e) => setRegion(e.target.value)}
+          className="border rounded px-3 py-2 w-full"
+        />
+        <input
+          type="date"
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
           className="border rounded px-3 py-2 w-full"
         />
         <button
           onClick={handleAddCampaign}
-          className="bg-black text-white px-4 py-2 rounded"
+          className="bg-black text-white px-4 py-2 rounded mt-2 md:mt-0"
         >
           Create
         </button>
@@ -103,8 +137,11 @@ const Campaigns = () => {
               onClick={() => goToCampaign(c.id)}
             >
               <div className="font-semibold text-lg mb-1">{c.title}</div>
-              <div className="text-sm text-gray-600 mb-1">Created: {new Date(c.createdAt).toLocaleDateString()}</div>
-              <div className="text-sm text-gray-800">🎯 {leadCounts[c.title] || 0} lead(s)</div>
+              <div className="text-sm text-gray-600 mb-1">🗓 {new Date(c.createdAt).toLocaleDateString()}</div>
+              {c.goal && <div className="text-sm text-gray-700 mb-1">🎯 {c.goal}</div>}
+              {c.region && <div className="text-sm text-gray-700 mb-1">📍 {c.region}</div>}
+              {c.deadline && <div className="text-sm text-gray-700 mb-1">⏳ {new Date(c.deadline).toLocaleDateString()}</div>}
+              <div className="text-sm text-gray-800 mt-2">📦 {leadCounts[c.title] || 0} lead(s)</div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
