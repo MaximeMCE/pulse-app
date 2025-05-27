@@ -82,7 +82,7 @@ const ArtistCard = ({
       )}
 
       {/* === Visually Detached Button Section === */}
-      <div className="mt-4 pt-3 border-t flex gap-2 flex-wrap">
+      <div className="mt-6 pt-4 border-t flex gap-2 flex-wrap">
         <button
           onClick={handlePoolToggle}
           className={`text-xs px-3 py-1 rounded border ${
