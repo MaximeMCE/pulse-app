@@ -8,6 +8,7 @@ const CampaignDetails = () => {
   const { id: campaignId } = useParams();
   const [campaigns, setCampaigns] = useState([]);
   const [leads, setLeads] = useState([]);
+  const [selectedLeads, setSelectedLeads] = useState([]);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadStatus, setNewLeadStatus] = useState('New');
 
@@ -61,9 +62,8 @@ const CampaignDetails = () => {
 
   const deleteLead = (id) => {
     if (window.confirm('Delete this lead?')) {
-      const updatedLeads = leads.filter(l => l.id !== id);
-      setLeads(updatedLeads);
-      // 🔁 Notify recommendations to refresh
+      setLeads(prev => prev.filter(l => l.id !== id));
+      setSelectedLeads(prev => prev.filter(sid => sid !== id));
       window.dispatchEvent(new Event('lead-deleted'));
     }
   };
@@ -71,6 +71,34 @@ const CampaignDetails = () => {
   const updateLeadStatus = (id, status) => {
     setLeads(prev =>
       prev.map(l => (l.id === id ? { ...l, status } : l))
+    );
+  };
+
+  const toggleSelectLead = (id) => {
+    setSelectedLeads(prev =>
+      prev.includes(id) ? prev.filter(lid => lid !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedLeads.length === leads.length) {
+      setSelectedLeads([]);
+    } else {
+      setSelectedLeads(leads.map(l => l.id));
+    }
+  };
+
+  const bulkDelete = () => {
+    if (window.confirm(`Delete ${selectedLeads.length} selected leads?`)) {
+      setLeads(prev => prev.filter(l => !selectedLeads.includes(l.id)));
+      setSelectedLeads([]);
+      window.dispatchEvent(new Event('lead-deleted'));
+    }
+  };
+
+  const bulkUpdateStatus = (status) => {
+    setLeads(prev =>
+      prev.map(l => selectedLeads.includes(l.id) ? { ...l, status } : l)
     );
   };
 
@@ -134,17 +162,58 @@ const CampaignDetails = () => {
         </div>
       </div>
 
+      {/* 🔁 Bulk Actions */}
+      {selectedLeads.length > 0 && (
+        <div className="mt-6 p-4 bg-yellow-50 border rounded shadow-sm flex justify-between items-center">
+          <span className="text-sm">{selectedLeads.length} selected</span>
+          <div className="flex items-center gap-4">
+            <select
+              onChange={(e) => bulkUpdateStatus(e.target.value)}
+              className="border rounded px-2 py-1"
+            >
+              <option value="">Change status</option>
+              <option>New</option>
+              <option>Contacted</option>
+              <option>Qualified</option>
+              <option>Lost</option>
+            </select>
+            <button
+              onClick={bulkDelete}
+              className="text-red-600 hover:underline text-sm"
+            >
+              Delete selected
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Lead List */}
       <div className="mt-8">
         {leads.length === 0 ? (
           <p>No leads yet.</p>
         ) : (
           <ul className="space-y-3">
+            <li className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedLeads.length === leads.length}
+                onChange={toggleSelectAll}
+              />
+              <span className="text-sm font-medium">Select all</span>
+            </li>
             {leads.map((lead) => (
               <li
                 key={lead.id}
                 className="border rounded p-4 flex justify-between items-center"
               >
-                <div>{lead.name}</div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedLeads.includes(lead.id)}
+                    onChange={() => toggleSelectLead(lead.id)}
+                  />
+                  <span>{lead.name}</span>
+                </div>
                 <div className="flex items-center gap-4">
                   <select
                     value={lead.status}
