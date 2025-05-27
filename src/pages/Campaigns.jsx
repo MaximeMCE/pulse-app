@@ -1,4 +1,4 @@
-// CampaignsPolished.jsx — fixed delete by sanitizing localStorage key access
+// CampaignsPolished.jsx — now safely handles empty storage + deletes by ID
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,7 +16,11 @@ const CampaignsPolished = () => {
   useEffect(() => {
     const loadCampaigns = () => {
       const stored = localStorage.getItem('campaigns');
-      if (stored) setCampaigns(JSON.parse(stored));
+      if (stored) {
+        setCampaigns(JSON.parse(stored));
+      } else {
+        setCampaigns([]); // fallback for first-time or cleared storage
+      }
     };
 
     const loadCounts = () => {
@@ -59,10 +63,15 @@ const CampaignsPolished = () => {
     window.dispatchEvent(new Event('campaignsUpdated'));
   };
 
-  const handleDelete = (title) => {
-    if (!confirm(`Delete campaign '${title}' and all its leads?`)) return;
-    setCampaigns(prev => prev.filter(c => c.title !== title));
-    localStorage.removeItem(toKey(title));
+  const handleDeleteById = (id) => {
+    const campaign = campaigns.find(c => c.id === id);
+    if (!campaign) return;
+    const confirmed = confirm(`Delete campaign '${campaign.title}' and all its leads?`);
+    if (!confirmed) return;
+
+    const key = toKey(campaign.title);
+    localStorage.removeItem(key);
+    setCampaigns(prev => prev.filter(c => c.id !== id));
     window.dispatchEvent(new Event('campaignsUpdated'));
   };
 
@@ -150,7 +159,7 @@ const CampaignsPolished = () => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDelete(c.title);
+                  handleDeleteById(c.id);
                 }}
                 className="absolute top-2 right-2 text-red-600 text-xs hover:underline"
               >
