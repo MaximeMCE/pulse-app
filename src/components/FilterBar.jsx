@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import GenrePicker from './GenrePicker';
 
 const FilterBar = ({ onFilterChange }) => {
   const [listenerTier, setListenerTier] = useState('micro'); // 🎯 Default tier
   const [recentRelease, setRecentRelease] = useState('30');   // ⚡ Default: last 30 days
+  const [selectedGenres, setSelectedGenres] = useState([]);   // 🎧 Genre filter
 
   useEffect(() => {
     const ranges = {
@@ -16,15 +18,16 @@ const FilterBar = ({ onFilterChange }) => {
     onFilterChange({
       minListeners: min,
       maxListeners: max,
-      recentRelease, // 'off', '7', '30'
+      recentRelease,
+      genres: selectedGenres,  // ✅ Consistent naming for Explorer filter
     });
-  }, [listenerTier, recentRelease]);
+  }, [listenerTier, recentRelease, selectedGenres]);
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow mb-6 space-y-4 border border-gray-200">
+    <div className="bg-white p-4 rounded-lg shadow mb-6 space-y-6 border border-gray-200">
       <h2 className="text-lg font-semibold">🎛 Filters</h2>
 
-      {/* Audience Tier */}
+      {/* === Tier Selector === */}
       <div>
         <label className="block text-sm font-medium mb-1">Audience Tier</label>
         <select
@@ -40,7 +43,7 @@ const FilterBar = ({ onFilterChange }) => {
         </select>
       </div>
 
-      {/* Recent Release */}
+      {/* === Recent Release === */}
       <div>
         <label className="block text-sm font-medium mb-1">Recent Release</label>
         <select
@@ -52,6 +55,15 @@ const FilterBar = ({ onFilterChange }) => {
           <option value="30">⚡ Recent Activity (Last 30 days)</option>
           <option value="off">🔍 Ignore release date</option>
         </select>
+      </div>
+
+      {/* === Genre Filter === */}
+      <div>
+        <label className="block text-sm font-medium mb-1">Genres</label>
+        <GenrePicker
+          selectedGenres={selectedGenres}
+          onChange={setSelectedGenres}
+        />
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ const Explorer = () => {
     minListeners: 0,
     maxListeners: 100000,
     recentRelease: '30',
+    genres: [],
   });
 
   const { recent: recentSearches, addSearch, clearSearches, togglePin, renameSearch } = useRecentSearches();
@@ -116,12 +117,34 @@ const Explorer = () => {
     setLoading(true);
     try {
       const artists = await searchArtists(token, searchTerm, filters);
-      setResults(artists);
-      localStorage.setItem('explorer_results', JSON.stringify(artists));
+
+      const filtered = artists.filter((artist) => {
+        const listeners = artist.listeners ?? 0;
+        const listenerCheck =
+          listeners >= filters.minListeners &&
+          listeners <= filters.maxListeners;
+
+        const releaseCheck =
+          filters.recentRelease === 'off' ||
+          (artist.releaseDaysAgo !== undefined &&
+            artist.releaseDaysAgo <= parseInt(filters.recentRelease));
+
+        const genreCheck =
+          filters.genres.length === 0 ||
+          (artist.genres &&
+            filters.genres.some((g) =>
+              artist.genres.map((x) => x.toLowerCase()).includes(g.toLowerCase())
+            ));
+
+        return listenerCheck && releaseCheck && genreCheck;
+      });
+
+      setResults(filtered);
+      localStorage.setItem('explorer_results', JSON.stringify(filtered));
       localStorage.setItem('explorer_query', searchTerm);
       localStorage.setItem('explorer_timestamp', Date.now().toString());
       addSearch(searchTerm);
-      setError(artists.length ? '' : 'No artists found.');
+      setError(filtered.length ? '' : 'No artists found.');
     } catch (err) {
       setError('Search failed.');
     } finally {
@@ -162,7 +185,6 @@ const Explorer = () => {
       <div className="flex-1 p-6 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
 
-        {/* ✅ Filter bar now visible */}
         <FilterBar onFilterChange={setFilters} />
 
         <div className="mb-6">
@@ -222,17 +244,9 @@ const Explorer = () => {
             />
           ))}
         </div>
-
-        <div className="hidden">
-          <div className="text-blue-600 border-blue-600 hover:bg-blue-50"></div>
-          <div className="text-green-600 border-green-600 hover:bg-green-50"></div>
-          <div className="text-red-600 border-red-400 hover:bg-red-50"></div>
-          <div className="text-gray-400 border-gray-300 hover:bg-gray-100"></div>
-          <div className="text-black cursor-not-allowed"></div>
-        </div>
       </div>
 
-      {/* ✅ Sidebar width reduced */}
+      {/* Sidebar: reduced width */}
       <div className="w-64 border-l bg-white shadow-inner">
         <ExploreManager
           recentSearches={recentSearches}
