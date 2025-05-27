@@ -72,11 +72,11 @@ const CampaignDetails = () => {
 
       <CampaignManager />
 
-      {/* 🔍 Need More Leads Section */}
+      {/* 🔍 Unified Need Leads Section */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold mb-2">Need more leads?</h2>
+        <h2 className="text-lg font-semibold mb-2">Need new leads?</h2>
         <p className="text-sm text-gray-600 mb-4">
-          Based on your campaign, we’ll suggest relevant artists here — or you can explore manually.
+          Based on your campaign, we’ll suggest relevant artists here — or you can explore manually, or add someone directly.
         </p>
 
         {/* Placeholder for future recommendations */}
@@ -86,71 +86,74 @@ const CampaignDetails = () => {
 
         <a
           href="/explorer"
-          className="inline-block bg-black text-white text-sm px-4 py-2 rounded hover:bg-gray-800"
+          className="inline-block bg-black text-white text-sm px-4 py-2 rounded hover:bg-gray-800 mb-4"
         >
           Go to Explorer
         </a>
+
+        {/* Manual Add */}
+        <div className="flex gap-2 mt-4">
+          <input
+            type="text"
+            placeholder="New lead name"
+            value={newLeadName}
+            onChange={(e) => setNewLeadName(e.target.value)}
+            className="border rounded px-3 py-2 flex-grow"
+          />
+          <select
+            value={newLeadStatus}
+            onChange={(e) => setNewLeadStatus(e.target.value)}
+            className="border rounded px-2 py-2"
+          >
+            <option>New</option>
+            <option>Contacted</option>
+            <option>Qualified</option>
+            <option>Lost</option>
+          </select>
+          <button
+            onClick={addLead}
+            className="bg-black text-white px-4 py-2 rounded"
+          >
+            Add Lead
+          </button>
+        </div>
       </div>
 
-      {/* Lead Input + List */}
-      <div className="flex gap-2 my-6">
-        <input
-          type="text"
-          placeholder="New lead name"
-          value={newLeadName}
-          onChange={(e) => setNewLeadName(e.target.value)}
-          className="border rounded px-3 py-2 flex-grow"
-        />
-        <select
-          value={newLeadStatus}
-          onChange={(e) => setNewLeadStatus(e.target.value)}
-          className="border rounded px-2 py-2"
-        >
-          <option>New</option>
-          <option>Contacted</option>
-          <option>Qualified</option>
-          <option>Lost</option>
-        </select>
-        <button
-          onClick={addLead}
-          className="bg-black text-white px-4 py-2 rounded"
-        >
-          Add Lead
-        </button>
+      {/* Lead List */}
+      <div className="mt-8">
+        {leads.length === 0 ? (
+          <p>No leads yet.</p>
+        ) : (
+          <ul className="space-y-3">
+            {leads.map((lead) => (
+              <li
+                key={lead.id}
+                className="border rounded p-4 flex justify-between items-center"
+              >
+                <div>{lead.name}</div>
+                <div className="flex items-center gap-4">
+                  <select
+                    value={lead.status}
+                    onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
+                    className="border rounded px-2 py-1"
+                  >
+                    <option>New</option>
+                    <option>Contacted</option>
+                    <option>Qualified</option>
+                    <option>Lost</option>
+                  </select>
+                  <button
+                    onClick={() => deleteLead(lead.id)}
+                    className="text-red-600 hover:underline"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-
-      {leads.length === 0 ? (
-        <p>No leads yet.</p>
-      ) : (
-        <ul className="space-y-3">
-          {leads.map((lead) => (
-            <li
-              key={lead.id}
-              className="border rounded p-4 flex justify-between items-center"
-            >
-              <div>{lead.name}</div>
-              <div className="flex items-center gap-4">
-                <select
-                  value={lead.status}
-                  onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
-                  className="border rounded px-2 py-1"
-                >
-                  <option>New</option>
-                  <option>Contacted</option>
-                  <option>Qualified</option>
-                  <option>Lost</option>
-                </select>
-                <button
-                  onClick={() => deleteLead(lead.id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };
