@@ -18,14 +18,7 @@ const Explorer = () => {
   const [editingQuery, setEditingQuery] = useState(null);
   const [labelInput, setLabelInput] = useState('');
 
-  const {
-    recent: recentSearches,
-    addSearch,
-    clearSearches,
-    togglePin,
-    renameSearch,
-  } = useRecentSearches();
-
+  const { recent: recentSearches, addSearch, clearSearches, togglePin, renameSearch } = useRecentSearches();
   const navigate = useNavigate();
 
   const searchSuggestions = [
@@ -159,12 +152,12 @@ const Explorer = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-50 text-gray-800">
       <div className="flex-1 p-6 overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
+        <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
 
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-600 mb-2">Try one of these:</h3>
+          <h3 className="text-sm font-semibold text-gray-600 mb-2">Suggestions</h3>
           <div className="flex flex-wrap gap-2">
             {searchSuggestions.map((s, i) => (
               <button
@@ -173,7 +166,7 @@ const Explorer = () => {
                   setQuery(s);
                   handleSearch(s);
                 }}
-                className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full"
+                className="text-sm bg-white border border-gray-300 hover:bg-blue-50 px-3 py-1 rounded-full shadow-sm transition"
               >
                 🔍 {s}
               </button>
@@ -186,35 +179,40 @@ const Explorer = () => {
             e.preventDefault();
             handleSearch();
           }}
-          className="flex gap-2 mb-4"
+          className="flex gap-2 mb-6"
         >
           <input
             type="text"
             placeholder="Search for an artist"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="border px-4 py-2 rounded-md w-full"
+            className="border border-gray-300 px-4 py-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
             Search
           </button>
         </form>
 
-        {results.map((artist) => (
-          <ArtistCard
-            key={artist.id}
-            artist={artist}
-            isOpen={dropdownOpen === artist.id}
-            onToggleDropdown={(id) =>
-              setDropdownOpen((prev) => (prev === id ? null : id))
-            }
-            onSaveLead={saveLead}
-            campaignList={campaignList}
-            isSavedTo={isSavedTo}
-            assignedCampaigns={savedCampaigns[artist.id] || []}
-            onRemoveFromCampaign={removeLead}
-          />
-        ))}
+        {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
+        {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {results.map((artist) => (
+            <ArtistCard
+              key={artist.id}
+              artist={artist}
+              isOpen={dropdownOpen === artist.id}
+              onToggleDropdown={(id) =>
+                setDropdownOpen((prev) => (prev === id ? null : id))
+              }
+              onSaveLead={saveLead}
+              campaignList={campaignList}
+              isSavedTo={isSavedTo}
+              assignedCampaigns={savedCampaigns[artist.id] || []}
+              onRemoveFromCampaign={removeLead}
+            />
+          ))}
+        </div>
 
         {/* 🔒 Force Tailwind to include dynamic styles */}
         <div className="hidden">
@@ -226,20 +224,22 @@ const Explorer = () => {
         </div>
       </div>
 
-      <ExploreManager
-        recentSearches={recentSearches}
-        onSearch={(q) => {
-          setQuery(q);
-          handleSearch(q);
-        }}
-        onPin={togglePin}
-        onRename={renameSearch}
-        onClear={clearSearches}
-        editingQuery={editingQuery}
-        setEditingQuery={setEditingQuery}
-        labelInput={labelInput}
-        setLabelInput={setLabelInput}
-      />
+      <div className="w-80 border-l bg-white shadow-inner">
+        <ExploreManager
+          recentSearches={recentSearches}
+          onSearch={(q) => {
+            setQuery(q);
+            handleSearch(q);
+          }}
+          onPin={togglePin}
+          onRename={renameSearch}
+          onClear={clearSearches}
+          editingQuery={editingQuery}
+          setEditingQuery={setEditingQuery}
+          labelInput={labelInput}
+          setLabelInput={setLabelInput}
+        />
+      </div>
     </div>
   );
 };
