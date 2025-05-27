@@ -4,7 +4,7 @@ import { searchArtists } from '../api/Spotify';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import useRecentSearches from '../hooks/useRecentSearches';
-import useTalentPool from '../hooks/useTalentPool'; // ✅ NEW
+import useTalentPool from '../hooks/useTalentPool';
 
 const Explorer = () => {
   const [query, setQuery] = useState('');
@@ -31,7 +31,7 @@ const Explorer = () => {
     addToPool,
     removeFromPool,
     isInPool
-  } = useTalentPool(); // ✅
+  } = useTalentPool();
 
   const navigate = useNavigate();
 
@@ -54,9 +54,18 @@ const Explorer = () => {
 
     const cachedResults = localStorage.getItem('explorer_results');
     const cachedQuery = localStorage.getItem('explorer_query');
-    if (cachedResults && cachedQuery) {
-      setResults(JSON.parse(cachedResults));
-      setQuery(cachedQuery);
+    const cachedTime = localStorage.getItem('explorer_timestamp');
+
+    if (cachedResults && cachedQuery && cachedTime) {
+      const age = Date.now() - parseInt(cachedTime, 10);
+      if (age < 5 * 60 * 1000) {
+        setResults(JSON.parse(cachedResults));
+        setQuery(cachedQuery);
+      } else {
+        localStorage.removeItem('explorer_results');
+        localStorage.removeItem('explorer_query');
+        localStorage.removeItem('explorer_timestamp');
+      }
     }
 
     ensureCampaignMetadata();
@@ -115,6 +124,7 @@ const Explorer = () => {
       setResults(artists);
       localStorage.setItem('explorer_results', JSON.stringify(artists));
       localStorage.setItem('explorer_query', searchTerm);
+      localStorage.setItem('explorer_timestamp', Date.now().toString());
       addSearch(searchTerm);
       setError(artists.length ? '' : 'No artists found.');
     } catch (err) {
@@ -195,45 +205,19 @@ const Explorer = () => {
         </form>
 
         {results.map((artist) => (
-          <div key={artist.id} className="border rounded p-4 mb-4 bg-white shadow">
-            <ArtistCard
-              artist={artist}
-              isOpen={dropdownOpen === artist.id}
-              onToggleDropdown={(id) =>
-                setDropdownOpen((prev) => (prev === id ? null : id))
-              }
-              onSaveLead={saveLead}
-              campaignList={campaignList}
-              isSavedTo={isSavedTo}
-              assignedCampaigns={savedCampaigns[artist.id] || []}
-              onRemoveFromCampaign={removeLead}
-            />
-            <div className="mt-2">
-              {isInPool(artist.id) ? (
-                <button
-                  onClick={() => removeFromPool(artist.id)}
-                  className="text-red-500 text-sm"
-                >
-                  ❌ Remove from Pool
-                </button>
-              ) : (
-                <button
-                  onClick={() => addToPool({
-                    id: artist.id,
-                    name: artist.name,
-                    image: artist.images?.[0]?.url || '',
-                    genres: artist.genres || [],
-                    monthlyListeners: artist.followers?.total || 0,
-                    preview_url: artist.preview_url || '',
-                    platforms: ['spotify']
-                  })}
-                  className="text-blue-500 text-sm"
-                >
-                  + Add to Pool
-                </button>
-              )}
-            </div>
-          </div>
+          <ArtistCard
+            key={artist.id}
+            artist={artist}
+            isOpen={dropdownOpen === artist.id}
+            onToggleDropdown={(id) =>
+              setDropdownOpen((prev) => (prev === id ? null : id))
+            }
+            onSaveLead={saveLead}
+            campaignList={campaignList}
+            isSavedTo={isSavedTo}
+            assignedCampaigns={savedCampaigns[artist.id] || []}
+            onRemoveFromCampaign={removeLead}
+          />
         ))}
       </div>
 

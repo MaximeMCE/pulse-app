@@ -1,5 +1,5 @@
 import React from 'react';
-import useTalentPool from '../hooks/useTalentPool'; // ✅ Add hook
+import useTalentPool from '../hooks/useTalentPool';
 
 const ArtistCard = ({
   artist,
@@ -15,7 +15,7 @@ const ArtistCard = ({
     addToPool,
     removeFromPool,
     isInPool
-  } = useTalentPool(); // ✅
+  } = useTalentPool();
 
   const handlePoolToggle = () => {
     const baseArtist = {
@@ -56,7 +56,6 @@ const ArtistCard = ({
           Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
         </div>
 
-        {/* Assigned Campaigns */}
         {assignedCampaigns.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2">
             {assignedCampaigns.map((camp) => (
@@ -77,7 +76,6 @@ const ArtistCard = ({
           </div>
         )}
 
-        {/* Save buttons */}
         <div className="mt-2 flex gap-2 flex-wrap">
           <button
             onClick={handlePoolToggle}
@@ -89,15 +87,15 @@ const ArtistCard = ({
           >
             {isInPool(artist.id) ? '❌ Pool' : '+ Pool'}
           </button>
+
           <button
             onClick={() => onToggleDropdown(artist.id)}
-            className="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700"
+            className="text-xs px-3 py-1 rounded border border-blue-600 text-blue-600 hover:bg-blue-50"
           >
             + Campaign
           </button>
         </div>
 
-        {/* Dropdown */}
         {isOpen && (
           <div className="mt-2 bg-white border p-3 rounded shadow max-w-xs">
             <div className="text-xs font-semibold text-gray-600 mb-2">Choose campaign:</div>
