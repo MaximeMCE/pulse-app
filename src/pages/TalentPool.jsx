@@ -1,7 +1,6 @@
 import React from 'react';
 import useTalentPool from '../hooks/useTalentPool';
 import useCampaigns from '../hooks/useCampaigns';
-import ArtistCard from '../components/ArtistCard';
 
 const TalentPool = () => {
   const { pool, removeFromPool } = useTalentPool();
@@ -13,21 +12,35 @@ const TalentPool = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">🎯 Talent Pool</h2>
+    <div className="p-6 bg-gray-50 min-h-screen text-gray-800">
+      <h2 className="text-2xl font-bold mb-6">🎯 Talent Pool</h2>
 
       {pool.length === 0 ? (
         <p className="text-gray-500">Your pool is empty. Add artists from Explorer.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="flex flex-col gap-4">
           {pool.map((artist) => (
-            <div key={artist.id} className="bg-white rounded-xl shadow p-4">
-              <ArtistCard artist={artist} />
-              <div className="flex justify-between mt-2">
+            <div
+              key={artist.id}
+              className="bg-white rounded-xl shadow p-4 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-4">
+                <img
+                  src={artist.image || 'https://via.placeholder.com/60'}
+                  alt={artist.name}
+                  className="w-14 h-14 object-cover rounded-lg"
+                />
+                <div>
+                  <p className="font-semibold">{artist.name}</p>
+                  <p className="text-sm text-gray-500">Status: {artist.status || 'New'}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
                 <select
                   onChange={(e) => handleMove(artist, e.target.value)}
                   defaultValue=""
-                  className="border rounded p-1 text-sm"
+                  className="border border-gray-300 rounded px-2 py-1 text-sm"
                 >
                   <option value="" disabled>
                     Move to Campaign
@@ -38,9 +51,10 @@ const TalentPool = () => {
                     </option>
                   ))}
                 </select>
+
                 <button
                   onClick={() => removeFromPool(artist.id)}
-                  className="text-red-600 text-sm"
+                  className="text-red-600 text-sm hover:underline"
                 >
                   ❌ Remove
                 </button>
