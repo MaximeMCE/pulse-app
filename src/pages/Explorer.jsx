@@ -14,7 +14,12 @@ const Explorer = () => {
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [campaignList, setCampaignList] = useState([]);
 
-  const { recent: recentSearches, addSearch, clearSearches } = useRecentSearches();
+  const {
+    recent: recentSearches,
+    addSearch,
+    clearSearches,
+    togglePin,
+  } = useRecentSearches();
 
   const navigate = useNavigate();
 
@@ -98,9 +103,7 @@ const Explorer = () => {
       setResults(artists);
       localStorage.setItem('explorer_results', JSON.stringify(artists));
       localStorage.setItem('explorer_query', searchTerm);
-
       addSearch(searchTerm);
-
       setError(artists.length ? '' : 'No artists found.');
     } catch (err) {
       setError('Search failed.');
@@ -136,7 +139,10 @@ const Explorer = () => {
           {searchSuggestions.map((s, i) => (
             <button
               key={i}
-              onClick={() => { setQuery(s); handleSearch(s); }}
+              onClick={() => {
+                setQuery(s);
+                handleSearch(s);
+              }}
               className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full"
             >
               🔍 {s}
@@ -155,22 +161,38 @@ const Explorer = () => {
                 🗑️ Clear
               </button>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {recentSearches.map((term, i) => (
-                <button
+            <div className="flex flex-wrap items-center gap-2">
+              {recentSearches.map(({ query, pinned }, i) => (
+                <div
                   key={i}
-                  onClick={() => { setQuery(term); handleSearch(term); }}
-                  className="text-sm bg-yellow-100 hover:bg-yellow-200 px-3 py-1 rounded-full"
+                  className="flex items-center bg-yellow-100 rounded-full px-2 py-1"
                 >
-                  🔁 {term}
-                </button>
+                  <button
+                    onClick={() => {
+                      setQuery(query);
+                      handleSearch(query);
+                    }}
+                    className="text-sm mr-2"
+                  >
+                    🔁 {query}
+                  </button>
+                  <button
+                    onClick={() => togglePin(query)}
+                    className="text-yellow-700 text-xs"
+                  >
+                    {pinned ? '⭐' : '☆'}
+                  </button>
+                </div>
               ))}
             </div>
           </div>
         )}
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="flex gap-2 mb-4">
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        handleSearch();
+      }} className="flex gap-2 mb-4">
         <input
           type="text"
           placeholder="Search for an artist"

@@ -7,12 +7,14 @@ export default function useRecentSearches(max = 3) {
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-    setRecent(stored);
+    setRecent(Array.isArray(stored) ? stored : []);
   }, []);
 
   const addSearch = (query) => {
-    const existing = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-    const updated = [query, ...existing.filter(q => q !== query)].slice(0, max);
+    const stored = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    const filtered = stored.filter((item) => item.query !== query);
+    const newEntry = { query, pinned: false };
+    const updated = [newEntry, ...filtered].slice(0, max + 5); // give room for pinned
     localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     setRecent(updated);
   };
@@ -22,5 +24,23 @@ export default function useRecentSearches(max = 3) {
     setRecent([]);
   };
 
-  return { recent, addSearch, clearSearches };
+  const togglePin = (query) => {
+    const updated = recent.map((item) =>
+      item.query === query ? { ...item, pinned: !item.pinned } : item
+    );
+    localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
+    setRecent(updated);
+  };
+
+  const sorted = [
+    ...recent.filter((item) => item.pinned),
+    ...recent.filter((item) => !item.pinned),
+  ].slice(0, max);
+
+  return {
+    recent: sorted,
+    addSearch,
+    clearSearches,
+    togglePin,
+  };
 }
