@@ -3,6 +3,12 @@ import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import CampaignManager from '../components/CampaignManager';
 
+// 🛑 INLINE MockRecommendations (for debug)
+function MockRecommendations() {
+  throw new Error("🛑 MOCKRECOMMENDATIONS IS LOADED");
+  // (You can put your real recommendation logic back once tested)
+}
+
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();
   const [campaigns, setCampaigns] = useState([]);
@@ -79,9 +85,7 @@ const CampaignDetails = () => {
         {/* 1. Smart Recommendations */}
         <div className="mb-6">
           <p className="text-sm font-medium mb-1">🎯 Get suggestions based on your campaign</p>
-          <div className="bg-gray-100 rounded px-4 py-3 text-sm text-gray-500">
-            Smart recommendations coming soon...
-          </div>
+          <MockRecommendations />
         </div>
 
         {/* 2. Explorer Redirect */}
