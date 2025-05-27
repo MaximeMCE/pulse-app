@@ -11,6 +11,7 @@ const CampaignDetails = () => {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadStatus, setNewLeadStatus] = useState('New');
+  const [moveTarget, setMoveTarget] = useState('');
 
   useEffect(() => {
     const storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || [];
@@ -102,6 +103,28 @@ const CampaignDetails = () => {
     );
   };
 
+  const bulkMoveToCampaign = () => {
+    if (!moveTarget) return;
+
+    const targetCampaign = campaigns.find(c => c.title === moveTarget);
+    if (!targetCampaign) return;
+
+    const targetKey = `leads_${moveTarget.toLowerCase()}`;
+    const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
+    const leadsToMove = leads.filter(l => selectedLeads.includes(l.id));
+
+    localStorage.setItem(
+      targetKey,
+      JSON.stringify([...targetLeads, ...leadsToMove])
+    );
+
+    const updatedLeads = leads.filter(l => !selectedLeads.includes(l.id));
+    setLeads(updatedLeads);
+    setSelectedLeads([]);
+    setMoveTarget('');
+    window.dispatchEvent(new Event('lead-deleted'));
+    window.dispatchEvent(new Event('leadsUpdated'));
+  };
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <div className="text-sm text-gray-500 mb-2">
@@ -164,9 +187,9 @@ const CampaignDetails = () => {
 
       {/* 🔁 Bulk Actions */}
       {selectedLeads.length > 0 && (
-        <div className="mt-6 p-4 bg-yellow-50 border rounded shadow-sm flex justify-between items-center">
+        <div className="mt-6 p-4 bg-yellow-50 border rounded shadow-sm flex flex-col gap-2 md:flex-row md:justify-between md:items-center">
           <span className="text-sm">{selectedLeads.length} selected</span>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <select
               onChange={(e) => bulkUpdateStatus(e.target.value)}
               className="border rounded px-2 py-1"
@@ -177,6 +200,29 @@ const CampaignDetails = () => {
               <option>Qualified</option>
               <option>Lost</option>
             </select>
+
+            <select
+              value={moveTarget}
+              onChange={(e) => setMoveTarget(e.target.value)}
+              className="border rounded px-2 py-1"
+            >
+              <option value="">Move to campaign</option>
+              {campaigns
+                .filter(c => c.id !== campaignId)
+                .map(c => (
+                  <option key={c.id} value={c.title}>
+                    {c.title}
+                  </option>
+                ))}
+            </select>
+
+            <button
+              onClick={bulkMoveToCampaign}
+              className="text-blue-600 hover:underline text-sm"
+            >
+              Move selected
+            </button>
+
             <button
               onClick={bulkDelete}
               className="text-red-600 hover:underline text-sm"
@@ -239,6 +285,6 @@ const CampaignDetails = () => {
       </div>
     </div>
   );
-};
+  };
 
-export default CampaignDetails;
+  export default CampaignDetails;
