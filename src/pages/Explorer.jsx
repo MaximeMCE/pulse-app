@@ -24,6 +24,7 @@ const Explorer = () => {
     maxListeners: 100000,
     recentRelease: '30',
     genres: [],
+    genreSource: 'spotify',
   });
 
   const { recent: recentSearches, addSearch, clearSearches, togglePin, renameSearch } = useRecentSearches();
@@ -123,7 +124,18 @@ const Explorer = () => {
         const listeners = artist.listeners ?? 0;
         const listenerCheck = listeners >= filters.minListeners && listeners <= filters.maxListeners;
         const releaseCheck = filters.recentRelease === 'off' || (artist.releaseDaysAgo !== undefined && artist.releaseDaysAgo <= parseInt(filters.recentRelease));
-        const genreCheck = filters.genres.length === 0 || (artist.genres && filters.genres.some((g) => artist.genres.map((x) => x.toLowerCase()).includes(g.toLowerCase())));
+
+        let genreCheck = true;
+        if (filters.genres.length > 0) {
+          if (filters.genreSource === 'spotify') {
+            const artistGenres = (artist.genres || []).map(g => g.toLowerCase());
+            genreCheck = filters.genres.some(g => artistGenres.includes(g.toLowerCase()));
+          } else if (filters.genreSource === 'custom') {
+            const customGenres = (artist.customGenres || []).map(g => g.toLowerCase());
+            genreCheck = filters.genres.some(g => customGenres.includes(g.toLowerCase()));
+          }
+        }
+
         return listenerCheck && releaseCheck && genreCheck;
       });
 
@@ -173,7 +185,7 @@ const Explorer = () => {
       <div className="flex-1 p-6 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
 
-        <FilterBlock onFilterChange={setFilters} />
+        <FilterBlock filters={filters} onFilterChange={setFilters} />
         <SearchBlock
           query={query}
           setQuery={setQuery}

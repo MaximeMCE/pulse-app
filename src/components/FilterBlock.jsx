@@ -5,6 +5,7 @@ const FilterBlock = ({ onFilterChange }) => {
   const [listenerTier, setListenerTier] = useState('micro');
   const [recentRelease, setRecentRelease] = useState('30');
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const [genreSource, setGenreSource] = useState('spotify');
 
   useEffect(() => {
     const ranges = {
@@ -14,19 +15,21 @@ const FilterBlock = ({ onFilterChange }) => {
       indie: [100000, 500000],
       any: [0, 1000000],
     };
-    const [min, max] = ranges[listenerTier];
+    const [minListeners, maxListeners] = ranges[listenerTier];
     onFilterChange({
-      minListeners: min,
-      maxListeners: max,
+      minListeners,
+      maxListeners,
       recentRelease,
-      selectedGenres,
+      genres: selectedGenres,
+      genreSource,
     });
-  }, [listenerTier, recentRelease, selectedGenres]);
+  }, [listenerTier, recentRelease, selectedGenres, genreSource]);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow mb-6 space-y-6 border border-gray-200">
       <h2 className="text-lg font-semibold">🎛 Discovery Filters</h2>
 
+      {/* === Audience Tier === */}
       <div>
         <label className="block text-sm font-medium mb-1">Audience Tier</label>
         <select
@@ -42,6 +45,7 @@ const FilterBlock = ({ onFilterChange }) => {
         </select>
       </div>
 
+      {/* === Recent Release === */}
       <div>
         <label className="block text-sm font-medium mb-1">Recent Release</label>
         <select
@@ -55,6 +59,20 @@ const FilterBlock = ({ onFilterChange }) => {
         </select>
       </div>
 
+      {/* === Genre Source === */}
+      <div>
+        <label className="block text-sm font-medium mb-1">Genre Source</label>
+        <select
+          value={genreSource}
+          onChange={(e) => setGenreSource(e.target.value)}
+          className="w-full border rounded px-3 py-2"
+        >
+          <option value="spotify">🎵 Spotify Genres</option>
+          <option value="custom">🧠 Scora AI Genres</option>
+        </select>
+      </div>
+
+      {/* === Genre Picker === */}
       <div>
         <label className="block text-sm font-medium mb-1">Genres</label>
         <GenrePicker
