@@ -6,7 +6,9 @@ const ArtistCard = ({
   onToggleDropdown,
   onSaveLead,
   campaignList,
-  isSavedTo
+  isSavedTo,
+  assignedCampaigns = [],
+  onRemoveFromCampaign
 }) => {
   return (
     <div key={artist.id} className="border-b py-4 flex items-center">
@@ -33,6 +35,29 @@ const ArtistCard = ({
         <div className="text-sm text-gray-400">
           Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
         </div>
+
+        {/* Assigned Campaigns */}
+        {assignedCampaigns.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {assignedCampaigns.map((camp) => (
+              <div
+                key={camp}
+                className="flex items-center bg-gray-100 text-xs text-gray-700 border border-gray-300 px-2 py-1 rounded"
+              >
+                {camp}
+                <button
+                  onClick={() => onRemoveFromCampaign(artist.id, camp)}
+                  className="ml-2 text-red-500 hover:text-red-700"
+                  title={`Remove from ${camp}`}
+                >
+                  ❌
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Save buttons */}
         <div className="mt-2 flex gap-2 flex-wrap">
           <button
             onClick={() => onSaveLead(artist, 'Talent Pool')}
@@ -48,6 +73,7 @@ const ArtistCard = ({
           </button>
         </div>
 
+        {/* Dropdown */}
         {isOpen && (
           <div className="mt-2 bg-white border p-3 rounded shadow max-w-xs">
             <div className="text-xs font-semibold text-gray-600 mb-2">Choose campaign:</div>

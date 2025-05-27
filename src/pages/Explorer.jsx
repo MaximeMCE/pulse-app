@@ -119,6 +119,8 @@ const Explorer = () => {
   const saveLead = (artist, campaign) => {
     const key = `leads_${campaign.toLowerCase()}`;
     const existing = JSON.parse(localStorage.getItem(key)) || [];
+    if (existing.find(l => l.id === artist.id)) return;
+
     const newLead = {
       id: artist.id,
       name: artist.name,
@@ -132,6 +134,15 @@ const Explorer = () => {
   };
 
   const isSavedTo = (id, campaign) => savedCampaigns[id]?.includes(campaign);
+
+  const removeLead = (artistId, campaignTitle) => {
+    const key = `leads_${campaignTitle.toLowerCase()}`;
+    const existing = JSON.parse(localStorage.getItem(key)) || [];
+    const updated = existing.filter(lead => lead.id !== artistId);
+    localStorage.setItem(key, JSON.stringify(updated));
+    window.dispatchEvent(new Event('leadsUpdated'));
+    refreshSavedCampaigns();
+  };
 
   return (
     <div className="flex h-screen">
@@ -186,6 +197,8 @@ const Explorer = () => {
             onSaveLead={saveLead}
             campaignList={campaignList}
             isSavedTo={isSavedTo}
+            assignedCampaigns={savedCampaigns[artist.id] || []}
+            onRemoveFromCampaign={removeLead}
           />
         ))}
       </div>
