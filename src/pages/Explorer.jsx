@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import ArtistCard from '../components/ArtistCard';
+import useRecentSearches from '../hooks/useRecentSearches';
 
 const Explorer = () => {
   const [query, setQuery] = useState('');
@@ -12,7 +13,8 @@ const Explorer = () => {
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [campaignList, setCampaignList] = useState([]);
-  const [recentSearches, setRecentSearches] = useState([]);
+
+  const { recent: recentSearches, addSearch, clearSearches } = useRecentSearches();
 
   const navigate = useNavigate();
 
@@ -39,9 +41,6 @@ const Explorer = () => {
       setResults(JSON.parse(cachedResults));
       setQuery(cachedQuery);
     }
-
-    const recent = JSON.parse(localStorage.getItem('explorer_recent') || '[]');
-    setRecentSearches(recent);
 
     ensureCampaignMetadata();
     refreshCampaignList();
@@ -100,10 +99,7 @@ const Explorer = () => {
       localStorage.setItem('explorer_results', JSON.stringify(artists));
       localStorage.setItem('explorer_query', searchTerm);
 
-      const existing = JSON.parse(localStorage.getItem('explorer_recent') || '[]');
-      const updated = [searchTerm, ...existing.filter(q => q !== searchTerm)].slice(0, 3);
-      localStorage.setItem('explorer_recent', JSON.stringify(updated));
-      setRecentSearches(updated);
+      addSearch(searchTerm);
 
       setError(artists.length ? '' : 'No artists found.');
     } catch (err) {
@@ -153,10 +149,7 @@ const Explorer = () => {
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-sm font-semibold text-gray-600">Recent searches:</h3>
               <button
-                onClick={() => {
-                  localStorage.removeItem('explorer_recent');
-                  setRecentSearches([]);
-                }}
+                onClick={clearSearches}
                 className="text-xs text-red-500 hover:underline"
               >
                 🗑️ Clear
