@@ -33,7 +33,6 @@ const CampaignDetails = () => {
     }
   }, [leads, campaignKey]);
 
-  // ✅ NEW: Listen for external leadsUpdated events
   useEffect(() => {
     const handleUpdate = () => {
       if (!campaignKey) return;
@@ -62,7 +61,10 @@ const CampaignDetails = () => {
 
   const deleteLead = (id) => {
     if (window.confirm('Delete this lead?')) {
-      setLeads(prev => prev.filter(l => l.id !== id));
+      const updatedLeads = leads.filter(l => l.id !== id);
+      setLeads(updatedLeads);
+      // 🔁 Notify recommendations to refresh
+      window.dispatchEvent(new Event('lead-deleted'));
     }
   };
 
@@ -74,7 +76,6 @@ const CampaignDetails = () => {
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
-      {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-2">
         <a href="/campaigns" className="text-blue-600 hover:underline">Campaigns</a>
         <span className="mx-1">›</span>
@@ -85,17 +86,14 @@ const CampaignDetails = () => {
 
       <CampaignManager />
 
-      {/* 🧩 Unified 'Need new leads?' Section */}
       <div className="mt-8 p-4 border rounded shadow-sm bg-white">
         <h2 className="text-lg font-semibold mb-4">Need new leads?</h2>
 
-        {/* 1. Smart Recommendations */}
         <div className="mb-6">
           <p className="text-sm font-medium mb-1">🎯 Get suggestions based on your campaign</p>
           <MockRecommendations />
         </div>
 
-        {/* 2. Explorer Redirect */}
         <div className="mb-6">
           <p className="text-sm font-medium mb-2">🔍 Explore artists manually</p>
           <a
@@ -106,7 +104,6 @@ const CampaignDetails = () => {
           </a>
         </div>
 
-        {/* 3. Manual Add */}
         <div>
           <p className="text-sm font-medium mb-2">📝 Add an artist manually</p>
           <div className="flex gap-2">
@@ -137,7 +134,6 @@ const CampaignDetails = () => {
         </div>
       </div>
 
-      {/* Lead List */}
       <div className="mt-8">
         {leads.length === 0 ? (
           <p>No leads yet.</p>

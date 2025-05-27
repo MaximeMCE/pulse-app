@@ -15,6 +15,12 @@ const MockRecommendations = () => {
   const [suggested, setSuggested] = useState([]);
   const [assignedIds, setAssignedIds] = useState([]);
 
+  const refreshAssignedLeads = (campaignTitle) => {
+    const key = `leads_${campaignTitle.toLowerCase()}`;
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    setAssignedIds(existing.map((l) => l.id));
+  };
+
   useEffect(() => {
     const storedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
     const found = storedCampaigns.find((c) => c.id === id);
@@ -34,25 +40,33 @@ const MockRecommendations = () => {
     });
 
     setSuggested(matched.slice(0, 3));
-
-    const key = `leads_${found.title.toLowerCase()}`;
-    const existing = JSON.parse(localStorage.getItem(key) || '[]');
-    setAssignedIds(existing.map(l => l.id));
+    refreshAssignedLeads(found.title);
   }, [id]);
+
+  // 🔁 Listen for deletions
+  useEffect(() => {
+    if (!campaign) return;
+
+    const handler = () => {
+      refreshAssignedLeads(campaign.title);
+    };
+
+    window.addEventListener('lead-deleted', handler);
+    return () => window.removeEventListener('lead-deleted', handler);
+  }, [campaign]);
 
   const addToCampaign = (artist) => {
     if (!campaign) return;
     const key = `leads_${campaign.title.toLowerCase()}`;
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
 
-    // prevent duplicates
     if (existing.some((l) => l.id === artist.id)) return;
 
     const newLead = {
       id: artist.id,
       name: artist.name,
       status: 'New',
-      image: '', // no image in mock
+      image: '',
       campaign: campaign.title,
     };
 
