@@ -6,10 +6,10 @@ const Sidebar = () => {
   const location = useLocation();
 
   const handleExplorerClick = (e) => {
-    e.preventDefault(); // Prevent default NavLink behavior
+    e.preventDefault();
     if (location.pathname === '/explorer') {
-      console.log('🔁 Resetting Explorer...');
-      window.dispatchEvent(new Event('resetExplorer'));
+      console.log('🔁 Reloading Explorer...');
+      window.location.reload();
     } else {
       navigate('/explorer');
     }

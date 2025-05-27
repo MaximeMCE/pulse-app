@@ -59,19 +59,6 @@ const Explorer = () => {
     return () => window.removeEventListener('leadsUpdated', refreshSavedCampaigns);
   }, []);
 
-  useEffect(() => {
-    const resetExplorer = () => {
-      console.log('🔄 Explorer received reset event');
-      setQuery('');
-      setResults([]);
-      localStorage.removeItem('explorer_results');
-      localStorage.removeItem('explorer_query');
-    };
-
-    window.addEventListener('resetExplorer', resetExplorer);
-    return () => window.removeEventListener('resetExplorer', resetExplorer);
-  }, []);
-
   const ensureCampaignMetadata = () => {
     const allCampaigns = Object.keys(localStorage)
       .filter(k => k.startsWith('leads_'))
