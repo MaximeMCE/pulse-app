@@ -72,50 +72,57 @@ const CampaignDetails = () => {
 
       <CampaignManager />
 
-      {/* 🔍 Unified Need Leads Section */}
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold mb-2">Need new leads?</h2>
-        <p className="text-sm text-gray-600 mb-4">
-          Based on your campaign, we’ll suggest relevant artists here — or you can explore manually, or add someone directly.
-        </p>
+      {/* 🧩 Unified 'Need new leads?' Section */}
+      <div className="mt-8 p-4 border rounded shadow-sm bg-white">
+        <h2 className="text-lg font-semibold mb-4">Need new leads?</h2>
 
-        {/* Placeholder for future recommendations */}
-        <div className="bg-gray-100 p-4 rounded mb-4">
-          <p className="text-sm text-gray-500">🎯 Smart recommendations coming soon...</p>
+        {/* 1. Smart Recommendations */}
+        <div className="mb-6">
+          <p className="text-sm font-medium mb-1">🎯 Get suggestions based on your campaign</p>
+          <div className="bg-gray-100 rounded px-4 py-3 text-sm text-gray-500">
+            Smart recommendations coming soon...
+          </div>
         </div>
 
-        <a
-          href="/explorer"
-          className="inline-block bg-black text-white text-sm px-4 py-2 rounded hover:bg-gray-800 mb-4"
-        >
-          Go to Explorer
-        </a>
+        {/* 2. Explorer Redirect */}
+        <div className="mb-6">
+          <p className="text-sm font-medium mb-2">🔍 Explore artists manually</p>
+          <a
+            href="/explorer"
+            className="inline-block bg-black text-white text-sm px-4 py-2 rounded hover:bg-gray-800"
+          >
+            Go to Explorer
+          </a>
+        </div>
 
-        {/* Manual Add */}
-        <div className="flex gap-2 mt-4">
-          <input
-            type="text"
-            placeholder="New lead name"
-            value={newLeadName}
-            onChange={(e) => setNewLeadName(e.target.value)}
-            className="border rounded px-3 py-2 flex-grow"
-          />
-          <select
-            value={newLeadStatus}
-            onChange={(e) => setNewLeadStatus(e.target.value)}
-            className="border rounded px-2 py-2"
-          >
-            <option>New</option>
-            <option>Contacted</option>
-            <option>Qualified</option>
-            <option>Lost</option>
-          </select>
-          <button
-            onClick={addLead}
-            className="bg-black text-white px-4 py-2 rounded"
-          >
-            Add Lead
-          </button>
+        {/* 3. Manual Add */}
+        <div>
+          <p className="text-sm font-medium mb-2">📝 Add an artist manually</p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="New lead name"
+              value={newLeadName}
+              onChange={(e) => setNewLeadName(e.target.value)}
+              className="border rounded px-3 py-2 flex-grow"
+            />
+            <select
+              value={newLeadStatus}
+              onChange={(e) => setNewLeadStatus(e.target.value)}
+              className="border rounded px-2 py-2"
+            >
+              <option>New</option>
+              <option>Contacted</option>
+              <option>Qualified</option>
+              <option>Lost</option>
+            </select>
+            <button
+              onClick={addLead}
+              className="bg-black text-white px-4 py-2 rounded"
+            >
+              Add Lead
+            </button>
+          </div>
         </div>
       </div>
 
