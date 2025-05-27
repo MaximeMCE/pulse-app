@@ -2,44 +2,64 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const mockArtists = [
-  { name: 'DJ Aurora', genre: 'House', region: 'Amsterdam' },
-  { name: 'Bassline Syndicate', genre: 'Techno', region: 'Berlin' },
-  { name: 'Luna Fade', genre: 'Electropop', region: 'Paris' },
-  { name: 'Night Drip', genre: 'Trap', region: 'Rotterdam' },
-  { name: 'Sonic Bloom', genre: 'Ambient', region: 'London' },
+  { id: 'a1', name: 'DJ Aurora', genre: 'House', region: 'Amsterdam' },
+  { id: 'a2', name: 'Bassline Syndicate', genre: 'Techno', region: 'Berlin' },
+  { id: 'a3', name: 'Luna Fade', genre: 'Electropop', region: 'Paris' },
+  { id: 'a4', name: 'Night Drip', genre: 'Trap', region: 'Rotterdam' },
+  { id: 'a5', name: 'Sonic Bloom', genre: 'Ambient', region: 'London' },
 ];
 
 const MockRecommendations = () => {
   const { id } = useParams();
   const [campaign, setCampaign] = useState(null);
   const [suggested, setSuggested] = useState([]);
+  const [assignedIds, setAssignedIds] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem('campaigns');
-    if (!stored) return;
-
-    const all = JSON.parse(stored);
-    const found = all.find((c) => c.id === id);
+    const storedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+    const found = storedCampaigns.find((c) => c.id === id);
     if (!found) return;
     setCampaign(found);
 
     const keywords = (found.goal || '').toLowerCase();
     const region = (found.region || '').toLowerCase();
-
     const genreWords = keywords.split(/\s+/);
 
-    const results = mockArtists.filter((artist) => {
+    const matched = mockArtists.filter((artist) => {
       const genreMatch = genreWords.some((word) =>
         artist.genre.toLowerCase().includes(word)
       );
-      const regionMatch =
-        region && artist.region.toLowerCase().includes(region);
-
+      const regionMatch = region && artist.region.toLowerCase().includes(region);
       return genreMatch || regionMatch;
     });
 
-    setSuggested(results.slice(0, 3));
+    setSuggested(matched.slice(0, 3));
+
+    const key = `leads_${found.title.toLowerCase()}`;
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    setAssignedIds(existing.map(l => l.id));
   }, [id]);
+
+  const addToCampaign = (artist) => {
+    if (!campaign) return;
+    const key = `leads_${campaign.title.toLowerCase()}`;
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+
+    // prevent duplicates
+    if (existing.some((l) => l.id === artist.id)) return;
+
+    const newLead = {
+      id: artist.id,
+      name: artist.name,
+      status: 'New',
+      image: '', // no image in mock
+      campaign: campaign.title,
+    };
+
+    localStorage.setItem(key, JSON.stringify([...existing, newLead]));
+    setAssignedIds((prev) => [...prev, artist.id]);
+    window.dispatchEvent(new Event('leadsUpdated'));
+  };
 
   if (!campaign) return null;
 
@@ -47,17 +67,24 @@ const MockRecommendations = () => {
     <div>
       {suggested.length > 0 ? (
         <ul className="space-y-2">
-          {suggested.map((artist, index) => (
+          {suggested.map((artist) => (
             <li
-              key={index}
+              key={artist.id}
               className="border rounded px-3 py-2 bg-gray-50 flex justify-between items-center"
             >
               <span>
                 <strong>{artist.name}</strong> — {artist.genre} ({artist.region})
               </span>
-              <button className="text-sm text-blue-600 hover:underline">
-                + Add to campaign
-              </button>
+              {assignedIds.includes(artist.id) ? (
+                <span className="text-xs text-green-600 font-medium">✅ Added</span>
+              ) : (
+                <button
+                  onClick={() => addToCampaign(artist)}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  + Add to campaign
+                </button>
+              )}
             </li>
           ))}
         </ul>
