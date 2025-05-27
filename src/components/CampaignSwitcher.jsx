@@ -1,14 +1,14 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const CampaignSwitcher = ({ campaigns, currentCampaignId }) => {
-  const navigate = useNavigate();
   const { id } = useParams();
 
   const handleChange = (e) => {
     const selectedId = e.target.value;
     if (selectedId && selectedId !== id) {
-      navigate(`/campaigns/${selectedId}`);
+      // 🔁 Force full reload to re-trigger campaign context
+      window.location.href = `/campaigns/${selectedId}`;
     }
   };
 
