@@ -10,6 +10,7 @@ const Explorer = () => {
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [campaignList, setCampaignList] = useState([]);
+  const [recentSearches, setRecentSearches] = useState([]);
 
   const searchSuggestions = [
     'Techno artists under 10K listeners',
@@ -22,9 +23,23 @@ const Explorer = () => {
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (storedToken) setToken(storedToken);
+
+    // Load recent search results
+    const cachedResults = localStorage.getItem('explorer_results');
+    const cachedQuery = localStorage.getItem('explorer_query');
+    if (cachedResults && cachedQuery) {
+      setResults(JSON.parse(cachedResults));
+      setQuery(cachedQuery);
+    }
+
+    // Load recent search terms
+    const recent = JSON.parse(localStorage.getItem('explorer_recent') || '[]');
+    setRecentSearches(recent);
+
     ensureCampaignMetadata();
     refreshCampaignList();
     refreshSavedCampaigns();
+
     window.addEventListener('leadsUpdated', refreshSavedCampaigns);
     return () => window.removeEventListener('leadsUpdated', refreshSavedCampaigns);
   }, []);
@@ -77,6 +92,13 @@ const Explorer = () => {
       setResults(artists);
       localStorage.setItem('explorer_results', JSON.stringify(artists));
       localStorage.setItem('explorer_query', searchTerm);
+
+      // Update recent search list
+      const existing = JSON.parse(localStorage.getItem('explorer_recent') || '[]');
+      const updated = [searchTerm, ...existing.filter(q => q !== searchTerm)].slice(0, 3);
+      localStorage.setItem('explorer_recent', JSON.stringify(updated));
+      setRecentSearches(updated);
+
       setError(artists.length ? '' : 'No artists found.');
     } catch (err) {
       setError('Search failed.');
@@ -105,22 +127,37 @@ const Explorer = () => {
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
+
       <div className="mb-6">
         <h3 className="text-sm font-semibold text-gray-600 mb-2">Try one of these:</h3>
         <div className="flex flex-wrap gap-2">
           {searchSuggestions.map((s, i) => (
             <button
               key={i}
-              onClick={() => {
-                setQuery(s);
-                handleSearch(s);
-              }}
+              onClick={() => { setQuery(s); handleSearch(s); }}
               className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full"
             >
               🔍 {s}
             </button>
           ))}
         </div>
+
+        {recentSearches.length > 0 && (
+          <div className="mt-4">
+            <h3 className="text-sm font-semibold text-gray-600 mb-2">Recent searches:</h3>
+            <div className="flex flex-wrap gap-2">
+              {recentSearches.map((term, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setQuery(term); handleSearch(term); }}
+                  className="text-sm bg-yellow-100 hover:bg-yellow-200 px-3 py-1 rounded-full"
+                >
+                  🔁 {term}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="flex gap-2 mb-4">
