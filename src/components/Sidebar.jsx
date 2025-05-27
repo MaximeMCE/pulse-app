@@ -1,7 +1,19 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleExplorerClick = (e) => {
+    e.preventDefault(); // Prevent default NavLink behavior
+    if (location.pathname === '/explorer') {
+      window.dispatchEvent(new Event('resetExplorer'));
+    } else {
+      navigate('/explorer');
+    }
+  };
+
   return (
     <nav className="flex flex-col space-y-4 p-4 border-r h-full">
       <NavLink
@@ -15,6 +27,7 @@ const Sidebar = () => {
 
       <NavLink
         to="/explorer"
+        onClick={handleExplorerClick}
         className={({ isActive }) =>
           isActive ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
         }
