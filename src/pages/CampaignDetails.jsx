@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import CampaignManager from '../components/CampaignManager';
-import MockRecommendations from '../components/MockRecommendations'; // Only import, no function in this file
+import MockRecommendations from '../components/MockRecommendations';
 
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();
@@ -21,7 +21,7 @@ const CampaignDetails = () => {
 
   useEffect(() => {
     if (campaignKey) {
-      const storedLeads = JSON.parse(localStorage.getItem(campaignKey)) || [];
+      const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
       setLeads(storedLeads);
     }
   }, [campaignKey]);
@@ -32,6 +32,18 @@ const CampaignDetails = () => {
       window.dispatchEvent(new Event('leadsUpdated'));
     }
   }, [leads, campaignKey]);
+
+  // ✅ NEW: Listen for external leadsUpdated events
+  useEffect(() => {
+    const handleUpdate = () => {
+      if (!campaignKey) return;
+      const updatedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+      setLeads(updatedLeads);
+    };
+
+    window.addEventListener('leadsUpdated', handleUpdate);
+    return () => window.removeEventListener('leadsUpdated', handleUpdate);
+  }, [campaignKey]);
 
   if (!campaign) return <div className="p-6">Campaign not found.</div>;
 
