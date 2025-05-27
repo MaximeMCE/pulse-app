@@ -39,7 +39,6 @@ const Explorer = () => {
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (!storedToken) {
-      // 🧹 Clear explorer state on logout/disconnect
       localStorage.removeItem('explorer_results');
       localStorage.removeItem('explorer_query');
       localStorage.removeItem('explorer_timestamp');
@@ -216,6 +215,15 @@ const Explorer = () => {
             onRemoveFromCampaign={removeLead}
           />
         ))}
+
+        {/* 🔒 Force Tailwind to include dynamic styles */}
+        <div className="hidden">
+          <div className="text-blue-600 border-blue-600 hover:bg-blue-50"></div>
+          <div className="text-green-600 border-green-600 hover:bg-green-50"></div>
+          <div className="text-red-600 border-red-400 hover:bg-red-50"></div>
+          <div className="text-gray-400 border-gray-300 hover:bg-gray-100"></div>
+          <div className="text-black cursor-not-allowed"></div>
+        </div>
       </div>
 
       <ExploreManager
