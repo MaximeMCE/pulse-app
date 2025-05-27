@@ -1,4 +1,4 @@
-import './generated.css'; // ✅ Use the precompiled Tailwind file
+import './index.css'; // ✅ assuming this is where @tailwind base/components/utilities live
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
