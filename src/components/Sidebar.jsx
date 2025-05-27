@@ -1,9 +1,26 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleClick = (path) => {
+    if (location.pathname === path) {
+      // ⚠️ Only reload if user is already on the same route
+      window.location.reload();
+    } else {
+      setTimeout(() => {
+        // If navigate fails silently (React Router quirk), fallback:
+        const watchdog = setTimeout(() => {
+          window.location.href = path; // 🔁 Last resort
+        }, 300);
+
+        navigate(path);
+        clearTimeout(watchdog); // cancel fallback if it worked
+      }, 0);
+    }
+  };
 
   const links = [
     { label: 'Dashboard', path: '/dashboard' },
@@ -12,15 +29,6 @@ const Sidebar = () => {
     { label: 'Leads', path: '/leads' },
     { label: 'Settings', path: '/settings' },
   ];
-
-  const handleClick = (path) => {
-    if (location.pathname === path) {
-      // Only reload if already on the same page
-      window.location.reload();
-    } else {
-      navigate(path); // Smooth single-page navigation
-    }
-  };
 
   return (
     <nav className="flex flex-col space-y-4 p-4 border-r h-full">
