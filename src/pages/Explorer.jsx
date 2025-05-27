@@ -39,6 +39,10 @@ const Explorer = () => {
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
     if (!storedToken) {
+      // 🧹 Clear explorer state on logout/disconnect
+      localStorage.removeItem('explorer_results');
+      localStorage.removeItem('explorer_query');
+      localStorage.removeItem('explorer_timestamp');
       navigate('/login');
       return;
     }
