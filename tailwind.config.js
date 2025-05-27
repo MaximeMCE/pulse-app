@@ -5,6 +5,7 @@ module.exports = {
     './src/**/*.{js,jsx,ts,tsx}',
   ],
   safelist: [
+    // Existing
     'bg-blue-200', 'text-blue-800',
     'bg-yellow-200', 'text-yellow-800',
     'bg-green-200', 'text-green-800',
@@ -20,7 +21,14 @@ module.exports = {
     'bg-green-500', 'text-green-500',
     'bg-red-500', 'text-red-500',
     'bg-gray-500', 'text-gray-500',
-    'w-20', 'h-20', // ✅ Added to prevent image size classes from being purged
+    'w-20', 'h-20',
+
+    // 🆕 Dynamic button states
+    'border-blue-600', 'text-blue-600', 'hover:bg-blue-50',
+    'border-green-600', 'text-green-600', 'hover:bg-green-50',
+    'border-red-400', 'text-red-600', 'hover:bg-red-50',
+    'text-gray-400', 'border-gray-300', 'cursor-not-allowed',
+    'hover:bg-gray-100', 'border-gray-400', 'text-black'
   ],
   theme: {
     extend: {
