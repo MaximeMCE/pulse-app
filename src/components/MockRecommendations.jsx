@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+// 🚨 This will throw a visible error if the file is loaded at all!
+throw new Error("🛑 MOCKRECOMMENDATIONS IS LOADED");
+
 const mockArtists = [
   { name: 'DJ Aurora', genre: 'House', region: 'Amsterdam' },
   { name: 'Bassline Syndicate', genre: 'Techno', region: 'Berlin' },
