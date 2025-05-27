@@ -5,12 +5,16 @@ module.exports = {
     './src/**/*.{js,jsx,ts,tsx}',
   ],
   safelist: [
-    // 🛡 Regex safelist to preserve all dynamic color classes + hover variants
+    // Base color classes
     {
-      pattern: /^(bg|text|border|hover:bg)-(red|blue|green|gray)-(50|100|200|300|400|500|600|700|800|900)$/,
-      variants: ['hover'],
+      pattern: /^(bg|text|border)-(red|blue|green|gray)-(50|100|200|300|400|500|600|700|800|900)$/,
     },
-    // 🔒 Specific classes not covered by the regex
+    // Hover variants must be defined separately
+    {
+      pattern: /^hover:bg-(red|blue|green|gray)-(50|100|200|300|400|500|600|700|800|900)$/,
+      variants: [],
+    },
+    // Specific non-color classes
     'cursor-not-allowed',
     'w-20',
     'h-20',
