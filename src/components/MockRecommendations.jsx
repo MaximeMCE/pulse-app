@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-// 🚨 This will throw a visible error if the file is loaded at all!
-throw new Error("🛑 MOCKRECOMMENDATIONS IS LOADED");
-
 const mockArtists = [
   { name: 'DJ Aurora', genre: 'House', region: 'Amsterdam' },
   { name: 'Bassline Syndicate', genre: 'Techno', region: 'Berlin' },
@@ -29,10 +26,6 @@ const MockRecommendations = () => {
     const keywords = (found.goal || '').toLowerCase();
     const region = (found.region || '').toLowerCase();
 
-    console.log('CAMPAIGN:', found);
-    console.log('GOAL keywords:', keywords);
-    console.log('REGION:', region);
-
     const genreWords = keywords.split(/\s+/);
 
     const results = mockArtists.filter((artist) => {
@@ -41,11 +34,6 @@ const MockRecommendations = () => {
       );
       const regionMatch =
         region && artist.region.toLowerCase().includes(region);
-
-      console.log(`Matching: ${artist.name}`, {
-        genreMatch,
-        regionMatch,
-      });
 
       return genreMatch || regionMatch;
     });
