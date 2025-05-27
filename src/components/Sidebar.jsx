@@ -10,6 +10,7 @@ const Sidebar = () => {
     { label: 'Explore', path: '/explorer' },
     { label: 'Campaigns', path: '/campaigns' },
     { label: 'Leads', path: '/leads' },
+    { label: 'Talent Pool', path: '/pool' }, // ✅ NEW
     { label: 'Settings', path: '/settings' },
   ];
 

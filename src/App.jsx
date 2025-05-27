@@ -14,6 +14,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Callback from './Callback';
 import Leads from './pages/Leads';
+import TalentPool from './pages/TalentPool'; // ✅ NEW
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/search" element={<ArtistSearch />} />
         <Route path="/leads-legacy" element={<LeadsLegacy />} />
+        <Route path="/pool" element={<TalentPool />} /> {/* ✅ NEW Talent Pool Route */}
       </Route>
     </Routes>
   );

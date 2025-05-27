@@ -4,6 +4,7 @@ import { searchArtists } from '../api/Spotify';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import useRecentSearches from '../hooks/useRecentSearches';
+import useTalentPool from '../hooks/useTalentPool'; // ✅ NEW
 
 const Explorer = () => {
   const [query, setQuery] = useState('');
@@ -24,6 +25,13 @@ const Explorer = () => {
     togglePin,
     renameSearch,
   } = useRecentSearches();
+
+  const {
+    pool,
+    addToPool,
+    removeFromPool,
+    isInPool
+  } = useTalentPool(); // ✅
 
   const navigate = useNavigate();
 
@@ -187,19 +195,45 @@ const Explorer = () => {
         </form>
 
         {results.map((artist) => (
-          <ArtistCard
-            key={artist.id}
-            artist={artist}
-            isOpen={dropdownOpen === artist.id}
-            onToggleDropdown={(id) =>
-              setDropdownOpen((prev) => (prev === id ? null : id))
-            }
-            onSaveLead={saveLead}
-            campaignList={campaignList}
-            isSavedTo={isSavedTo}
-            assignedCampaigns={savedCampaigns[artist.id] || []}
-            onRemoveFromCampaign={removeLead}
-          />
+          <div key={artist.id} className="border rounded p-4 mb-4 bg-white shadow">
+            <ArtistCard
+              artist={artist}
+              isOpen={dropdownOpen === artist.id}
+              onToggleDropdown={(id) =>
+                setDropdownOpen((prev) => (prev === id ? null : id))
+              }
+              onSaveLead={saveLead}
+              campaignList={campaignList}
+              isSavedTo={isSavedTo}
+              assignedCampaigns={savedCampaigns[artist.id] || []}
+              onRemoveFromCampaign={removeLead}
+            />
+            <div className="mt-2">
+              {isInPool(artist.id) ? (
+                <button
+                  onClick={() => removeFromPool(artist.id)}
+                  className="text-red-500 text-sm"
+                >
+                  ❌ Remove from Pool
+                </button>
+              ) : (
+                <button
+                  onClick={() => addToPool({
+                    id: artist.id,
+                    name: artist.name,
+                    image: artist.images?.[0]?.url || '',
+                    genres: artist.genres || [],
+                    monthlyListeners: artist.followers?.total || 0,
+                    preview_url: artist.preview_url || '',
+                    platforms: ['spotify']
+                  })}
+                  className="text-blue-500 text-sm"
+                >
+                  + Add to Pool
+                </button>
+              )}
+            </div>
+          </div>
         ))}
       </div>
 

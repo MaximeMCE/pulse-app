@@ -1,4 +1,5 @@
 import React from 'react';
+import useTalentPool from '../hooks/useTalentPool'; // ✅ Add hook
 
 const ArtistCard = ({
   artist,
@@ -10,6 +11,25 @@ const ArtistCard = ({
   assignedCampaigns = [],
   onRemoveFromCampaign
 }) => {
+  const {
+    addToPool,
+    removeFromPool,
+    isInPool
+  } = useTalentPool(); // ✅
+
+  const handlePoolToggle = () => {
+    const baseArtist = {
+      id: artist.id,
+      name: artist.name,
+      image: artist.images?.[0]?.url || '',
+      genres: artist.genres || [],
+      monthlyListeners: artist.followers?.total || 0,
+      preview_url: artist.preview_url || '',
+      platforms: ['spotify']
+    };
+    isInPool(artist.id) ? removeFromPool(artist.id) : addToPool(baseArtist);
+  };
+
   return (
     <div key={artist.id} className="border-b py-4 flex items-center">
       {artist.images[0] && (
@@ -60,10 +80,14 @@ const ArtistCard = ({
         {/* Save buttons */}
         <div className="mt-2 flex gap-2 flex-wrap">
           <button
-            onClick={() => onSaveLead(artist, 'Talent Pool')}
-            className="bg-white text-gray-800 text-xs px-3 py-1 rounded border border-gray-300 hover:bg-gray-100"
+            onClick={handlePoolToggle}
+            className={`text-xs px-3 py-1 rounded border ${
+              isInPool(artist.id)
+                ? 'border-red-400 text-red-600 hover:bg-red-50'
+                : 'border-gray-400 text-gray-800 hover:bg-gray-100'
+            }`}
           >
-            + Pool
+            {isInPool(artist.id) ? '❌ Pool' : '+ Pool'}
           </button>
           <button
             onClick={() => onToggleDropdown(artist.id)}
