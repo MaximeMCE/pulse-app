@@ -26,9 +26,14 @@ const MockRecommendations = () => {
     const keywords = (found.goal || '').toLowerCase();
     const region = (found.region || '').toLowerCase();
 
+    const genreWords = keywords.split(/\s+/);
+
     const results = mockArtists.filter((artist) => {
-      const genreMatch = keywords.includes(artist.genre.toLowerCase());
-      const regionMatch = region && artist.region.toLowerCase().includes(region);
+      const genreMatch = genreWords.some((word) =>
+        artist.genre.toLowerCase().includes(word)
+      );
+      const regionMatch =
+        region && artist.region.toLowerCase().includes(region);
       return genreMatch || regionMatch;
     });
 
