@@ -26,13 +26,6 @@ const Explorer = () => {
     renameSearch,
   } = useRecentSearches();
 
-  const {
-    pool,
-    addToPool,
-    removeFromPool,
-    isInPool
-  } = useTalentPool();
-
   const navigate = useNavigate();
 
   const searchSuggestions = [
