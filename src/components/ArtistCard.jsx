@@ -35,7 +35,7 @@ const ArtistCard = ({
       {/* === Artist Info & Tags Block === */}
       <div className="mb-4">
         <div className="flex items-center">
-          {artist.images[0] && (
+          {artist.images?.[0]?.url && (
             <img
               src={artist.images[0].url}
               alt={artist.name}
@@ -53,10 +53,16 @@ const ArtistCard = ({
           <div className="flex-1">
             <div className="font-semibold">{artist.name}</div>
             <div className="text-sm text-gray-500">
-              Followers: {artist.followers.total.toLocaleString()}
+              Followers:{' '}
+              {typeof artist.followers?.total === 'number'
+                ? artist.followers.total.toLocaleString()
+                : 'N/A'}
             </div>
             <div className="text-sm text-gray-400">
-              Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
+              Genres:{' '}
+              {Array.isArray(artist.genres) && artist.genres.length > 0
+                ? artist.genres.slice(0, 2).join(', ')
+                : 'N/A'}
             </div>
           </div>
         </div>
