@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import ArtistCard from '../components/ArtistCard';
+import ExploreManager from '../components/ExploreManager';
 import useRecentSearches from '../hooks/useRecentSearches';
 
 const Explorer = () => {
@@ -13,12 +14,15 @@ const Explorer = () => {
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [campaignList, setCampaignList] = useState([]);
+  const [editingQuery, setEditingQuery] = useState(null);
+  const [labelInput, setLabelInput] = useState('');
 
   const {
     recent: recentSearches,
     addSearch,
     clearSearches,
     togglePin,
+    renameSearch,
   } = useRecentSearches();
 
   const navigate = useNavigate();
@@ -130,94 +134,76 @@ const Explorer = () => {
   const isSavedTo = (id, campaign) => savedCampaigns[id]?.includes(campaign);
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
+    <div className="flex h-screen">
+      <div className="flex-1 p-6 overflow-y-auto">
+        <h2 className="text-xl font-bold mb-4">Explore Artists</h2>
 
-      <div className="mb-6">
-        <h3 className="text-sm font-semibold text-gray-600 mb-2">Try one of these:</h3>
-        <div className="flex flex-wrap gap-2">
-          {searchSuggestions.map((s, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                setQuery(s);
-                handleSearch(s);
-              }}
-              className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full"
-            >
-              🔍 {s}
-            </button>
-          ))}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-600 mb-2">Try one of these:</h3>
+          <div className="flex flex-wrap gap-2">
+            {searchSuggestions.map((s, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setQuery(s);
+                  handleSearch(s);
+                }}
+                className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full"
+              >
+                🔍 {s}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {recentSearches.length > 0 && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-semibold text-gray-600">Recent searches:</h3>
-              <button
-                onClick={clearSearches}
-                className="text-xs text-red-500 hover:underline"
-              >
-                🗑️ Clear
-              </button>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              {recentSearches.map(({ query, pinned }, i) => (
-                <div
-                  key={i}
-                  className="flex items-center bg-yellow-100 rounded-full px-2 py-1"
-                >
-                  <button
-                    onClick={() => {
-                      setQuery(query);
-                      handleSearch(query);
-                    }}
-                    className="text-sm mr-2"
-                  >
-                    🔁 {query}
-                  </button>
-                  <button
-                    onClick={() => togglePin(query)}
-                    className="text-yellow-700 text-xs"
-                  >
-                    {pinned ? '⭐' : '☆'}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}
+          className="flex gap-2 mb-4"
+        >
+          <input
+            type="text"
+            placeholder="Search for an artist"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="border px-4 py-2 rounded-md w-full"
+          />
+          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+            Search
+          </button>
+        </form>
+
+        {results.map((artist) => (
+          <ArtistCard
+            key={artist.id}
+            artist={artist}
+            isOpen={dropdownOpen === artist.id}
+            onToggleDropdown={(id) =>
+              setDropdownOpen((prev) => (prev === id ? null : id))
+            }
+            onSaveLead={saveLead}
+            campaignList={campaignList}
+            isSavedTo={isSavedTo}
+          />
+        ))}
       </div>
 
-      <form onSubmit={(e) => {
-        e.preventDefault();
-        handleSearch();
-      }} className="flex gap-2 mb-4">
-        <input
-          type="text"
-          placeholder="Search for an artist"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="border px-4 py-2 rounded-md w-full"
-        />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-          Search
-        </button>
-      </form>
-
-      {results.map((artist) => (
-        <ArtistCard
-          key={artist.id}
-          artist={artist}
-          isOpen={dropdownOpen === artist.id}
-          onToggleDropdown={(id) =>
-            setDropdownOpen((prev) => (prev === id ? null : id))
-          }
-          onSaveLead={saveLead}
-          campaignList={campaignList}
-          isSavedTo={isSavedTo}
-        />
-      ))}
+      <ExploreManager
+        recentSearches={recentSearches}
+        onSearch={(q) => {
+          setQuery(q);
+          handleSearch(q);
+        }}
+        onPin={togglePin}
+        onRename={renameSearch}
+        onClear={clearSearches}
+        editingQuery={editingQuery}
+        setEditingQuery={setEditingQuery}
+        labelInput={labelInput}
+        setLabelInput={setLabelInput}
+      />
     </div>
   );
 };
