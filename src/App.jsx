@@ -5,7 +5,7 @@ import ProtectedLayout from './ProtectedLayout';
 
 import Dashboard from './pages/Dashboard';
 import Explorer from './pages/Explorer';
-import Campaigns from './pages/Campaigns';
+import CampaignsDebug from './pages/CampaignsDebug';
 import CampaignDetails from './pages/CampaignDetails';
 import LeadsLegacy from './pages/LeadsLegacy';
 import ArtistProfile from './pages/ArtistProfile';
@@ -27,7 +27,7 @@ function App() {
       <Route element={<ProtectedLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/explorer" element={<Explorer />} />
-        <Route path="/campaigns" element={<Campaigns />} />
+        <Route path="/campaigns" element={<CampaignsDebug />} />
         <Route path="/campaigns/:id" element={<CampaignDetails />} />
         <Route path="/leads" element={<Leads />} />
         <Route path="/artist/:id" element={<ArtistProfile />} />
