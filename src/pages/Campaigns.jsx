@@ -1,4 +1,4 @@
-// Campaigns.jsx — With metadata support (goal, region, deadline)
+// Campaigns.jsx — Final version with clear date hierarchy
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -137,11 +137,13 @@ const Campaigns = () => {
               onClick={() => goToCampaign(c.id)}
             >
               <div className="font-semibold text-lg mb-1">{c.title}</div>
-              <div className="text-sm text-gray-600 mb-1">🗓 {new Date(c.createdAt).toLocaleDateString()}</div>
               {c.goal && <div className="text-sm text-gray-700 mb-1">🎯 {c.goal}</div>}
               {c.region && <div className="text-sm text-gray-700 mb-1">📍 {c.region}</div>}
-              {c.deadline && <div className="text-sm text-gray-700 mb-1">⏳ {new Date(c.deadline).toLocaleDateString()}</div>}
+              {c.deadline && (
+                <div className="text-sm text-gray-700 mb-1">⏳ Deadline: {new Date(c.deadline).toLocaleDateString()}</div>
+              )}
               <div className="text-sm text-gray-800 mt-2">📦 {leadCounts[c.title] || 0} lead(s)</div>
+              <div className="text-sm text-gray-500 mt-3">🗓 Created: {new Date(c.createdAt).toLocaleDateString()}</div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
