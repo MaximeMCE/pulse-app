@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 
 const Explorer = () => {
@@ -12,6 +13,8 @@ const Explorer = () => {
   const [campaignList, setCampaignList] = useState([]);
   const [recentSearches, setRecentSearches] = useState([]);
 
+  const navigate = useNavigate();
+
   const searchSuggestions = [
     'Techno artists under 10K listeners',
     'Unsigned female vocalists',
@@ -22,9 +25,13 @@ const Explorer = () => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
-    if (storedToken) setToken(storedToken);
+    if (!storedToken) {
+      navigate('/login');
+      return;
+    }
 
-    // Load recent search results
+    setToken(storedToken);
+
     const cachedResults = localStorage.getItem('explorer_results');
     const cachedQuery = localStorage.getItem('explorer_query');
     if (cachedResults && cachedQuery) {
@@ -32,7 +39,6 @@ const Explorer = () => {
       setQuery(cachedQuery);
     }
 
-    // Load recent search terms
     const recent = JSON.parse(localStorage.getItem('explorer_recent') || '[]');
     setRecentSearches(recent);
 
@@ -93,7 +99,6 @@ const Explorer = () => {
       localStorage.setItem('explorer_results', JSON.stringify(artists));
       localStorage.setItem('explorer_query', searchTerm);
 
-      // Update recent search list
       const existing = JSON.parse(localStorage.getItem('explorer_recent') || '[]');
       const updated = [searchTerm, ...existing.filter(q => q !== searchTerm)].slice(0, 3);
       localStorage.setItem('explorer_recent', JSON.stringify(updated));
@@ -144,7 +149,18 @@ const Explorer = () => {
 
         {recentSearches.length > 0 && (
           <div className="mt-4">
-            <h3 className="text-sm font-semibold text-gray-600 mb-2">Recent searches:</h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-semibold text-gray-600">Recent searches:</h3>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('explorer_recent');
+                  setRecentSearches([]);
+                }}
+                className="text-xs text-red-500 hover:underline"
+              >
+                🗑️ Clear
+              </button>
+            </div>
             <div className="flex flex-wrap gap-2">
               {recentSearches.map((term, i) => (
                 <button
@@ -209,7 +225,9 @@ const Explorer = () => {
                   + Pool
                 </button>
                 <button
-                  onClick={() => setDropdownOpen(artist.id)}
+                  onClick={() =>
+                    setDropdownOpen(prev => (prev === artist.id ? null : artist.id))
+                  }
                   className="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700"
                 >
                   + Campaign
