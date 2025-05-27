@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import CampaignManager from '../components/CampaignManager'; // ✅ NEW
 
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();
@@ -61,6 +62,9 @@ const CampaignDetails = () => {
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">{campaign.title} - Leads</h1>
+
+      {/* ✅ Injected Campaign Manager */}
+      <CampaignManager />
 
       <div className="flex gap-2 mb-6">
         <input
