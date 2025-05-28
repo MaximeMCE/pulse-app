@@ -145,8 +145,14 @@ const Explorer = () => {
         artists = await searchArtists(token, searchTerm, filters);
       }
 
-      // 🧪 DEBUG LOGS
+      // ✅ Failsafe check
       console.log('🚨 RAW artists from API:', artists);
+      if (!Array.isArray(artists)) {
+        console.error('❌ FATAL: Expected artists to be an array, got:', artists);
+        setError('Search failed: Invalid artist response.');
+        setLoading(false);
+        return;
+      }
 
       const filtered = artists.filter((artist) => {
         const listeners = artist?.listeners ?? 0;
