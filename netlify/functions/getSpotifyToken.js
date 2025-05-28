@@ -2,9 +2,10 @@ const axios = require('axios');
 
 exports.handler = async function (event) {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
   const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
 
-  if (!clientId || !redirectUri) {
+  if (!clientId || !clientSecret || !redirectUri) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Missing environment variables' }),
@@ -20,11 +21,12 @@ exports.handler = async function (event) {
     };
   }
 
+  const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
   try {
     const tokenRes = await axios.post(
       'https://accounts.spotify.com/api/token',
       new URLSearchParams({
-        client_id: clientId,
         grant_type: 'authorization_code',
         code,
         redirect_uri: redirectUri,
@@ -32,6 +34,7 @@ exports.handler = async function (event) {
       }).toString(),
       {
         headers: {
+          'Authorization': `Basic ${authHeader}`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       }

@@ -13,7 +13,7 @@ const Login = () => {
     if (code) {
       const codeVerifier = localStorage.getItem('spotify_code_verifier');
 
-      fetch('/.netlify/functions/getSpotifyToken', { // ✅ CORRECT FUNCTION PATH
+      fetch('/.netlify/functions/getSpotifyToken', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -24,10 +24,7 @@ const Login = () => {
         .then(data => {
           if (data.access_token) {
             localStorage.setItem('spotify_access_token', data.access_token);
-
-            // ✅ Clean the URL to remove ?code=...
             window.history.replaceState({}, document.title, '/');
-
             navigate('/campaigns');
           } else {
             console.error("Failed to get token:", data);
@@ -40,17 +37,15 @@ const Login = () => {
   }, [navigate]);
 
   const handleLogin = async () => {
-    const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-    const redirectUri = `${window.location.origin}/login`; // ✅ Must match Spotify settings
-
-    const scopes = [
-      "user-read-recently-played"
-    ].join(' ');
+    const redirectUri = `${window.location.origin}/login`; // must match Spotify settings
+    const scopes = ["user-read-recently-played"].join(' ');
 
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = await generateCodeChallenge(codeVerifier);
-
     localStorage.setItem("spotify_code_verifier", codeVerifier);
+
+    // ⚠️ Hardcoded client ID temporarily to remove from build (or move this into backend later)
+    const clientId = "43d52d0d3774470688a3fec0bc7e3378";
 
     const authUrl = `https://accounts.spotify.com/authorize?` +
       `client_id=${clientId}` +
