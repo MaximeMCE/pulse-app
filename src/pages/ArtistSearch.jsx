@@ -66,32 +66,33 @@ const ArtistSearch = () => {
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <div>
-        {results.map((artist) => (
-          <div key={artist.id} className="border-b py-2 flex items-center">
-            {artist.images?.[0]?.url && (
-              <img
-                src={artist.images[0].url}
-                alt={artist.name}
-                className="w-12 h-12 rounded-full mr-4 object-cover"
-              />
-            )}
-            <div>
-              <div className="font-semibold">{artist.name}</div>
-              <div className="text-sm text-gray-500">
-                Followers:{' '}
-                {artist.followers?.total
-                  ? artist.followers.total.toLocaleString()
-                  : artist.listeners?.toLocaleString?.() || 'N/A'}
-              </div>
-              <div className="text-sm text-gray-400">
-                Genres:{' '}
-                {Array.isArray(artist.genres) && artist.genres.length > 0
-                  ? artist.genres.slice(0, 2).join(', ')
-                  : 'N/A'}
+        {results.map((artist) => {
+          if (!artist || !artist.id || !artist.name) return null;
+
+          const image = artist.images?.[0]?.url || '';
+          const genres = Array.isArray(artist.genres) ? artist.genres.slice(0, 2).join(', ') : 'N/A';
+          const followers =
+            typeof artist.followers?.total === 'number'
+              ? artist.followers.total.toLocaleString()
+              : 'N/A';
+
+          return (
+            <div key={artist.id} className="border-b py-2 flex items-center">
+              {image && (
+                <img
+                  src={image}
+                  alt={artist.name}
+                  className="w-12 h-12 rounded-full mr-4 object-cover"
+                />
+              )}
+              <div>
+                <div className="font-semibold">{artist.name}</div>
+                <div className="text-sm text-gray-500">Followers: {followers}</div>
+                <div className="text-sm text-gray-400">Genres: {genres}</div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
