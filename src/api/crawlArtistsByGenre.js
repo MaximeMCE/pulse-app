@@ -9,41 +9,38 @@ export async function crawlArtistsByGenre(token, filters) {
   const topPlaylists = playlists.slice(0, 3);
 
   for (const playlist of topPlaylists) {
-    const tracks = await crawlPlaylistTracks(token, playlist.id);
+    const artists = await crawlPlaylistTracks(token, playlist.id);
 
-    tracks.forEach(track => {
-      if (!track || !Array.isArray(track.artists)) {
-        console.warn('❌ Skipping invalid track:', track);
+    if (!Array.isArray(artists)) {
+      console.warn('❌ Skipping playlist with invalid artist response:', playlist.name, artists);
+      continue;
+    }
+
+    artists.forEach(artist => {
+      if (!artist || !artist.id || !artist.name) {
+        console.warn('❌ Skipping invalid artist:', artist);
         return;
       }
 
-      const validArtist = track.artists.find(a => a && a.id && a.name);
-      if (!validArtist) {
-        console.warn('⚠️ Skipping track with malformed artist:', track.artists);
-        return;
-      }
-
-      if (allArtists[validArtist.id]) return;
+      if (allArtists[artist.id]) return;
 
       try {
-        allArtists[validArtist.id] = {
-          id: validArtist.id,
-          name: validArtist.name,
-          images: validArtist.images || [],
-          genres: validArtist.genres || [],
-          listeners: validArtist.followers?.total || 0,
-          preview_url: track.preview_url || null,
-          releaseDaysAgo: track.releaseDaysAgo || null,
+        allArtists[artist.id] = {
+          id: artist.id,
+          name: artist.name,
+          images: artist.images || [],
+          genres: artist.genres || [],
+          listeners: artist.followers || 0,
+          preview_url: artist.preview_url || null
         };
       } catch (e) {
-        console.error('💥 Error parsing artist:', validArtist, e);
+        console.error('💥 Error parsing artist:', artist, e);
       }
     });
   }
 
-  // 🧹 Final clean-up before returning
   const validResults = Object.values(allArtists).filter(
-    (a) => a && typeof a === 'object' && a.id && a.name
+    a => a && typeof a === 'object' && a.id && a.name
   );
 
   console.log('✅ Final artist count:', validResults.length);
