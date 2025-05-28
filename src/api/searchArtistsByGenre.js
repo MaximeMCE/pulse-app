@@ -1,4 +1,3 @@
-// /api/searchArtistsByGenre.js
 import axios from 'axios';
 import { genreMap } from './genreMap';
 import { validSeedGenres } from './validSeedGenres';
@@ -26,6 +25,11 @@ export const searchArtistsByGenre = async (token, filters) => {
     min_popularity: 10,
     target_popularity: 50,
   });
+
+  // 🔍 DEBUG LOGS
+  console.log("🔍 Fetching from Spotify with params:", params.toString());
+  console.log("🔍 Final URL:", `https://api.spotify.com/v1/recommendations?${params.toString()}`);
+  console.log("🔐 Token starts with:", token.slice(0, 20));
 
   const response = await axios.get(`https://api.spotify.com/v1/recommendations?${params.toString()}`, {
     headers: { Authorization: `Bearer ${token}` },
