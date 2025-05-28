@@ -12,6 +12,8 @@ const ExploreManager = ({
   labelInput,
   setLabelInput,
 }) => {
+  const safeRecent = Array.isArray(recentSearches) ? recentSearches : [];
+
   return (
     <div className="w-80 border-l bg-gray-50 p-4 overflow-y-auto h-full">
       <div className="flex justify-between items-center mb-3">
@@ -25,7 +27,7 @@ const ExploreManager = ({
       </div>
 
       <div className="space-y-2">
-        {recentSearches.map(({ query, pinned, label }, i) => (
+        {safeRecent.map(({ query, pinned, label }, i) => (
           <div
             key={i}
             className="flex items-center bg-yellow-100 rounded-full px-3 py-1"

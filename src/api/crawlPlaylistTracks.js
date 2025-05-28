@@ -1,4 +1,3 @@
-// /api/crawlPlaylistTracks.js
 import axios from 'axios';
 
 export const crawlPlaylistTracks = async (token, playlistId) => {
@@ -15,10 +14,23 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
     }
   );
 
-  const items = response.data.items || [];
+  const items = Array.isArray(response.data?.items) ? response.data.items : [];
 
-  // ✅ Return raw full track objects as expected by crawlArtistsByGenre
-  return items
-    .map(item => item.track)
-    .filter(track => track && Array.isArray(track.artists));
+  const artistsMap = new Map();
+
+  for (const item of items) {
+    const track = item.track;
+    const mainArtist = track?.artists?.[0];
+
+    if (mainArtist && !artistsMap.has(mainArtist.id)) {
+      artistsMap.set(mainArtist.id, {
+        id: mainArtist.id,
+        name: mainArtist.name,
+        preview_url: track.preview_url,
+        images: track.album?.images || []
+      });
+    }
+  }
+
+  return Array.from(artistsMap.values());
 };
