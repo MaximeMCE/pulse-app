@@ -17,21 +17,13 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
 
   const items = response.data.items || [];
 
-  const artistsMap = new Map();
-
-  for (const item of items) {
+  return items.map(item => {
     const track = item.track;
-    const mainArtist = track.artists?.[0];
 
-    if (mainArtist && !artistsMap.has(mainArtist.id)) {
-      artistsMap.set(mainArtist.id, {
-        id: mainArtist.id,
-        name: mainArtist.name,
-        preview_url: track.preview_url,
-        images: track.album?.images || []
-      });
-    }
-  }
-
-  return Array.from(artistsMap.values());
+    return {
+      preview_url: track.preview_url,
+      albumImages: track.album?.images || [],
+      artists: track.artists || []
+    };
+  });
 };
