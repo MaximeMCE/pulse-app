@@ -12,7 +12,7 @@ import ArtistProfile from './pages/ArtistProfile';
 import ArtistSearch from './pages/ArtistSearch';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
-import Callback from './Callback';
+import Callback from './pages/Callback'; // ✅ FIXED path
 import Leads from './pages/Leads';
 import TalentPool from './pages/TalentPool'; // ✅ NEW
 
@@ -35,7 +35,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/search" element={<ArtistSearch />} />
         <Route path="/leads-legacy" element={<LeadsLegacy />} />
-        <Route path="/pool" element={<TalentPool />} /> {/* ✅ NEW Talent Pool Route */}
+        <Route path="/pool" element={<TalentPool />} /> {/* ✅ Talent Pool */}
       </Route>
     </Routes>
   );
