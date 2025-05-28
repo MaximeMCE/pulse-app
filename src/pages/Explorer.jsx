@@ -145,8 +145,6 @@ const Explorer = () => {
         artists = await searchArtists(token, searchTerm, filters);
       }
 
-      // ✅ Failsafe check
-      console.log('🚨 RAW artists from API:', artists);
       if (!Array.isArray(artists)) {
         console.error('❌ FATAL: Expected artists to be an array, got:', artists);
         setError('Search failed: Invalid artist response.');
@@ -174,13 +172,6 @@ const Explorer = () => {
         }
 
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
-      });
-
-      console.log('✅ FILTERED artists:', filtered);
-      filtered.forEach((a, i) => {
-        if (!a || typeof a !== 'object' || !a.id || !a.name) {
-          console.warn(`❌ BAD ENTRY [${i}]:`, a);
-        }
       });
 
       setResults(filtered);
@@ -244,19 +235,26 @@ const Explorer = () => {
         <div className="flex flex-col gap-4">
           {results
             .filter((artist) => artist && typeof artist === 'object' && artist.id && artist.name)
-            .map((artist) => (
-              <ArtistCard
-                key={artist.id}
-                artist={artist}
-                isOpen={dropdownOpen === artist.id}
-                onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
-                onSaveLead={saveLead}
-                campaignList={campaignList}
-                isSavedTo={isSavedTo}
-                assignedCampaigns={savedCampaigns[artist.id] || []}
-                onRemoveFromCampaign={removeLead}
-              />
-            ))}
+            .map((artist) => {
+              if (!artist || !artist.id) {
+                console.warn('❌ Skipping invalid artist in .map():', artist);
+                return null;
+              }
+
+              return (
+                <ArtistCard
+                  key={artist.id}
+                  artist={artist}
+                  isOpen={dropdownOpen === artist.id}
+                  onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
+                  onSaveLead={saveLead}
+                  campaignList={campaignList}
+                  isSavedTo={isSavedTo}
+                  assignedCampaigns={savedCampaigns[artist.id] || []}
+                  onRemoveFromCampaign={removeLead}
+                />
+              );
+            })}
         </div>
       </div>
 
