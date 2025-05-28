@@ -44,8 +44,9 @@ const Login = () => {
     const codeChallenge = await generateCodeChallenge(codeVerifier);
     localStorage.setItem("spotify_code_verifier", codeVerifier);
 
-    // ✅ Use VITE_ env variable injected at build time
-    const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+    // ⬇️ Fetch client ID from Netlify function
+    const res = await fetch('/.netlify/functions/getSpotifyClientId');
+    const { clientId } = await res.json();
 
     const authUrl = `https://accounts.spotify.com/authorize?` +
       `client_id=${clientId}` +
