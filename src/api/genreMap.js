@@ -1,9 +1,9 @@
 export const genreMap = {
-  House: ['deep-house', 'progressive-house', 'tropical-house'],
+  House: ['house', 'progressive-house'],
   Techno: ['techno', 'minimal-techno'],
-  Indie: ['indie-pop', 'indie-rock'],
-  HipHop: ['hip-hop', 'rap'],
-  Electronic: ['electronic', 'electro'],
+  Indie: ['indie', 'indie-pop'],
+  HipHop: ['hip-hop'],
+  Electronic: ['electronic', 'edm'],
   Pop: ['pop'],
   Rock: ['rock'],
   Afrobeat: ['afrobeat'],
@@ -11,5 +11,5 @@ export const genreMap = {
   Jazz: ['jazz'],
   'Funk & Soul': ['funk', 'soul'],
   Ambient: ['ambient'],
-  Experimental: ['experimental'],
+  Experimental: ['psych-rock', 'trip-hop']
 };
