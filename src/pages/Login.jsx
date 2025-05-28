@@ -13,7 +13,7 @@ const Login = () => {
     if (code) {
       const codeVerifier = localStorage.getItem('spotify_code_verifier');
 
-      fetch('/.netlify/functions/api/getSpotifyToken', {
+      fetch('/.netlify/functions/getSpotifyToken', { // ✅ CORRECT FUNCTION PATH
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ const Login = () => {
           if (data.access_token) {
             localStorage.setItem('spotify_access_token', data.access_token);
 
-            // ✅ Prevent redirect loop by removing ?code param
+            // ✅ Clean the URL to remove ?code=...
             window.history.replaceState({}, document.title, '/');
 
             navigate('/campaigns');
@@ -41,7 +41,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-    const redirectUri = `${window.location.origin}/login`; // ✅ FIXED
+    const redirectUri = `${window.location.origin}/login`; // ✅ Must match Spotify settings
 
     const scopes = [
       "user-read-recently-played"
