@@ -13,7 +13,7 @@ const Login = () => {
     if (code) {
       const codeVerifier = localStorage.getItem('spotify_code_verifier');
 
-      fetch('/api/getSpotifyToken', {
+      fetch('/.netlify/functions/api/getSpotifyToken', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
