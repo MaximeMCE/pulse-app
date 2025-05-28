@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
-import { searchArtistsByGenre } from '../api/searchArtistsByGenre';
+import { crawlArtistsByGenre } from '../api/crawlArtistsByGenre'; // ✅ NEW import
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -20,7 +20,7 @@ const Explorer = () => {
   const [campaignList, setCampaignList] = useState([]);
   const [editingQuery, setEditingQuery] = useState(null);
   const [labelInput, setLabelInput] = useState('');
-  const [hasMounted, setHasMounted] = useState(false); // 🆕
+  const [hasMounted, setHasMounted] = useState(false);
   const [filters, setFilters] = useState({
     minListeners: 0,
     maxListeners: 100000,
@@ -140,7 +140,7 @@ const Explorer = () => {
           setLoading(false);
           return;
         }
-        artists = await searchArtistsByGenre(token, filters);
+        artists = await crawlArtistsByGenre(token, filters); // ✅ Replaced here
       } else {
         artists = await searchArtists(token, searchTerm, filters);
       }
