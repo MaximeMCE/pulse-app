@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
+import { searchArtistsByGenre } from '../api/searchArtistsByGenre'; // ✅ new import
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -74,7 +75,6 @@ const Explorer = () => {
     return () => window.removeEventListener('leadsUpdated', refreshSavedCampaigns);
   }, []);
 
-  // 🆕 Auto-search if filters change and query is empty
   useEffect(() => {
     if (query.trim() === '' && token) {
       handleSearch('');
@@ -122,10 +122,19 @@ const Explorer = () => {
 
   const handleSearch = async (overrideQuery) => {
     const searchTerm = overrideQuery || query;
-    if (!searchTerm && query.trim() !== '' && !token) return;
+    if (!token) return;
     setLoading(true);
+
     try {
-      const artists = await searchArtists(token, searchTerm, filters);
+      let artists;
+
+      if (searchTerm.trim() === '') {
+        // 🔍 No query → use genre-based recommendations
+        artists = await searchArtistsByGenre(token, filters);
+      } else {
+        // 🧠 Manual query → standard search
+        artists = await searchArtists(token, searchTerm, filters);
+      }
 
       const filtered = artists.filter((artist) => {
         const listeners = artist.listeners ?? 0;
@@ -153,6 +162,7 @@ const Explorer = () => {
       if (searchTerm) addSearch(searchTerm);
       setError(filtered.length ? '' : 'No artists found.');
     } catch (err) {
+      console.error(err);
       setError('Search failed.');
     } finally {
       setLoading(false);
