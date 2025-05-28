@@ -22,8 +22,8 @@ const ArtistCard = ({
   const id = artist.id;
   const name = artist.name;
   const image = artist.images?.[0]?.url || '';
-  const genres = artist.genres || [];
-  const followers = typeof artist.followers?.total === 'number' ? artist.followers.total : null;
+  const genres = Array.isArray(artist.genres) ? artist.genres : [];
+  const listeners = artist.monthlyListeners ?? 0;
   const previewUrl = artist.preview_url || '';
 
   const handlePoolToggle = () => {
@@ -32,7 +32,7 @@ const ArtistCard = ({
       name,
       image,
       genres,
-      monthlyListeners: followers ?? 0,
+      monthlyListeners: listeners,
       preview_url: previewUrl,
       platforms: ['spotify']
     };
@@ -54,7 +54,7 @@ const ArtistCard = ({
           <div className="flex-1">
             <div className="font-semibold">{name}</div>
             <div className="text-sm text-gray-500">
-              Followers: {followers !== null ? followers.toLocaleString() : 'N/A'}
+              Monthly Listeners: {typeof listeners === 'number' ? listeners.toLocaleString() : 'N/A'}
             </div>
             <div className="text-sm text-gray-400">
               Genres: {genres.length > 0 ? genres.slice(0, 2).join(', ') : 'N/A'}
@@ -71,7 +71,7 @@ const ArtistCard = ({
               >
                 {camp}
                 <button
-                  onClick={() => id && onRemoveFromCampaign(id, camp)}
+                  onClick={() => onRemoveFromCampaign(id, camp)}
                   className="ml-2 text-red-500 hover:text-red-700"
                   title={`Remove from ${camp}`}
                 >
@@ -113,8 +113,8 @@ const ArtistCard = ({
                 .map((c) => (
                   <button
                     key={c}
-                    onClick={() => id && onSaveLead(artist, c)}
-                    disabled={!id || isSavedTo(id, c)}
+                    onClick={() => onSaveLead(artist, c)}
+                    disabled={isSavedTo(id, c)}
                     className={`px-3 py-1 rounded text-sm border ${
                       isSavedTo(id, c)
                         ? 'text-gray-400 border-gray-300 cursor-not-allowed'
