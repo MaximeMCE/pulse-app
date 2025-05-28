@@ -1,58 +1,64 @@
 import { useState, useEffect } from 'react';
 
-const RECENT_KEY = 'explorer_recent';
-const STORAGE_LIMIT = 50;
+const RECENT_KEY = 'recent_searches';
 
-export default function useRecentSearches() {
+const useRecentSearches = () => {
   const [recent, setRecent] = useState([]);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-    setRecent(Array.isArray(stored) ? stored : []);
+    try {
+      const stored = localStorage.getItem(RECENT_KEY);
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) {
+        setRecent(parsed);
+      } else {
+        console.warn('⚠️ Stored recent searches are not an array:', parsed);
+      }
+    } catch (e) {
+      console.error('💥 Error parsing recent searches from localStorage:', e);
+    }
   }, []);
 
-  const addSearch = (query) => {
-    const stored = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
-    const filtered = stored.filter((item) => item.query !== query);
-    const newEntry = { query, pinned: false, label: '' };
-    const updated = [newEntry, ...filtered];
+  useEffect(() => {
+    try {
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+    } catch (e) {
+      console.error('💥 Failed to store recent searches:', e);
+    }
+  }, [recent]);
 
-    // Cap localStorage to 50 items
-    localStorage.setItem(RECENT_KEY, JSON.stringify(updated.slice(0, STORAGE_LIMIT)));
-    setRecent(updated);
+  const addSearch = (label) => {
+    if (!label || typeof label !== 'string') return;
+    const exists = Array.isArray(recent) && recent.find((item) => item.label === label);
+    if (exists) return;
+    setRecent([{ label, pinned: false }, ...(Array.isArray(recent) ? recent : [])].slice(0, 10));
   };
 
-  const clearSearches = () => {
-    localStorage.removeItem(RECENT_KEY);
-    setRecent([]);
-  };
-
-  const togglePin = (query) => {
+  const togglePin = (label) => {
+    if (!Array.isArray(recent)) return;
     const updated = recent.map((item) =>
-      item.query === query ? { ...item, pinned: !item.pinned } : item
+      item.label === label ? { ...item, pinned: !item.pinned } : item
     );
-    localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     setRecent(updated);
   };
 
-  const renameSearch = (query, newLabel) => {
+  const renameSearch = (oldLabel, newLabel) => {
+    if (!Array.isArray(recent)) return;
     const updated = recent.map((item) =>
-      item.query === query ? { ...item, label: newLabel } : item
+      item.label === oldLabel ? { ...item, label: newLabel } : item
     );
-    localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     setRecent(updated);
   };
 
-  const sorted = [
-    ...recent.filter((item) => item.pinned),
-    ...recent.filter((item) => !item.pinned)
-  ];
+  const clearSearches = () => setRecent([]);
 
   return {
-    recent: sorted,
+    recent,
     addSearch,
-    clearSearches,
     togglePin,
-    renameSearch
+    renameSearch,
+    clearSearches,
   };
-}
+};
+
+export default useRecentSearches;
