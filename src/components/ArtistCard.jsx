@@ -11,10 +11,7 @@ const ArtistCard = ({
   assignedCampaigns = [],
   onRemoveFromCampaign
 }) => {
-  // 🔐 CRITICAL GUARD
-  if (!artist || typeof artist !== 'object' || !artist.id || !artist.name) {
-    return null;
-  }
+  if (!artist || typeof artist !== 'object' || !artist.id || !artist.name) return null;
 
   const {
     addToPool,
@@ -22,57 +19,49 @@ const ArtistCard = ({
     isInPool
   } = useTalentPool();
 
+  const id = artist.id;
+  const name = artist.name;
+  const image = artist.images?.[0]?.url || '';
+  const genres = artist.genres || [];
+  const followers = typeof artist.followers?.total === 'number' ? artist.followers.total : null;
+  const previewUrl = artist.preview_url || '';
+
   const handlePoolToggle = () => {
     const baseArtist = {
-      id: artist.id,
-      name: artist.name,
-      image: artist.images?.[0]?.url || '',
-      genres: artist.genres || [],
-      monthlyListeners: artist.followers?.total || 0,
-      preview_url: artist.preview_url || '',
+      id,
+      name,
+      image,
+      genres,
+      monthlyListeners: followers ?? 0,
+      preview_url: previewUrl,
       platforms: ['spotify']
     };
-    isInPool(artist.id) ? removeFromPool(artist.id) : addToPool(baseArtist);
+    isInPool(id) ? removeFromPool(id) : addToPool(baseArtist);
   };
 
   return (
     <div className="border rounded p-4 mb-4 bg-white shadow">
-      {/* === Artist Info & Tags Block === */}
       <div className="mb-4">
         <div className="flex items-center">
-          {artist.images?.[0]?.url && (
+          {image && (
             <img
-              src={artist.images[0].url}
-              alt={artist.name}
+              src={image}
+              alt={name}
               className="rounded-full mr-4 object-cover"
-              style={{
-                width: '80px',
-                height: '80px',
-                minWidth: '80px',
-                minHeight: '80px',
-                maxWidth: '80px',
-                maxHeight: '80px',
-              }}
+              style={{ width: 80, height: 80 }}
             />
           )}
           <div className="flex-1">
-            <div className="font-semibold">{artist.name}</div>
+            <div className="font-semibold">{name}</div>
             <div className="text-sm text-gray-500">
-              Followers:{' '}
-              {typeof artist.followers?.total === 'number'
-                ? artist.followers.total.toLocaleString()
-                : 'N/A'}
+              Followers: {followers !== null ? followers.toLocaleString() : 'N/A'}
             </div>
             <div className="text-sm text-gray-400">
-              Genres:{' '}
-              {Array.isArray(artist.genres) && artist.genres.length > 0
-                ? artist.genres.slice(0, 2).join(', ')
-                : 'N/A'}
+              Genres: {genres.length > 0 ? genres.slice(0, 2).join(', ') : 'N/A'}
             </div>
           </div>
         </div>
 
-        {/* Campaign Tags */}
         {assignedCampaigns.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2">
             {assignedCampaigns.map((camp) => (
@@ -82,7 +71,7 @@ const ArtistCard = ({
               >
                 {camp}
                 <button
-                  onClick={() => onRemoveFromCampaign(artist.id, camp)}
+                  onClick={() => id && onRemoveFromCampaign(id, camp)}
                   className="ml-2 text-red-500 hover:text-red-700"
                   title={`Remove from ${camp}`}
                 >
@@ -94,28 +83,26 @@ const ArtistCard = ({
         )}
       </div>
 
-      {/* === Button Section === */}
       <div className="pt-4 border-t mt-4 flex gap-3 flex-wrap">
         <button
           onClick={handlePoolToggle}
           className={`text-xs px-3 py-1 rounded border ${
-            isInPool(artist.id)
+            isInPool(id)
               ? 'border-red-400 text-red-600 hover:bg-red-50'
               : 'border-blue-600 text-blue-600 hover:bg-blue-50'
           }`}
         >
-          {isInPool(artist.id) ? '❌ Pool' : '+ Pool'}
+          {isInPool(id) ? '❌ Pool' : '+ Pool'}
         </button>
 
         <button
-          onClick={() => onToggleDropdown(artist.id)}
+          onClick={() => onToggleDropdown(id)}
           className="text-xs px-3 py-1 rounded border border-green-600 text-green-600 hover:bg-green-50"
         >
           + Campaign
         </button>
       </div>
 
-      {/* Dropdown Campaign Selector */}
       {isOpen && (
         <div className="mt-2">
           <div className="bg-white border p-3 rounded shadow max-w-xs">
@@ -126,15 +113,15 @@ const ArtistCard = ({
                 .map((c) => (
                   <button
                     key={c}
-                    onClick={() => onSaveLead(artist, c)}
-                    disabled={isSavedTo(artist.id, c)}
+                    onClick={() => id && onSaveLead(artist, c)}
+                    disabled={!id || isSavedTo(id, c)}
                     className={`px-3 py-1 rounded text-sm border ${
-                      isSavedTo(artist.id, c)
+                      isSavedTo(id, c)
                         ? 'text-gray-400 border-gray-300 cursor-not-allowed'
                         : 'hover:bg-blue-50 border-gray-400 text-black'
                     }`}
                   >
-                    {isSavedTo(artist.id, c) ? `✅ ${c}` : c}
+                    {isSavedTo(id, c) ? `✅ ${c}` : c}
                   </button>
                 ))}
             </div>
