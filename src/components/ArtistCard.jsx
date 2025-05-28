@@ -11,6 +11,11 @@ const ArtistCard = ({
   assignedCampaigns = [],
   onRemoveFromCampaign
 }) => {
+  // 🔐 CRITICAL GUARD
+  if (!artist || typeof artist !== 'object' || !artist.id || !artist.name) {
+    return null;
+  }
+
   const {
     addToPool,
     removeFromPool,
