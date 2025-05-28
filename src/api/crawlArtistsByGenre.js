@@ -12,26 +12,35 @@ export async function crawlArtistsByGenre(token, filters) {
     const tracks = await crawlPlaylistTracks(token, playlist.id);
 
     tracks.forEach(track => {
-      if (!track || !track.artists || !Array.isArray(track.artists)) return;
+      if (!track || !Array.isArray(track.artists)) {
+        console.warn('❌ Skipping invalid track:', track);
+        return;
+      }
 
-      const artist = track.artists.find(a => a && a.id && a.name);
-      if (!artist || allArtists[artist.id]) return;
+      const validArtist = track.artists.find(a => a && a.id && a.name);
+      if (!validArtist) {
+        console.warn('⚠️ Skipping track with malformed artist:', track.artists);
+        return;
+      }
+
+      if (allArtists[validArtist.id]) return;
 
       try {
-        allArtists[artist.id] = {
-          id: artist.id,
-          name: artist.name,
-          images: artist.images || [],
-          genres: artist.genres || [],
-          listeners: artist.followers?.total || 0,
+        allArtists[validArtist.id] = {
+          id: validArtist.id,
+          name: validArtist.name,
+          images: validArtist.images || [],
+          genres: validArtist.genres || [],
+          listeners: validArtist.followers?.total || 0,
           preview_url: track.preview_url || null,
           releaseDaysAgo: track.releaseDaysAgo || null,
         };
       } catch (e) {
-        console.warn('Skipping artist due to invalid structure', artist, e);
+        console.error('💥 Error parsing artist:', validArtist, e);
       }
     });
   }
 
+  console.log('✅ Final artist count:', Object.keys(allArtists).length);
   return Object.values(allArtists);
 }
