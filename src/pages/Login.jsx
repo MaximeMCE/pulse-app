@@ -1,24 +1,54 @@
 // /pages/Login.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { generateCodeVerifier, generateCodeChallenge } from '../pkce';
 
 const Login = () => {
-  const handleLogin = async () => {
-    const clientId = "43d52d0d3774470688a3fec0bc7e3378";
-    const redirectUri = "https://pulse-scout.netlify.app/callback";
+  const navigate = useNavigate();
 
-    // 👇 Minimal public scopes — no email or playlist access
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+
+    // On callback: exchange code for token
+    if (code) {
+      const codeVerifier = localStorage.getItem('spotify_code_verifier');
+
+      fetch('/api/getSpotifyToken', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code, codeVerifier }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.access_token) {
+            localStorage.setItem('spotify_access_token', data.access_token);
+            navigate('/campaigns');
+          } else {
+            console.error("Failed to get token:", data);
+          }
+        })
+        .catch(err => {
+          console.error("Fetch error:", err);
+        });
+    }
+  }, [navigate]);
+
+  const handleLogin = async () => {
+    const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+    const redirectUri = window.location.origin; // now handles callback here
+
     const scopes = [
-      "user-read-recently-played" // optional, remove if not needed
+      "user-read-recently-played"
     ].join(' ');
 
-    // PKCE: secure user login method
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
     localStorage.setItem("spotify_code_verifier", codeVerifier);
 
-    // Build URL
     const authUrl = `https://accounts.spotify.com/authorize?` +
       `client_id=${clientId}` +
       `&response_type=code` +
@@ -27,7 +57,6 @@ const Login = () => {
       `&code_challenge_method=S256` +
       `&code_challenge=${codeChallenge}`;
 
-    // Redirect
     window.location.href = authUrl;
   };
 
