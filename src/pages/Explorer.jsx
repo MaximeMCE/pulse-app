@@ -223,19 +223,21 @@ const Explorer = () => {
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
 
         <div className="flex flex-col gap-4">
-          {results.filter(Boolean).map((artist) => (
-            <ArtistCard
-              key={artist?.id || Math.random()}
-              artist={artist}
-              isOpen={dropdownOpen === artist?.id}
-              onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
-              onSaveLead={saveLead}
-              campaignList={campaignList}
-              isSavedTo={isSavedTo}
-              assignedCampaigns={savedCampaigns[artist?.id] || []}
-              onRemoveFromCampaign={removeLead}
-            />
-          ))}
+          {results
+            .filter((artist) => artist && typeof artist === 'object' && artist.id && artist.name)
+            .map((artist) => (
+              <ArtistCard
+                key={artist.id}
+                artist={artist}
+                isOpen={dropdownOpen === artist.id}
+                onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
+                onSaveLead={saveLead}
+                campaignList={campaignList}
+                isSavedTo={isSavedTo}
+                assignedCampaigns={savedCampaigns[artist.id] || []}
+                onRemoveFromCampaign={removeLead}
+              />
+            ))}
         </div>
       </div>
 
