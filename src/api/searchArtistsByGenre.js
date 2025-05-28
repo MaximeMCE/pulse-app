@@ -1,24 +1,27 @@
 // /api/searchArtistsByGenre.js
 import axios from 'axios';
 import { genreMap } from './genreMap';
-import { validSeedGenres } from './validSeedGenres'; // ✅ added import
+import { validSeedGenres } from './validSeedGenres';
 
 export const searchArtistsByGenre = async (token, filters) => {
   const { genres, minListeners, maxListeners } = filters;
 
-  // Translate UI labels to raw Spotify genres
+  // Translate UI labels → genreMap → flatten
   const translated = genres.flatMap(label => genreMap[label] || []);
 
-  // ✅ Filter only valid Spotify seed genres
-  const validGenres = translated.filter(g => validSeedGenres.includes(g));
+  // Lowercase, trim, validate
+  const validGenres = translated
+    .map(g => g.toLowerCase().trim())
+    .filter(g => validSeedGenres.includes(g));
 
   if (!validGenres.length) {
     throw new Error("No valid Spotify genres selected");
   }
 
-  const seed = validGenres.slice(0, 5); // Spotify allows max 5
+  const seedGenres = validGenres.slice(0, 5).join(',');
+
   const params = new URLSearchParams({
-    seed_genres: seed.join(','),
+    seed_genres: seedGenres,
     limit: 30,
     min_popularity: 10,
     target_popularity: 50,
