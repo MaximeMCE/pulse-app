@@ -25,7 +25,7 @@ const Login = () => {
           if (data.access_token) {
             localStorage.setItem('spotify_access_token', data.access_token);
 
-            // ✅ Prevent redirect loop
+            // ✅ Prevent redirect loop by removing ?code param
             window.history.replaceState({}, document.title, '/');
 
             navigate('/campaigns');
@@ -41,7 +41,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-    const redirectUri = window.location.origin;
+    const redirectUri = `${window.location.origin}/login`; // ✅ FIXED
 
     const scopes = [
       "user-read-recently-played"
