@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
-import { crawlArtistsByGenre } from '../api/crawlArtistsByGenre'; // ✅ NEW import
+import { crawlArtistsByGenre } from '../api/crawlArtistsByGenre';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -140,7 +140,7 @@ const Explorer = () => {
           setLoading(false);
           return;
         }
-        artists = await crawlArtistsByGenre(token, filters); // ✅ Replaced here
+        artists = await crawlArtistsByGenre(token, filters);
       } else {
         artists = await searchArtists(token, searchTerm, filters);
       }
@@ -223,16 +223,16 @@ const Explorer = () => {
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
 
         <div className="flex flex-col gap-4">
-          {results.map((artist) => (
+          {results.filter(Boolean).map((artist) => (
             <ArtistCard
-              key={artist.id}
+              key={artist?.id || Math.random()}
               artist={artist}
-              isOpen={dropdownOpen === artist.id}
+              isOpen={dropdownOpen === artist?.id}
               onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
               onSaveLead={saveLead}
               campaignList={campaignList}
               isSavedTo={isSavedTo}
-              assignedCampaigns={savedCampaigns[artist.id] || []}
+              assignedCampaigns={savedCampaigns[artist?.id] || []}
               onRemoveFromCampaign={removeLead}
             />
           ))}
