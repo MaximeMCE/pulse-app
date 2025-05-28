@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
-import { searchArtistsByGenre } from '../api/searchArtistsByGenre'; // ✅ new import
+import { searchArtistsByGenre } from '../api/searchArtistsByGenre';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -20,6 +20,7 @@ const Explorer = () => {
   const [campaignList, setCampaignList] = useState([]);
   const [editingQuery, setEditingQuery] = useState(null);
   const [labelInput, setLabelInput] = useState('');
+  const [hasMounted, setHasMounted] = useState(false); // 🆕
   const [filters, setFilters] = useState({
     minListeners: 0,
     maxListeners: 100000,
@@ -76,7 +77,12 @@ const Explorer = () => {
   }, []);
 
   useEffect(() => {
-    if (query.trim() === '' && token) {
+    if (!hasMounted) {
+      setHasMounted(true);
+      return;
+    }
+
+    if (query.trim() === '' && token && filters.genres.length > 0) {
       handleSearch('');
     }
   }, [filters]);
@@ -129,10 +135,13 @@ const Explorer = () => {
       let artists;
 
       if (searchTerm.trim() === '') {
-        // 🔍 No query → use genre-based recommendations
+        if (!filters.genres.length) {
+          setError('Please select at least one genre to explore artists.');
+          setLoading(false);
+          return;
+        }
         artists = await searchArtistsByGenre(token, filters);
       } else {
-        // 🧠 Manual query → standard search
         artists = await searchArtists(token, searchTerm, filters);
       }
 

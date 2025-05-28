@@ -1,10 +1,8 @@
+// /components/GenrePicker.jsx
 import React from 'react';
+import { genreMap } from '../api/genreMap'; // import curated genre list
 
-const GENRES = [
-  'techno', 'house', 'indie', 'pop', 'hip hop', 'trap', 'electronic',
-  'rock', 'ambient', 'experimental', 'funk', 'soul', 'r&b', 'jazz',
-  'classical', 'latin', 'afro', 'drum & bass', 'dubstep'
-];
+const GENRES = Object.keys(genreMap); // display only clean scout labels
 
 const GenrePicker = ({ selectedGenres, onChange }) => {
   const toggleGenre = (genre) => {

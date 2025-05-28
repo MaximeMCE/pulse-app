@@ -1,13 +1,20 @@
 // /api/searchArtistsByGenre.js
 import axios from 'axios';
+import { genreMap } from './genreMap';
 
 export const searchArtistsByGenre = async (token, filters) => {
   const { genres, minListeners, maxListeners } = filters;
 
-  if (!genres.length) throw new Error("At least one genre is required");
+  // Translate user-selected labels to real Spotify genres
+  const translated = genres.flatMap(label => genreMap[label] || []);
+  const validGenres = Array.from(new Set(translated)); // remove duplicates
+
+  if (!validGenres.length) {
+    throw new Error("No valid Spotify genres selected");
+  }
 
   const params = new URLSearchParams({
-    seed_genres: genres.slice(0, 5).join(','), // max 5
+    seed_genres: validGenres.slice(0, 5).join(','), // max 5
     limit: 30,
     min_popularity: 10,
     target_popularity: 50,
@@ -19,7 +26,6 @@ export const searchArtistsByGenre = async (token, filters) => {
 
   const tracks = response.data.tracks || [];
 
-  // Extract unique artists from recommended tracks
   const artistsMap = new Map();
   for (const track of tracks) {
     const artist = track.artists?.[0];
@@ -27,11 +33,11 @@ export const searchArtistsByGenre = async (token, filters) => {
       artistsMap.set(artist.id, {
         id: artist.id,
         name: artist.name,
-        listeners: Math.floor(Math.random() * (maxListeners - minListeners + 1)) + minListeners, // Fake for now
-        genres: genres,
+        listeners: Math.floor(Math.random() * (maxListeners - minListeners + 1)) + minListeners,
+        genres: validGenres,
         preview_url: track.preview_url,
         images: track.album?.images || [],
-        releaseDaysAgo: 0, // Placeholder for now
+        releaseDaysAgo: 0,
       });
     }
   }
