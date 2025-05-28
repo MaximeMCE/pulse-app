@@ -37,15 +37,15 @@ const Login = () => {
   }, [navigate]);
 
   const handleLogin = async () => {
-    const redirectUri = `${window.location.origin}/login`; // must match Spotify settings
+    const redirectUri = `${window.location.origin}/login`;
     const scopes = ["user-read-recently-played"].join(' ');
 
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = await generateCodeChallenge(codeVerifier);
     localStorage.setItem("spotify_code_verifier", codeVerifier);
 
-    // ⚠️ Hardcoded client ID temporarily to remove from build (or move this into backend later)
-    const clientId = "43d52d0d3774470688a3fec0bc7e3378";
+    // ✅ Use VITE_ env variable injected at build time
+    const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 
     const authUrl = `https://accounts.spotify.com/authorize?` +
       `client_id=${clientId}` +
