@@ -13,8 +13,9 @@ export const searchArtistsByGenre = async (token, filters) => {
     throw new Error("No valid Spotify genres selected");
   }
 
+  const seed = validGenres.slice(0, 5); // Spotify allows max 5
   const params = new URLSearchParams({
-    seed_genres: validGenres.slice(0, 5).join(','), // max 5
+    seed_genres: seed.join(','), // clean, safe genre string
     limit: 30,
     min_popularity: 10,
     target_popularity: 50,
