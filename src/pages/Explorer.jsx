@@ -145,30 +145,37 @@ const Explorer = () => {
         artists = await searchArtists(token, searchTerm, filters);
       }
 
-      // 🧪 DEBUGGING
-      console.log('RAW_ARTISTS:', artists);
+      // 🧪 DEBUG LOGS
+      console.log('🚨 RAW artists from API:', artists);
 
       const filtered = artists.filter((artist) => {
         const listeners = artist?.listeners ?? 0;
         const listenerCheck = listeners >= filters.minListeners && listeners <= filters.maxListeners;
-        const releaseCheck = filters.recentRelease === 'off' || (artist?.releaseDaysAgo !== undefined && artist.releaseDaysAgo <= parseInt(filters.recentRelease));
+        const releaseCheck =
+          filters.recentRelease === 'off' ||
+          (artist?.releaseDaysAgo !== undefined &&
+            artist.releaseDaysAgo <= parseInt(filters.recentRelease));
 
         let genreCheck = true;
         if (filters.genres.length > 0) {
           if (filters.genreSource === 'spotify') {
-            const artistGenres = (artist?.genres || []).map(g => g.toLowerCase());
-            genreCheck = filters.genres.some(g => artistGenres.includes(g.toLowerCase()));
+            const artistGenres = (artist?.genres || []).map((g) => g.toLowerCase());
+            genreCheck = filters.genres.some((g) => artistGenres.includes(g.toLowerCase()));
           } else if (filters.genreSource === 'custom') {
-            const customGenres = (artist?.customGenres || []).map(g => g.toLowerCase());
-            genreCheck = filters.genres.some(g => customGenres.includes(g.toLowerCase()));
+            const customGenres = (artist?.customGenres || []).map((g) => g.toLowerCase());
+            genreCheck = filters.genres.some((g) => customGenres.includes(g.toLowerCase()));
           }
         }
 
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
       });
 
-      console.log('FILTERED:', filtered);
-      console.log('FIRST_INVALID:', filtered.find(a => !a || typeof a !== 'object' || !a.id));
+      console.log('✅ FILTERED artists:', filtered);
+      filtered.forEach((a, i) => {
+        if (!a || typeof a !== 'object' || !a.id || !a.name) {
+          console.warn(`❌ BAD ENTRY [${i}]:`, a);
+        }
+      });
 
       setResults(filtered);
       localStorage.setItem('explorer_results', JSON.stringify(filtered));
