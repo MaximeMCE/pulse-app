@@ -1,3 +1,4 @@
+// searchArtistsByGenre.js
 import { genreMap } from './genreMap';
 import { crawlPlaylistTracks } from './crawlPlaylistTracks';
 
@@ -9,8 +10,10 @@ export const searchArtistsByGenre = async (token, filters) => {
     return [];
   }
 
-  // Translate UI labels to playlist IDs
-  const playlistIds = genres.flatMap(label => Array.isArray(genreMap[label]) ? genreMap[label] : []);
+  const playlistIds = genres.flatMap(label =>
+    Array.isArray(genreMap[label]) ? genreMap[label] : []
+  );
+
   if (!playlistIds.length) throw new Error("No valid playlists for selected genres");
 
   const seenArtistIds = new Set();
@@ -27,11 +30,15 @@ export const searchArtistsByGenre = async (token, filters) => {
 
       if (!seenArtistIds.has(artist.id)) {
         seenArtistIds.add(artist.id);
+
         artists.push({
-          ...artist,
-          listeners: Math.floor(Math.random() * (maxListeners - minListeners + 1)) + minListeners,
-          genres,
-          releaseDaysAgo: 0
+          id: artist.id,
+          name: artist.name,
+          images: artist.images || [],
+          genres: Array.isArray(artist.genres) ? artist.genres : [],
+          monthlyListeners: Math.floor(Math.random() * (maxListeners - minListeners + 1)) + minListeners,
+          preview_url: artist.preview_url || null,
+          platforms: ['spotify']
         });
       }
     }

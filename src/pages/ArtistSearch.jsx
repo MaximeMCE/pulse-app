@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { searchArtists } from '../api/Spotify'; // Make sure this path is correct
+import { searchArtists } from '../api/Spotify';
 
 const ArtistSearch = () => {
   const [query, setQuery] = useState('');
@@ -8,7 +8,7 @@ const ArtistSearch = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('spotify_access_token'); // Confirm this key matches your auth flow
+    const storedToken = localStorage.getItem('spotify_access_token');
     if (storedToken) {
       console.log('✅ Token loaded in ArtistSearch:', storedToken);
       setToken(storedToken);
@@ -68,7 +68,7 @@ const ArtistSearch = () => {
       <div>
         {results.map((artist) => (
           <div key={artist.id} className="border-b py-2 flex items-center">
-            {artist.images[0] && (
+            {artist.images?.[0]?.url && (
               <img
                 src={artist.images[0].url}
                 alt={artist.name}
@@ -78,10 +78,16 @@ const ArtistSearch = () => {
             <div>
               <div className="font-semibold">{artist.name}</div>
               <div className="text-sm text-gray-500">
-                Followers: {artist.followers.total.toLocaleString()}
+                Followers:{' '}
+                {artist.followers?.total
+                  ? artist.followers.total.toLocaleString()
+                  : artist.listeners?.toLocaleString?.() || 'N/A'}
               </div>
               <div className="text-sm text-gray-400">
-                Genres: {artist.genres.slice(0, 2).join(', ') || 'N/A'}
+                Genres:{' '}
+                {Array.isArray(artist.genres) && artist.genres.length > 0
+                  ? artist.genres.slice(0, 2).join(', ')
+                  : 'N/A'}
               </div>
             </div>
           </div>
