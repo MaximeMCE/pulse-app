@@ -23,12 +23,29 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
     const mainArtist = track?.artists?.[0];
 
     if (mainArtist && !artistsMap.has(mainArtist.id)) {
-      artistsMap.set(mainArtist.id, {
-        id: mainArtist.id,
-        name: mainArtist.name,
-        preview_url: track.preview_url,
-        images: track.album?.images || []
-      });
+      try {
+        const artistDetail = await axios.get(
+          `https://api.spotify.com/v1/artists/${mainArtist.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        const artistData = artistDetail.data;
+
+        artistsMap.set(mainArtist.id, {
+          id: mainArtist.id,
+          name: mainArtist.name,
+          preview_url: track.preview_url || '',
+          images: track.album?.images || [],
+          genres: artistData.genres || [],
+          followers: artistData.followers?.total || 0
+        });
+      } catch (err) {
+        console.warn('❌ Failed to fetch artist metadata for', mainArtist.id, err);
+      }
     }
   }
 
