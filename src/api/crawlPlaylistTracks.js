@@ -17,13 +17,8 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
 
   const items = response.data.items || [];
 
-  return items.map(item => {
-    const track = item.track;
-
-    return {
-      preview_url: track.preview_url,
-      albumImages: track.album?.images || [],
-      artists: track.artists || []
-    };
-  });
+  // ✅ Return raw full track objects as expected by crawlArtistsByGenre
+  return items
+    .map(item => item.track)
+    .filter(track => track && Array.isArray(track.artists));
 };
