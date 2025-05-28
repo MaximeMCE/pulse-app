@@ -74,6 +74,13 @@ const Explorer = () => {
     return () => window.removeEventListener('leadsUpdated', refreshSavedCampaigns);
   }, []);
 
+  // 🆕 Auto-search if filters change and query is empty
+  useEffect(() => {
+    if (query.trim() === '' && token) {
+      handleSearch('');
+    }
+  }, [filters]);
+
   const ensureCampaignMetadata = () => {
     const allCampaigns = Object.keys(localStorage)
       .filter(k => k.startsWith('leads_'))
@@ -115,7 +122,7 @@ const Explorer = () => {
 
   const handleSearch = async (overrideQuery) => {
     const searchTerm = overrideQuery || query;
-    if (!searchTerm || !token) return;
+    if (!searchTerm && query.trim() !== '' && !token) return;
     setLoading(true);
     try {
       const artists = await searchArtists(token, searchTerm, filters);
@@ -143,7 +150,7 @@ const Explorer = () => {
       localStorage.setItem('explorer_results', JSON.stringify(filtered));
       localStorage.setItem('explorer_query', searchTerm);
       localStorage.setItem('explorer_timestamp', Date.now().toString());
-      addSearch(searchTerm);
+      if (searchTerm) addSearch(searchTerm);
       setError(filtered.length ? '' : 'No artists found.');
     } catch (err) {
       setError('Search failed.');
