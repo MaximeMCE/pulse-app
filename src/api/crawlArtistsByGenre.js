@@ -3,7 +3,7 @@ import { crawlPlaylistTracks } from './crawlPlaylistTracks';
 
 export async function crawlArtistsByGenre(token, filters) {
   const allArtists = {};
-  const genre = filters.genres[0]; // use the first selected genre for now
+  const genre = filters.genres[0]; // use the first selected genre
 
   const playlists = await fetchPlaylistsByGenre(token, genre);
   const topPlaylists = playlists.slice(0, 3); // limit to top 3 for performance
@@ -12,8 +12,11 @@ export async function crawlArtistsByGenre(token, filters) {
     const tracks = await crawlPlaylistTracks(token, playlist.id);
 
     tracks.forEach(track => {
-      const artist = track.artists?.[0];
-      if (!artist || allArtists[artist.id]) return;
+      // ✅ Defensive null checks
+      if (!track || !track.artists || !track.artists[0] || !track.artists[0].id) return;
+
+      const artist = track.artists[0];
+      if (allArtists[artist.id]) return;
 
       allArtists[artist.id] = {
         id: artist.id,
