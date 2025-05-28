@@ -1,16 +1,15 @@
-// /api/genreMap.js
 export const genreMap = {
-  'Techno': ['techno'],
-  'House': ['house'], // ✅ NOT deep-house, NOT chicago-house
-  'Indie': ['indie', 'indie-pop'],
-  'Hip-Hop': ['hip-hop'],
-  'Electronic': ['electronic'],
-  'Pop': ['pop'],
-  'Rock': ['rock'],
-  'Afrobeat': ['afrobeat'],
-  'Latin': ['latin', 'reggaeton'],
-  'Jazz': ['jazz'],
+  House: ['deep-house', 'progressive-house', 'tropical-house'],
+  Techno: ['techno', 'minimal-techno'],
+  Indie: ['indie-pop', 'indie-rock'],
+  HipHop: ['hip-hop', 'rap'],
+  Electronic: ['electronic', 'electro'],
+  Pop: ['pop'],
+  Rock: ['rock'],
+  Afrobeat: ['afrobeat'],
+  Latin: ['latin'],
+  Jazz: ['jazz'],
   'Funk & Soul': ['funk', 'soul'],
-  'Ambient': ['ambient'],
-  'Experimental': ['industrial']
+  Ambient: ['ambient'],
+  Experimental: ['experimental'],
 };
