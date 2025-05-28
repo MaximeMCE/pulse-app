@@ -10,7 +10,6 @@ const Login = () => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
 
-    // On callback: exchange code for token
     if (code) {
       const codeVerifier = localStorage.getItem('spotify_code_verifier');
 
@@ -25,6 +24,10 @@ const Login = () => {
         .then(data => {
           if (data.access_token) {
             localStorage.setItem('spotify_access_token', data.access_token);
+
+            // ✅ Prevent redirect loop
+            window.history.replaceState({}, document.title, '/');
+
             navigate('/campaigns');
           } else {
             console.error("Failed to get token:", data);
@@ -38,7 +41,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-    const redirectUri = window.location.origin; // now handles callback here
+    const redirectUri = window.location.origin;
 
     const scopes = [
       "user-read-recently-played"
