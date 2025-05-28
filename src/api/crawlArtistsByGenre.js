@@ -41,6 +41,11 @@ export async function crawlArtistsByGenre(token, filters) {
     });
   }
 
-  console.log('✅ Final artist count:', Object.keys(allArtists).length);
-  return Object.values(allArtists);
+  // 🧹 Final clean-up before returning
+  const validResults = Object.values(allArtists).filter(
+    (a) => a && typeof a === 'object' && a.id && a.name
+  );
+
+  console.log('✅ Final artist count:', validResults.length);
+  return validResults;
 }
