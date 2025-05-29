@@ -38,13 +38,16 @@ const Login = () => {
 
   const handleLogin = async () => {
     const redirectUri = `${window.location.origin}/login`;
-    const scopes = ["user-read-recently-played"].join(' ');
+    const scopes = [
+      "user-read-recently-played",
+      "playlist-read-private",
+      "playlist-read-collaborative"
+    ].join(' ');
 
     const codeVerifier = generateCodeVerifier();
     const codeChallenge = await generateCodeChallenge(codeVerifier);
     localStorage.setItem("spotify_code_verifier", codeVerifier);
 
-    // ⬇️ Fetch client ID from Netlify function
     const res = await fetch('/.netlify/functions/getSpotifyClientId');
     const { clientId } = await res.json();
 
