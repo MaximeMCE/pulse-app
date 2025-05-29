@@ -154,11 +154,12 @@ const Explorer = () => {
 
       const filtered = artists.filter((artist) => {
         const listeners = artist?.monthlyListeners ?? artist?.listeners ?? 0;
+        const releaseDays = artist?.releaseDaysAgo ?? null;
+
         const listenerCheck = listeners >= filters.minListeners && listeners <= filters.maxListeners;
         const releaseCheck =
           filters.recentRelease === 'off' ||
-          (artist?.releaseDaysAgo !== undefined &&
-            artist.releaseDaysAgo <= parseInt(filters.recentRelease));
+          (releaseDays !== null && releaseDays <= parseInt(filters.recentRelease));
 
         let genreCheck = true;
         if (filters.genres.length > 0) {
@@ -171,7 +172,19 @@ const Explorer = () => {
           }
         }
 
-        return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
+        const passed = artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
+        if (!passed) {
+          console.log('⛔ Skipped Artist:', {
+            name: artist?.name,
+            id: artist?.id,
+            listeners,
+            releaseDays,
+            genres: artist?.genres,
+            checks: { listenerCheck, releaseCheck, genreCheck }
+          });
+        }
+
+        return passed;
       });
 
       setResults(filtered);
@@ -235,26 +248,19 @@ const Explorer = () => {
         <div className="flex flex-col gap-4">
           {results
             .filter((artist) => artist && typeof artist === 'object' && artist.id && artist.name)
-            .map((artist) => {
-              if (!artist || !artist.id) {
-                console.warn('❌ Skipping invalid artist in .map():', artist);
-                return null;
-              }
-
-              return (
-                <ArtistCard
-                  key={artist.id}
-                  artist={artist}
-                  isOpen={dropdownOpen === artist.id}
-                  onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
-                  onSaveLead={saveLead}
-                  campaignList={campaignList}
-                  isSavedTo={isSavedTo}
-                  assignedCampaigns={savedCampaigns[artist.id] || []}
-                  onRemoveFromCampaign={removeLead}
-                />
-              );
-            })}
+            .map((artist) => (
+              <ArtistCard
+                key={artist.id}
+                artist={artist}
+                isOpen={dropdownOpen === artist.id}
+                onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
+                onSaveLead={saveLead}
+                campaignList={campaignList}
+                isSavedTo={isSavedTo}
+                assignedCampaigns={savedCampaigns[artist.id] || []}
+                onRemoveFromCampaign={removeLead}
+              />
+            ))}
         </div>
       </div>
 
