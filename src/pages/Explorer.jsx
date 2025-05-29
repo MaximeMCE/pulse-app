@@ -153,7 +153,7 @@ const Explorer = () => {
       }
 
       const filtered = artists.filter((artist) => {
-        const listeners = artist?.listeners ?? 0;
+        const listeners = artist?.monthlyListeners ?? artist?.listeners ?? 0;
         const listenerCheck = listeners >= filters.minListeners && listeners <= filters.maxListeners;
         const releaseCheck =
           filters.recentRelease === 'off' ||
