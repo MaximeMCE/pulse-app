@@ -28,7 +28,7 @@ const ArtistCard = ({
 
   const listeners = typeof artist.monthlyListeners === 'number'
     ? artist.monthlyListeners
-    : (typeof artist.listeners === 'number' ? artist.listeners : 'N/A');
+    : (typeof artist.listeners === 'number' ? artist.listeners : 0);
 
   const previewUrl = artist.preview_url || '';
 
