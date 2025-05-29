@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { fetchArtistsByIds } from './fetchArtistsByIds.js';
 
 export const crawlPlaylistTracks = async (token, playlistId) => {
   const response = await axios.get(
@@ -16,38 +17,36 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
 
   const items = Array.isArray(response.data?.items) ? response.data.items : [];
 
-  const artistsMap = new Map();
+  const artistTrackMap = new Map();
 
   for (const item of items) {
     const track = item.track;
-    const mainArtist = track?.artists?.[0];
+    const artist = track?.artists?.[0];
 
-    if (mainArtist && !artistsMap.has(mainArtist.id)) {
-      try {
-        const artistDetail = await axios.get(
-          `https://api.spotify.com/v1/artists/${mainArtist.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
+    if (!artist?.id) continue;
 
-        const artistData = artistDetail.data;
-
-        artistsMap.set(mainArtist.id, {
-          id: mainArtist.id,
-          name: mainArtist.name,
-          preview_url: track.preview_url || '',
-          images: track.album?.images || [],
-          genres: artistData.genres || [],
-          followers: artistData.followers?.total || 0
-        });
-      } catch (err) {
-        console.warn('❌ Failed to fetch artist metadata for', mainArtist.id, err);
-      }
+    if (!artistTrackMap.has(artist.id)) {
+      artistTrackMap.set(artist.id, {
+        id: artist.id,
+        name: artist.name,
+        preview_url: track.preview_url || '',
+        image: track.album?.images?.[0]?.url || ''
+      });
     }
   }
 
-  return Array.from(artistsMap.values());
+  const uniqueArtistIds = Array.from(artistTrackMap.keys());
+  const enrichedArtists = await fetchArtistsByIds(token, uniqueArtistIds);
+
+  return enrichedArtists.map((a) => {
+    const base = artistTrackMap.get(a.id);
+    return {
+      id: a.id,
+      name: a.name,
+      preview_url: base?.preview_url || '',
+      image: base?.image || '',
+      genres: a.genres || [],
+      followers: a.followers?.total || 0
+    };
+  });
 };
