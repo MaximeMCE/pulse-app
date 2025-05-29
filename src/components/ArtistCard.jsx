@@ -1,6 +1,23 @@
+// ✅ Updated ArtistCard.jsx with activity badge
 import React from 'react';
 import useTalentPool from '../hooks/useTalentPool';
 import { getSpotifyData, formatNumber, getTopGenres } from '../utils/artistUtils';
+
+const getActivityBadge = (releaseDaysAgo) => {
+  if (releaseDaysAgo === null || releaseDaysAgo === undefined) {
+    return { emoji: '❔', label: 'No Data Available', color: 'bg-gray-100 text-gray-600' };
+  }
+  if (releaseDaysAgo <= 3) {
+    return { emoji: '🔥', label: 'Just Dropped', color: 'bg-red-100 text-red-800' };
+  }
+  if (releaseDaysAgo <= 14) {
+    return { emoji: '⚡️', label: 'Actively Promoting', color: 'bg-yellow-100 text-yellow-800' };
+  }
+  if (releaseDaysAgo <= 45) {
+    return { emoji: '🌀', label: 'Recently Active', color: 'bg-blue-100 text-blue-800' };
+  }
+  return { emoji: '❄️', label: 'Between Releases', color: 'bg-slate-100 text-slate-600' };
+};
 
 const ArtistCard = ({
   artist,
@@ -27,7 +44,8 @@ const ArtistCard = ({
     genres,
     followers,
     monthlyListeners,
-    previewUrl
+    previewUrl,
+    releaseDaysAgo
   } = getSpotifyData(artist);
 
   const handlePoolToggle = () => {
@@ -44,6 +62,8 @@ const ArtistCard = ({
     isInPool(id) ? removeFromPool(id) : addToPool(baseArtist);
   };
 
+  const activity = getActivityBadge(releaseDaysAgo);
+
   return (
     <div className="border rounded p-4 mb-4 bg-white shadow">
       <div className="mb-4">
@@ -55,7 +75,15 @@ const ArtistCard = ({
             style={{ width: 80, height: 80 }}
           />
           <div className="flex-1">
-            <div className="font-semibold">{name}</div>
+            <div className="font-semibold flex items-center gap-2">
+              {name}
+              <span
+                title={activity.label}
+                className={`text-xs px-2 py-1 rounded ${activity.color}`}
+              >
+                {activity.emoji} {activity.label}
+              </span>
+            </div>
 
             <div className="text-sm text-gray-500 flex flex-col gap-1 mt-1">
               <span className="flex items-center gap-1">
