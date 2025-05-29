@@ -23,11 +23,13 @@ const ArtistCard = ({
 
   const id = artist.id;
   const name = artist.name || 'Unknown Artist';
-  const image = artist.image || fallbackImage;
+  const image = artist.image || artist.albumImage || fallbackImage;
   const genres = Array.isArray(artist.genres) ? artist.genres : [];
-  const listeners = typeof artist.followers === 'number'
-    ? artist.followers
-    : (typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0);
+
+  const listeners = typeof artist.monthlyListeners === 'number'
+    ? artist.monthlyListeners
+    : (typeof artist.listeners === 'number' ? artist.listeners : 'N/A');
+
   const previewUrl = artist.preview_url || '';
 
   const handlePoolToggle = () => {
@@ -56,7 +58,7 @@ const ArtistCard = ({
           <div className="flex-1">
             <div className="font-semibold">{name}</div>
             <div className="text-sm text-gray-500">
-              Monthly Listeners: {listeners.toLocaleString()}
+              Monthly Listeners: {listeners.toLocaleString?.() ?? listeners}
             </div>
             <div className="text-sm text-gray-400">
               Genres: {genres.length > 0 ? genres.slice(0, 2).join(', ') : 'N/A'}
