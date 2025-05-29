@@ -58,7 +58,7 @@ const ArtistCard = ({
           <div className="flex-1">
             <div className="font-semibold">{name}</div>
             <div className="text-sm text-gray-500">
-              Monthly Listeners: {listeners.toLocaleString?.() ?? listeners}
+              Monthly Listeners: {listeners > 0 ? listeners.toLocaleString() : '—'}
             </div>
             <div className="text-sm text-gray-400">
               Genres: {genres.length > 0 ? genres.slice(0, 2).join(', ') : 'N/A'}
