@@ -24,8 +24,6 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
       const artist = track?.artists?.[0];
 
       if (!track || !artist?.id) continue;
-
-      // Skip local or unavailable tracks
       if (track.is_local || track.type !== 'track') continue;
 
       if (!artistTrackMap.has(artist.id)) {
@@ -39,17 +37,14 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
     }
 
     const uniqueArtistIds = Array.from(artistTrackMap.keys());
-
     if (uniqueArtistIds.length === 0) return [];
 
-    // 🔍 Fetch enriched metadata (genres, followers, images)
     const enrichedArtists = await fetchArtistsByIds(token, uniqueArtistIds);
 
-    // 🧠 Merge original + enriched data
     return enrichedArtists.map((a) => {
       const base = artistTrackMap.get(a.id) || {};
 
-      return {
+      const finalArtist = {
         id: a.id,
         name: a.name || base.name || 'Unknown',
         preview_url: base.preview_url || '',
@@ -58,12 +53,14 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
           base.albumImage ||
           'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg',
         genres: Array.isArray(a.genres) ? a.genres : [],
-        monthlyListeners: a.followers?.total || 0, // 🟢 CORRECTED HERE
+        monthlyListeners: a.monthlyListeners || 0, // ✅ Corrected
       };
+
+      console.log('🎯 Final Enhanced Artist:', finalArtist);
+      return finalArtist;
     });
   } catch (err) {
     console.error('❌ Error crawling playlist tracks:', err.message);
     return [];
   }
 };
-
