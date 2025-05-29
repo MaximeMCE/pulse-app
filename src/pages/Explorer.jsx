@@ -1,4 +1,4 @@
-// ✅ Final Explorer.jsx with 'No results' message restored
+// ✅ Explorer.jsx with corrected releaseDays filter logic
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -77,7 +77,7 @@ const Explorer = () => {
         const listenerCheck = listeners >= filters.minListeners && listeners <= filters.maxListeners;
         const releaseCheck =
           filters.recentRelease === 'off' ||
-          (releaseDays !== null && releaseDays <= parseInt(filters.recentRelease));
+          (typeof releaseDays === 'number' && releaseDays <= Number(filters.recentRelease));
 
         let genreCheck = true;
         if (filters.genres.length > 0) {
