@@ -14,16 +14,25 @@ export const fetchArtistsByIds = async (token, ids) => {
         'https://api.spotify.com/v1/artists',
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           params: {
-            ids: batch.join(',')
-          }
+            ids: batch.join(','),
+          },
         }
       );
 
       if (Array.isArray(response.data?.artists)) {
-        results.push(...response.data.artists);
+        // Map and clean each artist before pushing
+        const cleanedArtists = response.data.artists.map((artist) => ({
+          id: artist.id,
+          name: artist.name,
+          genres: artist.genres || [],
+          images: artist.images || [],
+          monthlyListeners: artist.followers?.total || 0,
+        }));
+
+        results.push(...cleanedArtists);
       }
     } catch (err) {
       console.error('❌ Error fetching artist batch:', batch, err?.response?.data || err.message);
