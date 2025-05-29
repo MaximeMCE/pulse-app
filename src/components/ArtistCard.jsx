@@ -26,7 +26,7 @@ const ArtistCard = ({
   const image = artist.image || artist.albumImage || fallbackImage;
   const genres = Array.isArray(artist.genres) ? artist.genres : [];
 
-  const listeners = typeof artist.monthlyListeners === 'number'
+  const spotifyFollowers = typeof artist.monthlyListeners === 'number'
     ? artist.monthlyListeners
     : (typeof artist.listeners === 'number' ? artist.listeners : 0);
 
@@ -38,7 +38,7 @@ const ArtistCard = ({
       name,
       image,
       genres,
-      monthlyListeners: listeners,
+      monthlyListeners: spotifyFollowers,
       preview_url: previewUrl,
       platforms: ['spotify']
     };
@@ -57,9 +57,16 @@ const ArtistCard = ({
           />
           <div className="flex-1">
             <div className="font-semibold">{name}</div>
-            <div className="text-sm text-gray-500">
-              Monthly Listeners: {listeners > 0 ? listeners.toLocaleString() : '—'}
+
+            {/* Modular follower block */}
+            <div className="text-sm text-gray-500 flex items-center gap-2 mt-1">
+              <span className="flex items-center gap-1">
+                <img src="/icons/spotify.svg" alt="Spotify" className="w-4 h-4" />
+                {spotifyFollowers > 0 ? spotifyFollowers.toLocaleString() : '—'}
+              </span>
+              {/* Future: Add more platforms here */}
             </div>
+
             <div className="text-sm text-gray-400">
               Genres: {genres.length > 0 ? genres.slice(0, 2).join(', ') : 'N/A'}
             </div>
