@@ -22,15 +22,15 @@ export const fetchArtistsByIds = async (token, ids) => {
         }
       );
 
+      // 👇 LOG RAW RESPONSE BEFORE ANY MAPPING
+      console.log('🎯 RAW Spotify artist batch response:', response.data);
+
       if (Array.isArray(response.data?.artists)) {
         const cleanedArtists = response.data.artists.map((artist) => {
           const listeners = artist.followers?.total || 0;
 
-          console.log('🎧 Artist fetched:', {
-            name: artist.name,
-            followers: artist.followers,
-            monthlyListeners: listeners,
-          });
+          // 👇 LOG INDIVIDUAL ARTIST OBJECT
+          console.log('🎧 Single artist raw:', artist);
 
           return {
             id: artist.id,
