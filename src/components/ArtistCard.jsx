@@ -1,7 +1,6 @@
 import React from 'react';
 import useTalentPool from '../hooks/useTalentPool';
-
-const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg';
+import { getSpotifyData, formatNumber, getTopGenres } from '../utils/artistUtils';
 
 const ArtistCard = ({
   artist,
@@ -15,20 +14,21 @@ const ArtistCard = ({
 }) => {
   if (!artist || typeof artist !== 'object' || !artist.id || !artist.name) return null;
 
-  const { addToPool, removeFromPool, isInPool } = useTalentPool();
+  const {
+    addToPool,
+    removeFromPool,
+    isInPool
+  } = useTalentPool();
 
-  const id = artist.id;
-  const name = artist.name || 'Unknown Artist';
-  const image = artist.image || artist.albumImage || fallbackImage;
-  const genres = Array.isArray(artist.genres) ? artist.genres : [];
-
-  const spotifyFollowers = typeof artist.followers === 'number' ? artist.followers : 0;
-  const monthlyListeners =
-    typeof artist.monthlyListeners === 'number'
-      ? artist.monthlyListeners
-      : (typeof artist.listeners === 'number' ? artist.listeners : 0);
-
-  const previewUrl = artist.preview_url || '';
+  const {
+    id,
+    name,
+    image,
+    genres,
+    followers,
+    monthlyListeners,
+    previewUrl
+  } = getSpotifyData(artist);
 
   const handlePoolToggle = () => {
     const baseArtist = {
@@ -36,8 +36,8 @@ const ArtistCard = ({
       name,
       image,
       genres,
+      followers,
       monthlyListeners,
-      followers: spotifyFollowers,
       preview_url: previewUrl,
       platforms: ['spotify']
     };
@@ -60,16 +60,16 @@ const ArtistCard = ({
             <div className="text-sm text-gray-500 flex flex-col gap-1 mt-1">
               <span className="flex items-center gap-1">
                 <img src="/icons/spotify.svg" alt="Spotify" className="w-4 h-4" />
-                Followers: {spotifyFollowers > 0 ? spotifyFollowers.toLocaleString() : '—'}
+                Followers: {formatNumber(followers)}
               </span>
               <span className="flex items-center gap-1">
                 <img src="/icons/spotify.svg" alt="Spotify" className="w-4 h-4" />
-                Monthly Listeners: {monthlyListeners > 0 ? monthlyListeners.toLocaleString() : '—'}
+                Monthly Listeners: {formatNumber(monthlyListeners)}
               </span>
             </div>
 
             <div className="text-sm text-gray-400">
-              Genres: {genres.length > 0 ? genres.slice(0, 2).join(', ') : 'N/A'}
+              Genres: {getTopGenres(genres)}
             </div>
           </div>
         </div>
