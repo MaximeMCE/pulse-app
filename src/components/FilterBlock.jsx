@@ -1,4 +1,4 @@
-// ✅ Updated FilterBlock.jsx
+// ✅ Updated FilterBlock.jsx with release filters matching badge logic
 import React, { useState } from 'react';
 import GenrePicker from './GenrePicker';
 
@@ -54,9 +54,10 @@ const FilterBlock = ({ onSubmitFilters }) => {
           className="w-full border rounded px-3 py-2"
         >
           <option value="">Select activity window...</option>
-          <option value="7">🔥 Fresh Drop (Last 7 days)</option>
-          <option value="30">⚡ Recent Activity (Last 30 days)</option>
-          <option value="off">🔍 Ignore release date</option>
+          <option value="3">🔥 Just Dropped (≤ 3 days)</option>
+          <option value="14">⚡ Actively Promoting (≤ 14 days)</option>
+          <option value="45">🌀 Recently Active (≤ 45 days)</option>
+          <option value="off">❄️ No activity filter</option>
         </select>
       </div>
 
