@@ -1,4 +1,4 @@
-// ✅ Final Combined Explorer.jsx with SearchBlock + FilterBlock
+// ✅ Final Explorer.jsx with 'No results' message restored
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -155,6 +155,9 @@ const Explorer = () => {
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
+        {!loading && results.length === 0 && (
+          <p className="text-sm text-gray-500 italic">No artists found. Try adjusting your filters or search terms.</p>
+        )}
 
         <div className="flex flex-col gap-4">
           {results
