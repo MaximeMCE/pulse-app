@@ -1,50 +1,36 @@
 import axios from 'axios';
 
 export const fetchArtistsByIds = async (token, ids) => {
-  const batches = [];
   const results = [];
 
-  for (let i = 0; i < ids.length; i += 50) {
-    batches.push(ids.slice(i, i + 50));
-  }
-
-  for (const batch of batches) {
+  for (const id of ids) {
     try {
-      const response = await axios.get(
-        'https://api.spotify.com/v1/artists',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            ids: batch.join(','),
-          },
-        }
-      );
+      const response = await axios.get(`https://api.spotify.com/v1/artists/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      // 🔍 DEBUG FULL RAW BATCH
-      console.log('🎯 RAW Spotify artist batch response:', response.data);
+      const artist = response.data;
 
-      if (Array.isArray(response.data?.artists)) {
-        const cleanedArtists = response.data.artists.map((artist) => {
-          // 🔍 DEBUG EACH ARTIST
-          console.log('🎧 Single artist raw:', artist);
+      if (!artist || !artist.id) continue;
 
-          const listeners = artist.followers?.total || 0;
+      console.log('🎧 Verified artist:', {
+        id: artist.id,
+        name: artist.name,
+        followers: artist.followers?.total,
+        genres: artist.genres,
+      });
 
-          return {
-            id: artist.id,
-            name: artist.name,
-            genres: artist.genres || [],
-            images: artist.images || [],
-            monthlyListeners: listeners,
-          };
-        });
-
-        results.push(...cleanedArtists);
-      }
+      results.push({
+        id: artist.id,
+        name: artist.name,
+        genres: artist.genres || [],
+        images: artist.images || [],
+        monthlyListeners: artist.followers?.total || 0,
+      });
     } catch (err) {
-      console.error('❌ Error fetching artist batch:', batch, err?.response?.data || err.message);
+      console.error('❌ Error fetching artist:', id, err?.response?.data || err.message);
     }
   }
 
