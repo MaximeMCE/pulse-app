@@ -42,8 +42,10 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
 
     if (uniqueArtistIds.length === 0) return [];
 
+    // 🔍 Fetch enriched metadata (genres, followers, images)
     const enrichedArtists = await fetchArtistsByIds(token, uniqueArtistIds);
 
+    // 🧠 Merge original + enriched data
     return enrichedArtists.map((a) => {
       const base = artistTrackMap.get(a.id) || {};
 
@@ -52,12 +54,11 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
         name: a.name || base.name || 'Unknown',
         preview_url: base.preview_url || '',
         image:
-          a.images?.[0]?.url ||
+          (Array.isArray(a.images) && a.images[0]?.url) ||
           base.albumImage ||
           'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg',
-        albumImage: base.albumImage || '',
         genres: Array.isArray(a.genres) ? a.genres : [],
-        monthlyListeners: a.followers?.total || 0,
+        monthlyListeners: a.followers?.total || 0, // 🟢 CORRECTED HERE
       };
     });
   } catch (err) {
