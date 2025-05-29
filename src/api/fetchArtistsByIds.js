@@ -15,10 +15,12 @@ export const fetchArtistsByIds = async (token, ids) => {
 
       if (!artist || !artist.id) continue;
 
+      const monthlyListeners = artist.followers?.total || 0;
+
       console.log('🎧 Verified artist:', {
         id: artist.id,
         name: artist.name,
-        followers: artist.followers?.total,
+        monthlyListeners,
         genres: artist.genres,
       });
 
@@ -27,7 +29,8 @@ export const fetchArtistsByIds = async (token, ids) => {
         name: artist.name,
         genres: artist.genres || [],
         images: artist.images || [],
-        monthlyListeners: artist.followers?.total || 0,
+        followers: artist.followers || {}, // Include raw followers object
+        monthlyListeners, // Explicitly defined
       });
     } catch (err) {
       console.error('❌ Error fetching artist:', id, err?.response?.data || err.message);
