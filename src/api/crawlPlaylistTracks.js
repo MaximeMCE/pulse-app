@@ -53,7 +53,7 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
           base.albumImage ||
           'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg',
         genres: Array.isArray(a.genres) ? a.genres : [],
-        monthlyListeners: a.monthlyListeners || 0, // ✅ Corrected
+        monthlyListeners: a.monthlyListeners || 0, // ✅ FIXED: pull from enriched object
       };
 
       console.log('🎯 Final Enhanced Artist:', finalArtist);
