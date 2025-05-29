@@ -33,9 +33,9 @@ export async function crawlArtistsByGenre(token, filters) {
         const enhanced = {
           id: artist.id,
           name: artist.name,
-          image: artist.images?.[0]?.url || '',
+          image: artist.image || '',
           genres: artist.genres || [],
-          monthlyListeners: artist.followers?.total || 0,
+          monthlyListeners: artist.followers || 0,
           preview_url: artist.preview_url || '',
         };
 
@@ -51,7 +51,8 @@ export async function crawlArtistsByGenre(token, filters) {
     a => a && typeof a === 'object' && a.id && a.name
   );
 
+  console.log('✅ Final enriched artists array:', validResults);
   console.log('✅ Final artist count:', validResults.length);
+
   return validResults;
 }
-
