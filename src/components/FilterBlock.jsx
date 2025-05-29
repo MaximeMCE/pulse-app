@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+// ✅ Updated FilterBlock.jsx
+import React, { useState } from 'react';
 import GenrePicker from './GenrePicker';
 
-const FilterBlock = ({ onFilterChange }) => {
-  const [listenerTier, setListenerTier] = useState('micro');
-  const [recentRelease, setRecentRelease] = useState('30');
+const FilterBlock = ({ onSubmitFilters }) => {
+  const [listenerTier, setListenerTier] = useState('');
+  const [recentRelease, setRecentRelease] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [genreSource, setGenreSource] = useState('spotify');
 
-  useEffect(() => {
+  const handleSubmit = () => {
     const ranges = {
       nano: [0, 5000],
       micro: [5000, 25000],
@@ -15,21 +16,20 @@ const FilterBlock = ({ onFilterChange }) => {
       indie: [100000, 500000],
       any: [0, 1000000],
     };
-    const [minListeners, maxListeners] = ranges[listenerTier];
-    onFilterChange({
+    const [minListeners, maxListeners] = ranges[listenerTier] || [0, 1000000];
+    onSubmitFilters({
       minListeners,
       maxListeners,
       recentRelease,
       genres: selectedGenres,
       genreSource,
     });
-  }, [listenerTier, recentRelease, selectedGenres, genreSource]);
+  };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow mb-6 space-y-6 border border-gray-200">
       <h2 className="text-lg font-semibold">🎛 Discovery Filters</h2>
 
-      {/* === Audience Tier === */}
       <div>
         <label className="block text-sm font-medium mb-1">Audience Tier</label>
         <select
@@ -37,6 +37,7 @@ const FilterBlock = ({ onFilterChange }) => {
           onChange={(e) => setListenerTier(e.target.value)}
           className="w-full border rounded px-3 py-2"
         >
+          <option value="">Select audience...</option>
           <option value="micro">🎯 Micro (5K–25K)</option>
           <option value="nano">🧪 Nano (0–5K)</option>
           <option value="mid">📈 Mid (25K–100K)</option>
@@ -45,7 +46,6 @@ const FilterBlock = ({ onFilterChange }) => {
         </select>
       </div>
 
-      {/* === Recent Release === */}
       <div>
         <label className="block text-sm font-medium mb-1">Recent Release</label>
         <select
@@ -53,13 +53,13 @@ const FilterBlock = ({ onFilterChange }) => {
           onChange={(e) => setRecentRelease(e.target.value)}
           className="w-full border rounded px-3 py-2"
         >
+          <option value="">Select activity window...</option>
           <option value="7">🔥 Fresh Drop (Last 7 days)</option>
           <option value="30">⚡ Recent Activity (Last 30 days)</option>
           <option value="off">🔍 Ignore release date</option>
         </select>
       </div>
 
-      {/* === Genre Source === */}
       <div>
         <label className="block text-sm font-medium mb-1">Genre Source</label>
         <select
@@ -72,7 +72,6 @@ const FilterBlock = ({ onFilterChange }) => {
         </select>
       </div>
 
-      {/* === Genre Picker === */}
       <div>
         <label className="block text-sm font-medium mb-1">Genres</label>
         <GenrePicker
@@ -80,6 +79,13 @@ const FilterBlock = ({ onFilterChange }) => {
           onChange={setSelectedGenres}
         />
       </div>
+
+      <button
+        onClick={handleSubmit}
+        className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+      >
+        🔍 Search
+      </button>
     </div>
   );
 };

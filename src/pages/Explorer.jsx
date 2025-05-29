@@ -1,3 +1,4 @@
+// ✅ Final Combined Explorer.jsx with SearchBlock + FilterBlock
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -15,97 +16,25 @@ const Explorer = () => {
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState(null);
   const [savedCampaigns, setSavedCampaigns] = useState({});
-  const [dropdownOpen, setDropdownOpen] = useState(null);
   const [campaignList, setCampaignList] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(null);
   const [editingQuery, setEditingQuery] = useState(null);
   const [labelInput, setLabelInput] = useState('');
-  const [hasMounted, setHasMounted] = useState(false);
-  const [filters, setFilters] = useState({
-    minListeners: 0,
-    maxListeners: 100000,
-    recentRelease: '30',
-    genres: [],
-    genreSource: 'spotify',
-  });
 
   const { recent: recentSearches, addSearch, clearSearches, togglePin, renameSearch } = useRecentSearches();
   const navigate = useNavigate();
 
-  const searchSuggestions = [
-    'Techno artists under 10K listeners',
-    'Unsigned female vocalists',
-    'Rising Afrobeat acts in Europe',
-    'Amsterdam-based DJs',
-    'Recently dropped EPs',
-  ];
-
   useEffect(() => {
     const storedToken = localStorage.getItem('spotify_access_token');
-    if (!storedToken) {
-      localStorage.removeItem('explorer_results');
-      localStorage.removeItem('explorer_query');
-      localStorage.removeItem('explorer_timestamp');
-      navigate('/login');
-      return;
-    }
-
+    if (!storedToken) return navigate('/login');
     setToken(storedToken);
-
-    const cachedResults = localStorage.getItem('explorer_results');
-    const cachedQuery = localStorage.getItem('explorer_query');
-    const cachedTime = localStorage.getItem('explorer_timestamp');
-
-    if (cachedResults && cachedQuery && cachedTime) {
-      const age = Date.now() - parseInt(cachedTime, 10);
-      if (age < 5 * 60 * 1000) {
-        setResults(JSON.parse(cachedResults));
-        setQuery(cachedQuery);
-      } else {
-        localStorage.removeItem('explorer_results');
-        localStorage.removeItem('explorer_query');
-        localStorage.removeItem('explorer_timestamp');
-      }
-    }
-
-    ensureCampaignMetadata();
     refreshCampaignList();
     refreshSavedCampaigns();
-
     window.addEventListener('leadsUpdated', refreshSavedCampaigns);
     return () => window.removeEventListener('leadsUpdated', refreshSavedCampaigns);
   }, []);
-
-  useEffect(() => {
-    if (!hasMounted) {
-      setHasMounted(true);
-      return;
-    }
-
-    if (query.trim() === '' && token && filters.genres.length > 0) {
-      handleSearch('');
-    }
-  }, [filters]);
-
-  const ensureCampaignMetadata = () => {
-    const allCampaigns = Object.keys(localStorage)
-      .filter(k => k.startsWith('leads_'))
-      .map(k => k.replace('leads_', ''));
-    const existingMeta = JSON.parse(localStorage.getItem('campaigns') || '[]');
-    const metaTitles = existingMeta.map(c => c.title.toLowerCase());
-    const updated = [...existingMeta];
-    allCampaigns.forEach(c => {
-      if (!metaTitles.includes(c)) {
-        updated.push({
-          id: `auto-${c}`,
-          title: c.charAt(0).toUpperCase() + c.slice(1),
-          createdAt: new Date().toISOString(),
-        });
-      }
-    });
-    localStorage.setItem('campaigns', JSON.stringify(updated));
-    window.dispatchEvent(new Event('campaignsUpdated'));
-  };
 
   const refreshCampaignList = () => {
     const stored = JSON.parse(localStorage.getItem('campaigns') || '[]');
@@ -127,29 +56,18 @@ const Explorer = () => {
   };
 
   const handleSearch = async (overrideQuery) => {
+    if (!token || !filters) return;
     const searchTerm = overrideQuery || query;
-    if (!token) return;
     setLoading(true);
+    setError('');
 
     try {
       let artists;
-
-      if (searchTerm.trim() === '') {
-        if (!filters.genres.length) {
-          setError('Please select at least one genre to explore artists.');
-          setLoading(false);
-          return;
-        }
-        artists = await crawlArtistsByGenre(token, filters);
-      } else {
+      if (searchTerm.trim().length > 0) {
         artists = await searchArtists(token, searchTerm, filters);
-      }
-
-      if (!Array.isArray(artists)) {
-        console.error('❌ FATAL: Expected artists to be an array, got:', artists);
-        setError('Search failed: Invalid artist response.');
-        setLoading(false);
-        return;
+        addSearch(searchTerm);
+      } else {
+        artists = await crawlArtistsByGenre(token, filters);
       }
 
       const filtered = artists.filter((artist) => {
@@ -188,11 +106,6 @@ const Explorer = () => {
       });
 
       setResults(filtered);
-      localStorage.setItem('explorer_results', JSON.stringify(filtered));
-      localStorage.setItem('explorer_query', searchTerm);
-      localStorage.setItem('explorer_timestamp', Date.now().toString());
-      if (searchTerm) addSearch(searchTerm);
-      setError(filtered.length ? '' : 'No artists found.');
     } catch (err) {
       console.error(err);
       setError('Search failed.');
@@ -201,18 +114,16 @@ const Explorer = () => {
     }
   };
 
+  const handleFilterSubmit = (newFilters) => {
+    setFilters(newFilters);
+    handleSearch();
+  };
+
   const saveLead = (artist, campaign) => {
     const key = `leads_${campaign.toLowerCase()}`;
     const existing = JSON.parse(localStorage.getItem(key)) || [];
     if (existing.find(l => l.id === artist.id)) return;
-
-    const newLead = {
-      id: artist.id,
-      name: artist.name,
-      image: artist.images?.[0]?.url || '',
-      status: 'New',
-      campaign,
-    };
+    const newLead = { id: artist.id, name: artist.name, image: artist.images?.[0]?.url || '', status: 'New', campaign };
     localStorage.setItem(key, JSON.stringify([...existing, newLead]));
     window.dispatchEvent(new Event('leadsUpdated'));
     setDropdownOpen(null);
@@ -234,12 +145,12 @@ const Explorer = () => {
       <div className="flex-1 p-6 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
 
-        <FilterBlock filters={filters} onFilterChange={setFilters} />
+        <FilterBlock onSubmitFilters={handleFilterSubmit} />
         <SearchBlock
           query={query}
           setQuery={setQuery}
           onSearch={handleSearch}
-          suggestions={searchSuggestions}
+          suggestions={['Techno artists under 10K listeners', 'Unsigned female vocalists', 'Rising Afrobeat acts in Europe', 'Amsterdam-based DJs', 'Recently dropped EPs']}
         />
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
