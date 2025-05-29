@@ -23,14 +23,23 @@ export const fetchArtistsByIds = async (token, ids) => {
       );
 
       if (Array.isArray(response.data?.artists)) {
-        // Map and clean each artist before pushing
-        const cleanedArtists = response.data.artists.map((artist) => ({
-          id: artist.id,
-          name: artist.name,
-          genres: artist.genres || [],
-          images: artist.images || [],
-          monthlyListeners: artist.followers?.total || 0,
-        }));
+        const cleanedArtists = response.data.artists.map((artist) => {
+          const listeners = artist.followers?.total || 0;
+
+          console.log('🎧 Artist fetched:', {
+            name: artist.name,
+            followers: artist.followers,
+            monthlyListeners: listeners,
+          });
+
+          return {
+            id: artist.id,
+            name: artist.name,
+            genres: artist.genres || [],
+            images: artist.images || [],
+            monthlyListeners: listeners,
+          };
+        });
 
         results.push(...cleanedArtists);
       }
