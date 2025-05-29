@@ -39,12 +39,16 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
   const enrichedArtists = await fetchArtistsByIds(token, uniqueArtistIds);
 
   return enrichedArtists.map((a) => {
-    const base = artistTrackMap.get(a.id);
+    const base = artistTrackMap.get(a.id) || {};
+
     return {
       id: a.id,
-      name: a.name,
-      preview_url: base?.preview_url || '',
-      image: base?.image || '',
+      name: a.name || 'Unknown',
+      preview_url: base.preview_url || '',
+      image:
+        base.image ||
+        a.images?.[0]?.url ||
+        'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg',
       genres: a.genres || [],
       followers: a.followers?.total || 0
     };
