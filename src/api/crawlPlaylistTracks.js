@@ -45,7 +45,10 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
       id: a.id,
       name: a.name || 'Unknown',
       preview_url: base.preview_url || '',
-      image: a.images?.[0]?.url || '',
+      image:
+        a.images?.[0]?.url ||
+        base.albumImage ||
+        'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg',
       albumImage: base.albumImage || '',
       genres: a.genres || [],
       followers: a.followers?.total || 0
