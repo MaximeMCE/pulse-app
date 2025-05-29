@@ -35,7 +35,7 @@ export async function crawlArtistsByGenre(token, filters) {
           name: artist.name,
           image: artist.image || '',
           genres: artist.genres || [],
-          monthlyListeners: artist.followers || 0,
+          monthlyListeners: artist.followers?.total || 0, // ✅ FIXED
           preview_url: artist.preview_url || '',
         };
 
