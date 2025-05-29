@@ -26,12 +26,18 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
       if (!track || !artist?.id) continue;
       if (track.is_local || track.type !== 'track') continue;
 
+      const releaseDate = track.album?.release_date;
+      const releaseDaysAgo = releaseDate
+        ? Math.floor((Date.now() - new Date(releaseDate)) / (1000 * 60 * 60 * 24))
+        : undefined;
+
       if (!artistTrackMap.has(artist.id)) {
         artistTrackMap.set(artist.id, {
           id: artist.id,
           name: artist.name || 'Unknown',
           preview_url: track.preview_url || '',
           albumImage: track.album?.images?.[0]?.url || '',
+          releaseDaysAgo, // ✅ ADD HERE
         });
       }
     }
@@ -53,7 +59,8 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
           base.albumImage ||
           'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg',
         genres: Array.isArray(a.genres) ? a.genres : [],
-        monthlyListeners: a.monthlyListeners || 0, // ✅ FIXED: pull from enriched object
+        monthlyListeners: a.monthlyListeners || 0,
+        releaseDaysAgo: base.releaseDaysAgo, // ✅ INCLUDE HERE
       };
 
       console.log('🎯 Final Enhanced Artist:', finalArtist);

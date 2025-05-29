@@ -35,11 +35,12 @@ export async function crawlArtistsByGenre(token, filters) {
           name: artist.name,
           image: artist.image || '',
           genres: artist.genres || [],
-          monthlyListeners: artist.followers?.total || 0, // ✅ FIXED
+          monthlyListeners: artist.monthlyListeners || 0,
+          releaseDaysAgo: artist.releaseDaysAgo ?? undefined, // ✅ NEW
           preview_url: artist.preview_url || '',
         };
 
-        console.log('🎯 Final Enhanced Artist:', enhanced);
+        console.log('🎯 Final Enhanced Artist (Genre Crawler):', enhanced);
         allArtists[artist.id] = enhanced;
       });
     } catch (e) {
