@@ -18,21 +18,25 @@ export async function crawlArtistsByGenre(token, filters) {
 
     artists.forEach(artist => {
       if (!artist || !artist.id || !artist.name) {
-        console.warn('❌ Skipping invalid artist:', artist);
+        console.warn('⚠️ Skipping invalid artist:', artist);
         return;
       }
 
       if (allArtists[artist.id]) return;
 
       try {
-        allArtists[artist.id] = {
+        const enhanced = {
           id: artist.id,
           name: artist.name,
-          images: artist.images || [],
+          image: artist.images?.[0]?.url || '',
           genres: artist.genres || [],
-          listeners: artist.followers || 0,
-          preview_url: artist.preview_url || null
+          monthlyListeners: artist.followers?.total || 0,
+          preview_url: artist.preview_url || '',
         };
+
+        console.log('🎯 Final Enhanced Artist:', enhanced);
+
+        allArtists[artist.id] = enhanced;
       } catch (e) {
         console.error('💥 Error parsing artist:', artist, e);
       }

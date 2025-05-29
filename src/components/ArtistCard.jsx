@@ -1,6 +1,8 @@
 import React from 'react';
 import useTalentPool from '../hooks/useTalentPool';
 
+const fallbackImage = 'https://via.placeholder.com/80x80?text=Artist';
+
 const ArtistCard = ({
   artist,
   isOpen,
@@ -20,10 +22,10 @@ const ArtistCard = ({
   } = useTalentPool();
 
   const id = artist.id;
-  const name = artist.name;
-  const image = artist.images?.[0]?.url || '';
+  const name = artist.name || 'Unknown Artist';
+  const image = artist.image || fallbackImage;
   const genres = Array.isArray(artist.genres) ? artist.genres : [];
-  const listeners = artist.monthlyListeners ?? 0;
+  const listeners = typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0;
   const previewUrl = artist.preview_url || '';
 
   const handlePoolToggle = () => {
@@ -43,24 +45,28 @@ const ArtistCard = ({
     <div className="border rounded p-4 mb-4 bg-white shadow">
       <div className="mb-4">
         <div className="flex items-center">
-          {image && (
-            <img
-              src={image}
-              alt={name}
-              className="rounded-full mr-4 object-cover"
-              style={{ width: 80, height: 80 }}
-            />
-          )}
+          <img
+            src={image}
+            alt={name}
+            className="rounded-full mr-4 object-cover"
+            style={{ width: 80, height: 80 }}
+          />
           <div className="flex-1">
             <div className="font-semibold">{name}</div>
             <div className="text-sm text-gray-500">
-              Monthly Listeners: {typeof listeners === 'number' ? listeners.toLocaleString() : 'N/A'}
+              Monthly Listeners: {listeners.toLocaleString()}
             </div>
             <div className="text-sm text-gray-400">
               Genres: {genres.length > 0 ? genres.slice(0, 2).join(', ') : 'N/A'}
             </div>
           </div>
         </div>
+
+        {previewUrl && (
+          <div className="mt-2">
+            <audio controls src={previewUrl} className="w-full" />
+          </div>
+        )}
 
         {assignedCampaigns.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2">
