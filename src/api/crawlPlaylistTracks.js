@@ -30,7 +30,7 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
         id: artist.id,
         name: artist.name,
         preview_url: track.preview_url || '',
-        image: track.album?.images?.[0]?.url || ''
+        albumImage: track.album?.images?.[0]?.url || ''
       });
     }
   }
@@ -45,10 +45,8 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
       id: a.id,
       name: a.name || 'Unknown',
       preview_url: base.preview_url || '',
-      image:
-        base.image ||
-        a.images?.[0]?.url ||
-        'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg',
+      image: a.images?.[0]?.url || '',
+      albumImage: base.albumImage || '',
       genres: a.genres || [],
       followers: a.followers?.total || 0
     };
