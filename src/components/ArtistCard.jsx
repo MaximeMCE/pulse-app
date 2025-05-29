@@ -1,7 +1,7 @@
 import React from 'react';
 import useTalentPool from '../hooks/useTalentPool';
 
-const fallbackImage = 'https://via.placeholder.com/80x80?text=Artist';
+const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg';
 
 const ArtistCard = ({
   artist,
@@ -25,7 +25,9 @@ const ArtistCard = ({
   const name = artist.name || 'Unknown Artist';
   const image = artist.image || fallbackImage;
   const genres = Array.isArray(artist.genres) ? artist.genres : [];
-  const listeners = typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0;
+  const listeners = typeof artist.followers === 'number'
+    ? artist.followers
+    : (typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0);
   const previewUrl = artist.preview_url || '';
 
   const handlePoolToggle = () => {
