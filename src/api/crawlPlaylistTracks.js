@@ -9,7 +9,6 @@ export const crawlPlaylistTracks = async (token, playlistId) => {
         Authorization: `Bearer ${token}`
       },
       params: {
-        fields: 'items(track(name,preview_url,artists(id,name),album(images)))',
         limit: 100
       }
     }
