@@ -15,20 +15,18 @@ const ArtistCard = ({
 }) => {
   if (!artist || typeof artist !== 'object' || !artist.id || !artist.name) return null;
 
-  const {
-    addToPool,
-    removeFromPool,
-    isInPool
-  } = useTalentPool();
+  const { addToPool, removeFromPool, isInPool } = useTalentPool();
 
   const id = artist.id;
   const name = artist.name || 'Unknown Artist';
   const image = artist.image || artist.albumImage || fallbackImage;
   const genres = Array.isArray(artist.genres) ? artist.genres : [];
 
-  const spotifyFollowers = typeof artist.monthlyListeners === 'number'
-    ? artist.monthlyListeners
-    : (typeof artist.listeners === 'number' ? artist.listeners : 0);
+  const spotifyFollowers = typeof artist.followers === 'number' ? artist.followers : 0;
+  const monthlyListeners =
+    typeof artist.monthlyListeners === 'number'
+      ? artist.monthlyListeners
+      : (typeof artist.listeners === 'number' ? artist.listeners : 0);
 
   const previewUrl = artist.preview_url || '';
 
@@ -38,7 +36,8 @@ const ArtistCard = ({
       name,
       image,
       genres,
-      monthlyListeners: spotifyFollowers,
+      monthlyListeners,
+      followers: spotifyFollowers,
       preview_url: previewUrl,
       platforms: ['spotify']
     };
@@ -58,13 +57,15 @@ const ArtistCard = ({
           <div className="flex-1">
             <div className="font-semibold">{name}</div>
 
-            {/* Modular follower block */}
-            <div className="text-sm text-gray-500 flex items-center gap-2 mt-1">
+            <div className="text-sm text-gray-500 flex flex-col gap-1 mt-1">
               <span className="flex items-center gap-1">
                 <img src="/icons/spotify.svg" alt="Spotify" className="w-4 h-4" />
-                {spotifyFollowers > 0 ? spotifyFollowers.toLocaleString() : '—'}
+                Followers: {spotifyFollowers > 0 ? spotifyFollowers.toLocaleString() : '—'}
               </span>
-              {/* Future: Add more platforms here */}
+              <span className="flex items-center gap-1">
+                <img src="/icons/spotify.svg" alt="Spotify" className="w-4 h-4" />
+                Monthly Listeners: {monthlyListeners > 0 ? monthlyListeners.toLocaleString() : '—'}
+              </span>
             </div>
 
             <div className="text-sm text-gray-400">
