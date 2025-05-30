@@ -1,4 +1,4 @@
-// Explorer.jsx — Genre filter fix applied
+// Explorer.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -19,6 +19,7 @@ const Explorer = () => {
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(null);
   const [sortOrder, setSortOrder] = useState('');
+  const [searchPerformed, setSearchPerformed] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [campaignList, setCampaignList] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -62,6 +63,8 @@ const Explorer = () => {
     const searchTerm = overrideQuery || query;
     setLoading(true);
     setError('');
+    setSearchPerformed(true);
+    setResults([]);
 
     try {
       let artists;
@@ -83,17 +86,19 @@ const Explorer = () => {
         const releaseDays = artist?.releaseDaysAgo ?? null;
 
         const listenerCheck = listeners >= minListeners && listeners <= maxListeners;
-        const releaseCheck = recentRelease === 'off' || (typeof releaseDays === 'number' && releaseDays <= Number(recentRelease));
+        const releaseCheck =
+          recentRelease === 'off' ||
+          (typeof releaseDays === 'number' && releaseDays <= Number(recentRelease));
 
         let genreCheck = true;
         if (genres.length > 0) {
           const lowerGenres = genres.map((g) => g.toLowerCase());
-          const artistGenres = genreSource === 'spotify'
-            ? (artist.genres || []).map((g) => g.toLowerCase())
-            : (artist.customGenres || []).map((g) => g.toLowerCase());
+          const artistGenres =
+            genreSource === 'spotify'
+              ? (artist.genres || []).map((g) => g.toLowerCase())
+              : (artist.customGenres || []).map((g) => g.toLowerCase());
 
-          if (!artistGenres.length) return false;
-          genreCheck = artistGenres.some((g) => lowerGenres.includes(g));
+          genreCheck = lowerGenres.every((g) => artistGenres.includes(g));
         }
 
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
@@ -131,7 +136,6 @@ const Explorer = () => {
 
   const handleFilterSubmit = (newFilters) => {
     setFilters(newFilters);
-    setResults([]); // clear stale results on new filter
     handleSearch();
   };
 
@@ -178,7 +182,7 @@ const Explorer = () => {
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
-        {!loading && filters && results.length === 0 && (
+        {!loading && searchPerformed && results.length === 0 && (
           <p className="text-sm text-gray-500 italic">No artists found. Try adjusting your filters or search terms.</p>
         )}
 
