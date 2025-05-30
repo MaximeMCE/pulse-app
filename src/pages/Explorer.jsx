@@ -1,4 +1,3 @@
-// ✅ Explorer.jsx with corrected releaseDays filter logic
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -7,6 +6,7 @@ import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
 import SearchBlock from '../components/SearchBlock';
+import SortDropdown from '../components/SortDropdown';
 import useRecentSearches from '../hooks/useRecentSearches';
 import useTalentPool from '../hooks/useTalentPool';
 
@@ -17,6 +17,7 @@ const Explorer = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(null);
+  const [sortOption, setSortOption] = useState('');
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [campaignList, setCampaignList] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -90,28 +91,33 @@ const Explorer = () => {
           }
         }
 
-        const passed = artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
-        if (!passed) {
-          console.log('⛔ Skipped Artist:', {
-            name: artist?.name,
-            id: artist?.id,
-            listeners,
-            releaseDays,
-            genres: artist?.genres,
-            checks: { listenerCheck, releaseCheck, genreCheck }
-          });
-        }
-
-        return passed;
+        return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
       });
 
-      setResults(filtered);
+      const sorted = sortResults(filtered);
+      setResults(sorted);
     } catch (err) {
       console.error(err);
       setError('Search failed.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const sortResults = (results) => {
+    if (!sortOption) return results;
+    return [...results].sort((a, b) => {
+      switch (sortOption) {
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'listeners':
+          return (b.monthlyListeners || 0) - (a.monthlyListeners || 0);
+        case 'release':
+          return (a.releaseDaysAgo || 9999) - (b.releaseDaysAgo || 9999);
+        default:
+          return 0;
+      }
+    });
   };
 
   const handleFilterSubmit = (newFilters) => {
@@ -152,6 +158,10 @@ const Explorer = () => {
           onSearch={handleSearch}
           suggestions={['Techno artists under 10K listeners', 'Unsigned female vocalists', 'Rising Afrobeat acts in Europe', 'Amsterdam-based DJs', 'Recently dropped EPs']}
         />
+
+        <div className="mt-4 mb-6">
+          <SortDropdown selected={sortOption} onChange={setSortOption} />
+        </div>
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
