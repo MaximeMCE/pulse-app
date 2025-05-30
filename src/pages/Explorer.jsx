@@ -6,7 +6,7 @@ import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
 import SearchBlock from '../components/SearchBlock';
-import SortDropdown from '../components/SortDropdown.jsx'; // ✅ fixed import
+import SortDropdown from '../components/SortDropdown.jsx';
 import useRecentSearches from '../hooks/useRecentSearches';
 import useTalentPool from '../hooks/useTalentPool';
 
@@ -17,7 +17,7 @@ const Explorer = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(null);
-  const [sortOrder, setSortOrder] = useState(''); // New
+  const [sortOrder, setSortOrder] = useState('');
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [campaignList, setCampaignList] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -71,23 +71,30 @@ const Explorer = () => {
         artists = await crawlArtistsByGenre(token, filters);
       }
 
+      // Defaults for permissive filtering
+      const minListeners = filters.minListeners ?? 0;
+      const maxListeners = filters.maxListeners ?? Infinity;
+      const recentRelease = filters.recentRelease === '' ? 'off' : filters.recentRelease;
+      const genres = filters.genres ?? [];
+      const genreSource = filters.genreSource ?? 'spotify';
+
       const filtered = artists.filter((artist) => {
         const listeners = artist?.monthlyListeners ?? artist?.listeners ?? 0;
         const releaseDays = artist?.releaseDaysAgo ?? null;
 
-        const listenerCheck = listeners >= filters.minListeners && listeners <= filters.maxListeners;
+        const listenerCheck = listeners >= minListeners && listeners <= maxListeners;
         const releaseCheck =
-          filters.recentRelease === 'off' ||
-          (typeof releaseDays === 'number' && releaseDays <= Number(filters.recentRelease));
+          recentRelease === 'off' ||
+          (typeof releaseDays === 'number' && releaseDays <= Number(recentRelease));
 
         let genreCheck = true;
-        if (filters.genres.length > 0) {
-          if (filters.genreSource === 'spotify') {
+        if (genres.length > 0) {
+          if (genreSource === 'spotify') {
             const artistGenres = (artist?.genres || []).map((g) => g.toLowerCase());
-            genreCheck = filters.genres.some((g) => artistGenres.includes(g.toLowerCase()));
-          } else if (filters.genreSource === 'custom') {
+            genreCheck = genres.some((g) => artistGenres.includes(g.toLowerCase()));
+          } else if (genreSource === 'custom') {
             const customGenres = (artist?.customGenres || []).map((g) => g.toLowerCase());
-            genreCheck = filters.genres.some((g) => customGenres.includes(g.toLowerCase()));
+            genreCheck = genres.some((g) => customGenres.includes(g.toLowerCase()));
           }
         }
 
