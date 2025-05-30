@@ -32,7 +32,7 @@ const Callback = () => {
         const data = await res.json();
         if (data.access_token) {
           localStorage.setItem('spotify_access_token', data.access_token);
-          navigate('/campaigns');
+          navigate('/dashboard'); // ✅ Redirect to dashboard instead of campaigns
         } else {
           console.error("Failed to get token:", data);
         }
