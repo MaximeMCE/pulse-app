@@ -1,8 +1,9 @@
-// Explorer.jsx — Strict Genre Filtering + Working Sort + N/A Genre Exclusion
+// Explorer.jsx — Strict Genre Filtering + Working Sort + Filters After Enrichment
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import { crawlArtistsByGenre } from '../api/crawlArtistsByGenre';
+import { fetchArtistsByIds } from '../api/fetchArtistsByIds';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -73,14 +74,17 @@ const Explorer = () => {
         artists = await crawlArtistsByGenre(token, filters);
       }
 
+      const artistIds = artists.map(a => a.id);
+      const enriched = await fetchArtistsByIds(token, artistIds);
+
       const minListeners = filters.minListeners ?? 0;
       const maxListeners = filters.maxListeners ?? Infinity;
       const recentRelease = filters.recentRelease === '' ? 'off' : filters.recentRelease;
       const genres = filters.genres ?? [];
       const genreSource = filters.genreSource ?? 'spotify';
 
-      const filtered = artists.filter((artist) => {
-        const listeners = artist?.monthlyListeners ?? artist?.listeners ?? 0;
+      const filtered = enriched.filter((artist) => {
+        const listeners = artist?.monthlyListeners ?? 0;
         const releaseDays = artist?.releaseDaysAgo ?? null;
 
         const listenerCheck = listeners >= minListeners && listeners <= maxListeners;
@@ -91,18 +95,8 @@ const Explorer = () => {
         let genreCheck = true;
         if (genres.length > 0) {
           const lowerGenres = genres.map((g) => g.toLowerCase());
-          const artistGenres =
-            genreSource === 'spotify'
-              ? (artist.genres || []).map((g) => g.toLowerCase())
-              : (artist.customGenres || []).map((g) => g.toLowerCase());
-
-          // Reject if artist has no genres
-          if (!artistGenres || artistGenres.length === 0) {
-            genreCheck = false;
-          } else {
-            // Accept only if at least one genre matches
-            genreCheck = lowerGenres.some((g) => artistGenres.includes(g));
-          }
+          const artistGenres = (artist.genres || []).map((g) => g.toLowerCase());
+          genreCheck = artistGenres.some((g) => lowerGenres.includes(g));
         }
 
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
