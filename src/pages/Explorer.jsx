@@ -1,4 +1,3 @@
-// Explorer.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -72,7 +71,6 @@ const Explorer = () => {
         artists = await crawlArtistsByGenre(token, filters);
       }
 
-      // Defaults for permissive filtering
       const minListeners = filters.minListeners ?? 0;
       const maxListeners = filters.maxListeners ?? Infinity;
       const recentRelease = filters.recentRelease === '' ? 'off' : filters.recentRelease;
@@ -176,7 +174,7 @@ const Explorer = () => {
             'Recently dropped EPs',
           ]}
         />
-        <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
+        <SortDropdown sortBy={sortOrder} setSortBy={setSortOrder} />
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
