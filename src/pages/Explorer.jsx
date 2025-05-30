@@ -1,4 +1,4 @@
-// Explorer.jsx — Strict Genre Filtering + Working Sort
+// Explorer.jsx — Strict Genre Filtering + Working Sort + N/A Genre Exclusion
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -96,7 +96,13 @@ const Explorer = () => {
               ? (artist.genres || []).map((g) => g.toLowerCase())
               : (artist.customGenres || []).map((g) => g.toLowerCase());
 
-          genreCheck = artistGenres.some((g) => lowerGenres.includes(g));
+          // Reject if artist has no genres
+          if (!artistGenres || artistGenres.length === 0) {
+            genreCheck = false;
+          } else {
+            // Accept only if at least one genre matches
+            genreCheck = lowerGenres.some((g) => artistGenres.includes(g));
+          }
         }
 
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
