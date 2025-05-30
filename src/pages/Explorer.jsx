@@ -1,3 +1,4 @@
+// Explorer.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -100,28 +101,7 @@ const Explorer = () => {
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
       });
 
-      const sorted = [...filtered];
-      switch (sortOrder) {
-        case 'listeners_desc':
-          sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
-          break;
-        case 'listeners_asc':
-          sorted.sort((a, b) => (a.monthlyListeners || 0) - (b.monthlyListeners || 0));
-          break;
-        case 'recent_desc':
-          sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
-          break;
-        case 'recent_asc':
-          sorted.sort((a, b) => (b.releaseDaysAgo || -1) - (a.releaseDaysAgo || -1));
-          break;
-        case 'alpha':
-          sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-          break;
-        default:
-          break;
-      }
-
-      setResults(sorted);
+      setResults(filtered);
     } catch (err) {
       console.error(err);
       setError('Search failed.');
@@ -129,6 +109,34 @@ const Explorer = () => {
       setLoading(false);
     }
   };
+
+  // 🔁 Re-sort current results if sortOrder changes
+  useEffect(() => {
+    if (!filters || results.length === 0) return;
+
+    const sorted = [...results];
+    switch (sortOrder) {
+      case 'listeners_desc':
+        sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
+        break;
+      case 'listeners_asc':
+        sorted.sort((a, b) => (a.monthlyListeners || 0) - (b.monthlyListeners || 0));
+        break;
+      case 'recent_desc':
+        sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
+        break;
+      case 'recent_asc':
+        sorted.sort((a, b) => (b.releaseDaysAgo || -1) - (a.releaseDaysAgo || -1));
+        break;
+      case 'alpha':
+        sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        break;
+      default:
+        break;
+    }
+
+    setResults(sorted);
+  }, [sortOrder]);
 
   const handleFilterSubmit = (newFilters) => {
     setFilters(newFilters);
