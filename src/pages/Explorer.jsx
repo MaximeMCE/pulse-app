@@ -1,4 +1,4 @@
-// Explorer.jsx
+// Explorer.jsx — Genre filter fix applied
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -62,7 +62,6 @@ const Explorer = () => {
     const searchTerm = overrideQuery || query;
     setLoading(true);
     setError('');
-    setResults([]); // ✅ Clear stale results
 
     try {
       let artists;
@@ -84,25 +83,44 @@ const Explorer = () => {
         const releaseDays = artist?.releaseDaysAgo ?? null;
 
         const listenerCheck = listeners >= minListeners && listeners <= maxListeners;
-        const releaseCheck =
-          recentRelease === 'off' ||
-          (typeof releaseDays === 'number' && releaseDays <= Number(recentRelease));
+        const releaseCheck = recentRelease === 'off' || (typeof releaseDays === 'number' && releaseDays <= Number(recentRelease));
 
         let genreCheck = true;
         if (genres.length > 0) {
           const lowerGenres = genres.map((g) => g.toLowerCase());
-          const artistGenres =
-            genreSource === 'spotify'
-              ? (artist.genres || []).map((g) => g.toLowerCase())
-              : (artist.customGenres || []).map((g) => g.toLowerCase());
+          const artistGenres = genreSource === 'spotify'
+            ? (artist.genres || []).map((g) => g.toLowerCase())
+            : (artist.customGenres || []).map((g) => g.toLowerCase());
 
-          genreCheck = lowerGenres.some((g) => artistGenres.includes(g));
+          if (!artistGenres.length) return false;
+          genreCheck = artistGenres.some((g) => lowerGenres.includes(g));
         }
 
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
       });
 
-      setResults(filtered);
+      const sorted = [...filtered];
+      switch (sortOrder) {
+        case 'listeners_desc':
+          sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
+          break;
+        case 'listeners_asc':
+          sorted.sort((a, b) => (a.monthlyListeners || 0) - (b.monthlyListeners || 0));
+          break;
+        case 'recent_desc':
+          sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
+          break;
+        case 'recent_asc':
+          sorted.sort((a, b) => (b.releaseDaysAgo || -1) - (a.releaseDaysAgo || -1));
+          break;
+        case 'alpha':
+          sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+          break;
+        default:
+          break;
+      }
+
+      setResults(sorted);
     } catch (err) {
       console.error(err);
       setError('Search failed.');
@@ -111,35 +129,9 @@ const Explorer = () => {
     }
   };
 
-  useEffect(() => {
-    if (!filters || results.length === 0) return;
-
-    const sorted = [...results];
-    switch (sortOrder) {
-      case 'listeners_desc':
-        sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
-        break;
-      case 'listeners_asc':
-        sorted.sort((a, b) => (a.monthlyListeners || 0) - (b.monthlyListeners || 0));
-        break;
-      case 'recent_desc':
-        sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
-        break;
-      case 'recent_asc':
-        sorted.sort((a, b) => (b.releaseDaysAgo || -1) - (a.releaseDaysAgo || -1));
-        break;
-      case 'alpha':
-        sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-        break;
-      default:
-        break;
-    }
-
-    setResults(sorted);
-  }, [sortOrder]);
-
   const handleFilterSubmit = (newFilters) => {
     setFilters(newFilters);
+    setResults([]); // clear stale results on new filter
     handleSearch();
   };
 
