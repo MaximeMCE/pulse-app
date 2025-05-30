@@ -19,7 +19,6 @@ const Explorer = () => {
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(null);
   const [sortOrder, setSortOrder] = useState('');
-  const [searchPerformed, setSearchPerformed] = useState(false);
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [campaignList, setCampaignList] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -63,7 +62,6 @@ const Explorer = () => {
     const searchTerm = overrideQuery || query;
     setLoading(true);
     setError('');
-    setSearchPerformed(true);
     setResults([]);
 
     try {
@@ -104,28 +102,7 @@ const Explorer = () => {
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
       });
 
-      const sorted = [...filtered];
-      switch (sortOrder) {
-        case 'listeners_desc':
-          sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
-          break;
-        case 'listeners_asc':
-          sorted.sort((a, b) => (a.monthlyListeners || 0) - (b.monthlyListeners || 0));
-          break;
-        case 'recent_desc':
-          sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
-          break;
-        case 'recent_asc':
-          sorted.sort((a, b) => (b.releaseDaysAgo || -1) - (a.releaseDaysAgo || -1));
-          break;
-        case 'alpha':
-          sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-          break;
-        default:
-          break;
-      }
-
-      setResults(sorted);
+      setResults(filtered);
     } catch (err) {
       console.error(err);
       setError('Search failed.');
@@ -133,6 +110,33 @@ const Explorer = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!filters || results.length === 0) return;
+
+    const sorted = [...results];
+    switch (sortOrder) {
+      case 'listeners_desc':
+        sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
+        break;
+      case 'listeners_asc':
+        sorted.sort((a, b) => (a.monthlyListeners || 0) - (b.monthlyListeners || 0));
+        break;
+      case 'recent_desc':
+        sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
+        break;
+      case 'recent_asc':
+        sorted.sort((a, b) => (b.releaseDaysAgo || -1) - (a.releaseDaysAgo || -1));
+        break;
+      case 'alpha':
+        sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        break;
+      default:
+        break;
+    }
+
+    setResults(sorted);
+  }, [sortOrder]);
 
   const handleFilterSubmit = (newFilters) => {
     setFilters(newFilters);
@@ -182,7 +186,7 @@ const Explorer = () => {
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
-        {!loading && searchPerformed && results.length === 0 && (
+        {!loading && filters && results.length === 0 && (
           <p className="text-sm text-gray-500 italic">No artists found. Try adjusting your filters or search terms.</p>
         )}
 
