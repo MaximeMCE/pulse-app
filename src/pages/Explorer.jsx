@@ -1,4 +1,4 @@
-// Explorer.jsx
+// Explorer.jsx — Strict Genre Filtering + Working Sort
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -96,7 +96,7 @@ const Explorer = () => {
               ? (artist.genres || []).map((g) => g.toLowerCase())
               : (artist.customGenres || []).map((g) => g.toLowerCase());
 
-          genreCheck = lowerGenres.every((g) => artistGenres.includes(g));
+          genreCheck = artistGenres.some((g) => lowerGenres.includes(g));
         }
 
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
@@ -186,9 +186,7 @@ const Explorer = () => {
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
-        {!loading && filters && results.length === 0 && (
-          <p className="text-sm text-gray-500 italic">No artists found. Try adjusting your filters or search terms.</p>
-        )}
+        {!loading && filters && results.length === 0 && null}
 
         <div className="flex flex-col gap-4">
           {results.map((artist) => (
