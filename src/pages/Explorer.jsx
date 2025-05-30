@@ -62,6 +62,7 @@ const Explorer = () => {
     const searchTerm = overrideQuery || query;
     setLoading(true);
     setError('');
+    setResults([]); // ✅ Clear stale results
 
     try {
       let artists;
@@ -110,7 +111,6 @@ const Explorer = () => {
     }
   };
 
-  // 🔁 Re-sort current results if sortOrder changes
   useEffect(() => {
     if (!filters || results.length === 0) return;
 
@@ -186,7 +186,7 @@ const Explorer = () => {
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
-        {!loading && results.length === 0 && (
+        {!loading && filters && results.length === 0 && (
           <p className="text-sm text-gray-500 italic">No artists found. Try adjusting your filters or search terms.</p>
         )}
 
