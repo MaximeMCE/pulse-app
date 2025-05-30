@@ -1,3 +1,4 @@
+// Explorer.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -89,25 +90,37 @@ const Explorer = () => {
 
         let genreCheck = true;
         if (genres.length > 0) {
-          if (genreSource === 'spotify') {
-            const artistGenres = (artist?.genres || []).map((g) => g.toLowerCase());
-            genreCheck = genres.some((g) => artistGenres.includes(g.toLowerCase()));
-          } else if (genreSource === 'custom') {
-            const customGenres = (artist?.customGenres || []).map((g) => g.toLowerCase());
-            genreCheck = genres.some((g) => customGenres.includes(g.toLowerCase()));
-          }
+          const lowerGenres = genres.map((g) => g.toLowerCase());
+          const artistGenres =
+            genreSource === 'spotify'
+              ? (artist.genres || []).map((g) => g.toLowerCase())
+              : (artist.customGenres || []).map((g) => g.toLowerCase());
+
+          genreCheck = lowerGenres.some((g) => artistGenres.includes(g));
         }
 
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
       });
 
       const sorted = [...filtered];
-      if (sortOrder === 'listeners') {
-        sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
-      } else if (sortOrder === 'recent') {
-        sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
-      } else if (sortOrder === 'alpha') {
-        sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      switch (sortOrder) {
+        case 'listeners_desc':
+          sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
+          break;
+        case 'listeners_asc':
+          sorted.sort((a, b) => (a.monthlyListeners || 0) - (b.monthlyListeners || 0));
+          break;
+        case 'recent_desc':
+          sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
+          break;
+        case 'recent_asc':
+          sorted.sort((a, b) => (b.releaseDaysAgo || -1) - (a.releaseDaysAgo || -1));
+          break;
+        case 'alpha':
+          sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+          break;
+        default:
+          break;
       }
 
       setResults(sorted);
@@ -172,21 +185,19 @@ const Explorer = () => {
         )}
 
         <div className="flex flex-col gap-4">
-          {results
-            .filter((artist) => artist && typeof artist === 'object' && artist.id && artist.name)
-            .map((artist) => (
-              <ArtistCard
-                key={artist.id}
-                artist={artist}
-                isOpen={dropdownOpen === artist.id}
-                onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
-                onSaveLead={saveLead}
-                campaignList={campaignList}
-                isSavedTo={isSavedTo}
-                assignedCampaigns={savedCampaigns[artist.id] || []}
-                onRemoveFromCampaign={removeLead}
-              />
-            ))}
+          {results.map((artist) => (
+            <ArtistCard
+              key={artist.id}
+              artist={artist}
+              isOpen={dropdownOpen === artist.id}
+              onToggleDropdown={(id) => setDropdownOpen((prev) => (prev === id ? null : id))}
+              onSaveLead={saveLead}
+              campaignList={campaignList}
+              isSavedTo={isSavedTo}
+              assignedCampaigns={savedCampaigns[artist.id] || []}
+              onRemoveFromCampaign={removeLead}
+            />
+          ))}
         </div>
       </div>
 
