@@ -6,7 +6,7 @@ import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
 import SearchBlock from '../components/SearchBlock';
-import SortDropdown from '../components/SortDropdown';
+import SortDropdown from '../components/SortDropdown.jsx'; // ✅ fixed import
 import useRecentSearches from '../hooks/useRecentSearches';
 import useTalentPool from '../hooks/useTalentPool';
 
@@ -17,7 +17,7 @@ const Explorer = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState(null);
-  const [sortOption, setSortOption] = useState('');
+  const [sortOrder, setSortOrder] = useState(''); // New
   const [savedCampaigns, setSavedCampaigns] = useState({});
   const [campaignList, setCampaignList] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -94,7 +94,15 @@ const Explorer = () => {
         return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
       });
 
-      const sorted = sortResults(filtered);
+      const sorted = [...filtered];
+      if (sortOrder === 'listeners') {
+        sorted.sort((a, b) => (b.monthlyListeners || 0) - (a.monthlyListeners || 0));
+      } else if (sortOrder === 'recent') {
+        sorted.sort((a, b) => (a.releaseDaysAgo || Infinity) - (b.releaseDaysAgo || Infinity));
+      } else if (sortOrder === 'alpha') {
+        sorted.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      }
+
       setResults(sorted);
     } catch (err) {
       console.error(err);
@@ -102,22 +110,6 @@ const Explorer = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const sortResults = (results) => {
-    if (!sortOption) return results;
-    return [...results].sort((a, b) => {
-      switch (sortOption) {
-        case 'name':
-          return a.name.localeCompare(b.name);
-        case 'listeners':
-          return (b.monthlyListeners || 0) - (a.monthlyListeners || 0);
-        case 'release':
-          return (a.releaseDaysAgo || 9999) - (b.releaseDaysAgo || 9999);
-        default:
-          return 0;
-      }
-    });
   };
 
   const handleFilterSubmit = (newFilters) => {
@@ -156,12 +148,15 @@ const Explorer = () => {
           query={query}
           setQuery={setQuery}
           onSearch={handleSearch}
-          suggestions={['Techno artists under 10K listeners', 'Unsigned female vocalists', 'Rising Afrobeat acts in Europe', 'Amsterdam-based DJs', 'Recently dropped EPs']}
+          suggestions={[
+            'Techno artists under 10K listeners',
+            'Unsigned female vocalists',
+            'Rising Afrobeat acts in Europe',
+            'Amsterdam-based DJs',
+            'Recently dropped EPs',
+          ]}
         />
-
-        <div className="mt-4 mb-6">
-          <SortDropdown selected={sortOption} onChange={setSortOption} />
-        </div>
+        <SortDropdown sortOrder={sortOrder} setSortOrder={setSortOrder} />
 
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
