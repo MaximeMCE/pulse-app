@@ -33,6 +33,10 @@ const Explorer = () => {
     setToken(storedToken);
     refreshCampaignList();
     refreshSavedCampaigns();
+
+    const cachedResults = localStorage.getItem('last_explorer_results');
+    if (cachedResults) setResults(JSON.parse(cachedResults));
+
     window.addEventListener('leadsUpdated', refreshSavedCampaigns);
     return () => window.removeEventListener('leadsUpdated', refreshSavedCampaigns);
   }, []);
@@ -102,6 +106,7 @@ const Explorer = () => {
       });
 
       setResults(filtered);
+      localStorage.setItem('last_explorer_results', JSON.stringify(filtered));
     } catch (err) {
       console.error(err);
       setError('Search failed.');
@@ -155,10 +160,8 @@ const Explorer = () => {
       campaign,
     };
 
-    // Save to leads
     localStorage.setItem(key, JSON.stringify([...existing, newLead]));
 
-    // Save to artistProfiles
     const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
     profiles[artist.id] = {
       id: artist.id,
