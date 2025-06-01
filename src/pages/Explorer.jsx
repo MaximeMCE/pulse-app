@@ -175,7 +175,7 @@ const Explorer = () => {
     profiles[artist.id] = {
       id: artist.id,
       name: artist.name,
-      image: artist.images?.[0]?.url || '',
+      image: artist.image || artist.images?.[0]?.url || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
       genres: Array.isArray(artist.genres) ? artist.genres : [],
       followers: typeof artist.followers === 'number' ? artist.followers : 0,
       monthlyListeners: typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0,
