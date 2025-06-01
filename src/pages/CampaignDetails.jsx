@@ -23,7 +23,7 @@ const CampaignDetails = () => {
   }, []);
 
   const campaign = campaigns.find(c => c.id === campaignId);
-  const campaignKey = campaign ? `leads_${campaign.title.toLowerCase()}` : null;
+  const campaignKey = campaign ? `leads_${campaign.id}` : null;
 
   useEffect(() => {
     if (campaignKey) {
@@ -131,7 +131,7 @@ const CampaignDetails = () => {
     const targetCampaign = campaigns.find(c => c.id === newCampaignId);
     if (!targetCampaign) return;
 
-    const targetKey = `leads_${targetCampaign.title.toLowerCase()}`;
+    const targetKey = `leads_${targetCampaign.id}`;
     const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
 
     const leadToMove = leads.find(l => l.id === id);
@@ -148,70 +148,6 @@ const CampaignDetails = () => {
     setLeads(updatedLeads);
     window.dispatchEvent(new Event('lead-deleted'));
     window.dispatchEvent(new Event('leadsUpdated'));
-  };
-
-  const toggleSelectLead = (id) => {
-    setSelectedLeads(prev =>
-      prev.includes(id) ? prev.filter(lid => lid !== id) : [...prev, id]
-    );
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedLeads.length === leads.length) {
-      setSelectedLeads([]);
-    } else {
-      setSelectedLeads(leads.map(l => l.id));
-    }
-  };
-
-  const applyStatusChange = () => {
-    if (!pendingStatusChange) return;
-    setLeads(prev =>
-      prev.map(l =>
-        selectedLeads.includes(l.id) ? { ...l, status: pendingStatusChange } : l
-      )
-    );
-    setPendingStatusChange('');
-  };
-
-  const applyMoveToCampaign = () => {
-    if (!pendingCampaignMove) return;
-
-    const targetCampaign = campaigns.find(c => c.title === pendingCampaignMove);
-    if (!targetCampaign) return;
-
-    const targetKey = `leads_${pendingCampaignMove.toLowerCase()}`;
-    const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
-
-    const leadsToMove = leads.filter(l => {
-      const alreadyExists = targetLeads.some(t => t.id === l.id);
-      return selectedLeads.includes(l.id) && !alreadyExists;
-    });
-
-    if (leadsToMove.length === 0) {
-      setPendingCampaignMove('');
-      return;
-    }
-
-    localStorage.setItem(
-      targetKey,
-      JSON.stringify([...targetLeads, ...leadsToMove])
-    );
-
-    const updatedLeads = leads.filter(l => !selectedLeads.includes(l.id));
-    setLeads(updatedLeads);
-    setSelectedLeads([]);
-    setPendingCampaignMove('');
-    window.dispatchEvent(new Event('lead-deleted'));
-    window.dispatchEvent(new Event('leadsUpdated'));
-  };
-
-  const bulkDelete = () => {
-    if (window.confirm(`Delete ${selectedLeads.length} selected leads?`)) {
-      setLeads(prev => prev.filter(l => !selectedLeads.includes(l.id)));
-      setSelectedLeads([]);
-      window.dispatchEvent(new Event('lead-deleted'));
-    }
   };
 
   return (
@@ -265,98 +201,25 @@ const CampaignDetails = () => {
         </div>
       </div>
 
-      {selectedLeads.length > 0 && (
-        <div className="p-4 bg-yellow-50 border rounded shadow mb-6 space-y-3">
-          <div className="flex items-center gap-4">
-            <select
-              value={pendingStatusChange}
-              onChange={(e) => setPendingStatusChange(e.target.value)}
-              className="border rounded px-2 py-1"
-            >
-              <option value="">Change status</option>
-              <option>New</option>
-              <option>Contacted</option>
-              <option>Qualified</option>
-              <option>Lost</option>
-            </select>
-            <button
-              onClick={applyStatusChange}
-              className="text-blue-600 hover:underline text-sm"
-            >
-              Apply status
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex gap-4 items-center">
-              <select
-                value={pendingCampaignMove}
-                onChange={(e) => setPendingCampaignMove(e.target.value)}
-                className="border rounded px-2 py-1"
-              >
-                <option value="">Move to campaign</option>
-                {campaigns
-                  .filter(c => c.id !== campaignId)
-                  .map(c => (
-                    <option key={c.id} value={c.title}>
-                      {c.title}
-                    </option>
-                  ))}
-              </select>
-              <button
-                onClick={applyMoveToCampaign}
-                className="text-blue-600 hover:underline text-sm"
-              >
-                Move leads
-              </button>
-            </div>
-
-            <button
-              onClick={bulkDelete}
-              className="text-red-600 hover:underline text-sm"
-            >
-              Delete selected
-            </button>
-          </div>
+      {leads.length === 0 ? (
+        <p className="text-gray-500">No leads yet.</p>
+      ) : (
+        <div className="space-y-4">
+          {leads.map((lead) => (
+            <LeadCard
+              key={lead.id}
+              lead={lead}
+              campaigns={campaigns}
+              onStatusChange={updateLeadStatus}
+              onCampaignChange={updateLeadCampaign}
+              onDelete={deleteLead}
+            />
+          ))}
         </div>
       )}
-
-      <div className="space-y-4">
-        {leads.length === 0 ? (
-          <p className="text-gray-500">No leads yet.</p>
-        ) : (
-          <>
-            <div className="flex items-center gap-2 mb-2">
-              <input
-                type="checkbox"
-                checked={selectedLeads.length === leads.length}
-                onChange={toggleSelectAll}
-              />
-              <span className="text-sm font-medium">Select all</span>
-            </div>
-
-            {leads.map((lead) => (
-              <div key={lead.id} className="flex gap-2 items-start">
-                <input
-                  type="checkbox"
-                  checked={selectedLeads.includes(lead.id)}
-                  onChange={() => toggleSelectLead(lead.id)}
-                  className="mt-2"
-                />
-                <LeadCard
-                  lead={lead}
-                  campaigns={campaigns}
-                  onStatusChange={updateLeadStatus}
-                  onCampaignChange={updateLeadCampaign}
-                  onDelete={deleteLead}
-                />
-              </div>
-            ))}
-          </>
-        )}
-      </div>
     </div>
   );
 };
 
 export default CampaignDetails;
+
