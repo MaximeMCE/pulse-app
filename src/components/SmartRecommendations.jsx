@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getRecommendedArtists } from '../utils/getRecommendedArtists';
-import sampleArtists from '../data/sampleArtists.json';
 
 function getMatchReason(artist, campaign) {
   const genres = (campaign.goal || '').toLowerCase().split(/\s+/);
