@@ -28,7 +28,22 @@ const CampaignDetails = () => {
   useEffect(() => {
     if (campaignKey) {
       const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
-      setLeads(storedLeads);
+      const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+
+      const enrichedLeads = storedLeads.map((lead) => {
+        const profile = profiles[lead.artistId] || {};
+        return {
+          ...lead,
+          name: profile.name || lead.name || 'Unknown',
+          image: profile.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+          genres: profile.genres || [],
+          monthlyListeners: profile.monthlyListeners || 0,
+          preview_url: profile.preview_url || '',
+          tier: profile.tier || 'Emerging',
+        };
+      });
+
+      setLeads(enrichedLeads);
     }
   }, [campaignKey]);
 
@@ -42,8 +57,23 @@ const CampaignDetails = () => {
   useEffect(() => {
     const handleUpdate = () => {
       if (!campaignKey) return;
-      const updatedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
-      setLeads(updatedLeads);
+      const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+      const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+
+      const enrichedLeads = storedLeads.map((lead) => {
+        const profile = profiles[lead.artistId] || {};
+        return {
+          ...lead,
+          name: profile.name || lead.name || 'Unknown',
+          image: profile.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+          genres: profile.genres || [],
+          monthlyListeners: profile.monthlyListeners || 0,
+          preview_url: profile.preview_url || '',
+          tier: profile.tier || 'Emerging',
+        };
+      });
+
+      setLeads(enrichedLeads);
     };
 
     window.addEventListener('leadsUpdated', handleUpdate);
@@ -75,7 +105,12 @@ const CampaignDetails = () => {
       createdAt: new Date().toISOString()
     };
 
-    setLeads(prev => [...prev, newLead]);
+    setLeads(prev => [...prev, {
+      ...newLead,
+      name: newLead.name,
+      image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+    }]);
+
     setNewLeadName('');
     setNewLeadStatus('New');
   };
