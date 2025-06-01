@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-const LeadCard = ({ lead, campaigns, onStatusChange, onCampaignChange, onDelete }) => {
-  // TEMP: Simulated AI match reason and tier (replace later with real logic)
+const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
+  const [profile, setProfile] = useState(null);
+
   const matchReason = lead.source === 'manual'
     ? 'Added manually'
     : 'Matched by genre + location';
@@ -10,11 +11,33 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onCampaignChange, onDelete 
                lead.followers > 10_000 ? 'Mid' :
                'Emerging';
 
+  useEffect(() => {
+    const allProfiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+    setProfile(allProfiles[lead.artistId] || null);
+  }, [lead.artistId]);
+
+  const handleMove = (newCampaignId) => {
+    if (!newCampaignId || newCampaignId === lead.campaignId) return;
+
+    const currentKey = `leads_${lead.campaignId}`;
+    const newKey = `leads_${newCampaignId}`;
+
+    const currentLeads = JSON.parse(localStorage.getItem(currentKey) || '[]');
+    const updatedCurrentLeads = currentLeads.filter((l) => l.id !== lead.id);
+    localStorage.setItem(currentKey, JSON.stringify(updatedCurrentLeads));
+
+    const newLeads = JSON.parse(localStorage.getItem(newKey) || '[]');
+    const newLead = { ...lead, campaignId: newCampaignId };
+    localStorage.setItem(newKey, JSON.stringify([...newLeads, newLead]));
+
+    window.dispatchEvent(new Event('leadsUpdated'));
+  };
+
   return (
     <div className="flex justify-between items-start p-4 border rounded mb-2 bg-white shadow-sm">
       <div className="flex gap-3">
         <img
-          src={lead.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
+          src={profile?.image || lead.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
           alt={lead.name}
           className="w-12 h-12 rounded object-cover"
         />
@@ -45,16 +68,19 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onCampaignChange, onDelete 
           </select>
 
           <select
-            value={lead.campaignId}
-            onChange={(e) => onCampaignChange(lead.id, e.target.value)}
+            defaultValue=""
+            onChange={(e) => handleMove(e.target.value)}
             className="border px-2 py-1 text-sm rounded"
           >
-            {campaigns.map((campaign) => (
-              <option key={campaign.id} value={campaign.id}>
-                {campaign.name}
-              </option>
-            ))}
-            <option value="">Unassigned</option>
+            <option value="">Move</option>
+            {campaigns
+              .filter(c => c.id !== lead.campaignId)
+              .map((campaign) => (
+                <option key={campaign.id} value={campaign.id}>
+                  {campaign.name}
+                </option>
+              ))}
+            <option value="unassigned">Unassigned</option>
           </select>
 
           <button
@@ -70,3 +96,4 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onCampaignChange, onDelete 
 };
 
 export default LeadCard;
+
