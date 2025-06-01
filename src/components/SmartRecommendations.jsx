@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getRecommendedArtists } from '../utils/getRecommendedArtists';
+import { saveArtistProfile } from '../utils/artistUtils'; // ✅ Added
 
 function getMatchReason(artist, campaign) {
   const genres = (campaign.goal || '').toLowerCase().split(/\s+/);
@@ -63,19 +64,26 @@ const SmartRecommendations = () => {
 
     const key = `leads_${campaign.title.toLowerCase()}`;
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
-    const artistProfiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
 
     if (existing.some((l) => l.artistId === artist.id || l.id === artist.id)) return;
 
-    // Save artist profile
-    artistProfiles[artist.id] = artist;
-    localStorage.setItem('artistProfiles', JSON.stringify(artistProfiles));
+    // ✅ Save full artist profile
+    saveArtistProfile({
+      id: artist.id,
+      name: artist.name,
+      image: artist.image || '',
+      genre: artist.genres?.[0] || 'unknown',
+      preview_url: artist.preview_url || null,
+      followers: artist.followers || 0,
+      source: 'recommendation'
+    });
 
     const newLead = {
       id: crypto.randomUUID(),
       artistId: artist.id,
       status: 'New',
       campaignId: campaign.id,
+      createdAt: new Date().toISOString()
     };
 
     localStorage.setItem(key, JSON.stringify([...existing, newLead]));

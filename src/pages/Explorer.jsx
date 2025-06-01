@@ -1,3 +1,5 @@
+// src/pages/Explorer.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -53,8 +55,8 @@ const Explorer = () => {
       const camp = key.replace('leads_', '');
       const leads = JSON.parse(localStorage.getItem(key)) || [];
       leads.forEach(lead => {
-        if (!saved[lead.id]) saved[lead.id] = [];
-        if (!saved[lead.id].includes(camp)) saved[lead.id].push(camp);
+        if (!saved[lead.artistId || lead.id]) saved[lead.artistId || lead.id] = [];
+        if (!saved[lead.artistId || lead.id].includes(camp)) saved[lead.artistId || lead.id].push(camp);
       });
     });
     setSavedCampaigns(saved);
@@ -153,16 +155,18 @@ const Explorer = () => {
       return;
     }
 
-    const key = `leads_${campaign.toLowerCase()}`;
+    const campaignId = campaign.toLowerCase();
+    const key = `leads_${campaignId}`;
     const existing = JSON.parse(localStorage.getItem(key)) || [];
-    if (existing.find(l => l.id === artist.id)) return;
+
+    if (existing.some(l => l.artistId === artist.id || l.id === artist.id)) return;
 
     const newLead = {
-      id: artist.id,
-      name: artist.name,
-      image: artist.images?.[0]?.url || '',
+      id: crypto.randomUUID(),
+      artistId: artist.id,
       status: 'New',
-      campaign,
+      campaignId,
+      createdAt: new Date().toISOString()
     };
 
     localStorage.setItem(key, JSON.stringify([...existing, newLead]));
@@ -176,6 +180,7 @@ const Explorer = () => {
       followers: typeof artist.followers === 'number' ? artist.followers : 0,
       monthlyListeners: typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0,
       preview_url: artist.preview_url || '',
+      source: 'explorer'
     };
     localStorage.setItem('artistProfiles', JSON.stringify(profiles));
 
@@ -188,7 +193,7 @@ const Explorer = () => {
   const removeLead = (artistId, campaignTitle) => {
     const key = `leads_${campaignTitle.toLowerCase()}`;
     const existing = JSON.parse(localStorage.getItem(key)) || [];
-    const updated = existing.filter(lead => lead.id !== artistId);
+    const updated = existing.filter(lead => lead.artistId !== artistId && lead.id !== artistId);
     localStorage.setItem(key, JSON.stringify(updated));
     window.dispatchEvent(new Event('leadsUpdated'));
     refreshSavedCampaigns();
