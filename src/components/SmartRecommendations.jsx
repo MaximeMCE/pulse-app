@@ -1,15 +1,24 @@
+// SmartRecommendations.jsx
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { getRecommendedArtists } from '../utils/getRecommendedArtists';
+import sampleArtists from '../data/sampleArtists.json';
 
-const mockArtists = [
-  { id: 'a1', name: 'DJ Aurora', genre: 'House', region: 'Amsterdam' },
-  { id: 'a2', name: 'Bassline Syndicate', genre: 'Techno', region: 'Berlin' },
-  { id: 'a3', name: 'Luna Fade', genre: 'Electropop', region: 'Paris' },
-  { id: 'a4', name: 'Night Drip', genre: 'Trap', region: 'Rotterdam' },
-  { id: 'a5', name: 'Sonic Bloom', genre: 'Ambient', region: 'London' },
-];
+function getMatchReason(artist, campaign) {
+  const genres = (campaign.goal || '').toLowerCase().split(/\s+/);
+  const region = (campaign.region || '').toLowerCase();
 
-const MockRecommendations = () => {
+  const artistGenres = (artist.genres || []).map(g => g.toLowerCase());
+  const genreMatch = genres.find(g => artistGenres.includes(g));
+  const regionMatch = artist.region.toLowerCase().includes(region);
+
+  if (genreMatch) return `Matched genre: ${genreMatch}`;
+  if (regionMatch) return `Matched region: ${artist.region}`;
+  return null;
+}
+
+const SmartRecommendations = () => {
   const { id } = useParams();
   const [campaign, setCampaign] = useState(null);
   const [suggested, setSuggested] = useState([]);
@@ -27,23 +36,18 @@ const MockRecommendations = () => {
     if (!found) return;
     setCampaign(found);
 
-    const keywords = (found.goal || '').toLowerCase();
-    const region = (found.region || '').toLowerCase();
-    const genreWords = keywords.split(/\s+/);
+    const key = `leads_${found.title.toLowerCase()}`;
+    const leadsInCampaign = JSON.parse(localStorage.getItem(key) || '[]');
 
-    const matched = mockArtists.filter((artist) => {
-      const genreMatch = genreWords.some((word) =>
-        artist.genre.toLowerCase().includes(word)
-      );
-      const regionMatch = region && artist.region.toLowerCase().includes(region);
-      return genreMatch || regionMatch;
+    const recs = getRecommendedArtists({
+      campaign: found,
+      existingLeads: leadsInCampaign,
     });
 
-    setSuggested(matched.slice(0, 3));
+    setSuggested(recs);
     refreshAssignedLeads(found.title);
   }, [id]);
 
-  // 🔁 Listen for deletions or updates and re-sync
   useEffect(() => {
     if (!campaign) return;
 
@@ -89,9 +93,14 @@ const MockRecommendations = () => {
               key={artist.id}
               className="border rounded px-3 py-2 bg-gray-50 flex justify-between items-center"
             >
-              <span>
-                <strong>{artist.name}</strong> — {artist.genre} ({artist.region})
-              </span>
+              <div>
+                <div>
+                  <strong>{artist.name}</strong> — {artist.genres.join(', ')} ({artist.region})
+                </div>
+                <div className="text-xs text-gray-500 italic">
+                  🧠 {getMatchReason(artist, campaign)}
+                </div>
+              </div>
               {assignedIds.includes(artist.id) ? (
                 <span className="text-xs text-green-600 font-medium">✅ Added</span>
               ) : (
@@ -112,4 +121,4 @@ const MockRecommendations = () => {
   );
 };
 
-export default MockRecommendations;
+export default SmartRecommendations;

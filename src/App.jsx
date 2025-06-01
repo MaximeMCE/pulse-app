@@ -7,7 +7,6 @@ import Dashboard from './pages/Dashboard';
 import Explorer from './pages/Explorer';
 import Campaigns from './pages/Campaigns';
 import CampaignDetails from './pages/CampaignDetails';
-import LeadsLegacy from './pages/LeadsLegacy';
 import ArtistProfile from './pages/ArtistProfile';
 import ArtistSearch from './pages/ArtistSearch';
 import Settings from './pages/Settings';
@@ -34,7 +33,6 @@ function App() {
         <Route path="/artist/:id" element={<ArtistProfile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/search" element={<ArtistSearch />} />
-        <Route path="/leads-legacy" element={<LeadsLegacy />} />
         <Route path="/pool" element={<TalentPool />} /> {/* ✅ Talent Pool */}
       </Route>
     </Routes>
