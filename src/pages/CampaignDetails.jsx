@@ -23,28 +23,34 @@ const CampaignDetails = () => {
   }, []);
 
   const campaign = campaigns.find(c => c.id === campaignId);
-  const campaignKey = campaign ? `leads_${campaign.id}` : null;
+  const fallbackKey = campaign ? `leads_${campaign.title?.toLowerCase()}` : null;
+  const campaignKey = campaign ? `leads_${campaign.id}` : fallbackKey;
+
+  const loadLeads = () => {
+    if (!campaignKey) return;
+    const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+    const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+
+    const enriched = storedLeads.map(lead => {
+      const profile = profiles[lead.artistId] || {};
+      return {
+        ...lead,
+        name: profile.name || lead.name || 'Unknown',
+        image: profile.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+        genres: profile.genres || [],
+        monthlyListeners: profile.monthlyListeners || 0,
+        preview_url: profile.preview_url || '',
+        tier: profile.tier || 'Emerging',
+      };
+    });
+
+    setLeads(enriched);
+  };
 
   useEffect(() => {
-    if (campaignKey) {
-      const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
-      const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
-
-      const enrichedLeads = storedLeads.map((lead) => {
-        const profile = profiles[lead.artistId] || {};
-        return {
-          ...lead,
-          name: profile.name || lead.name || 'Unknown',
-          image: profile.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-          genres: profile.genres || [],
-          monthlyListeners: profile.monthlyListeners || 0,
-          preview_url: profile.preview_url || '',
-          tier: profile.tier || 'Emerging',
-        };
-      });
-
-      setLeads(enrichedLeads);
-    }
+    loadLeads();
+    window.addEventListener('leadsUpdated', loadLeads);
+    return () => window.removeEventListener('leadsUpdated', loadLeads);
   }, [campaignKey]);
 
   useEffect(() => {
@@ -54,39 +60,12 @@ const CampaignDetails = () => {
     }
   }, [leads, campaignKey]);
 
-  useEffect(() => {
-    const handleUpdate = () => {
-      if (!campaignKey) return;
-      const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
-      const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
-
-      const enrichedLeads = storedLeads.map((lead) => {
-        const profile = profiles[lead.artistId] || {};
-        return {
-          ...lead,
-          name: profile.name || lead.name || 'Unknown',
-          image: profile.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-          genres: profile.genres || [],
-          monthlyListeners: profile.monthlyListeners || 0,
-          preview_url: profile.preview_url || '',
-          tier: profile.tier || 'Emerging',
-        };
-      });
-
-      setLeads(enrichedLeads);
-    };
-
-    window.addEventListener('leadsUpdated', handleUpdate);
-    return () => window.removeEventListener('leadsUpdated', handleUpdate);
-  }, [campaignKey]);
-
   if (!campaign) return <div className="p-6">Campaign not found.</div>;
 
   const addLead = () => {
     if (!newLeadName.trim()) return;
 
     const artistId = uuidv4();
-
     saveArtistProfile({
       id: artistId,
       name: newLeadName.trim(),
@@ -135,18 +114,10 @@ const CampaignDetails = () => {
     const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
 
     const leadToMove = leads.find(l => l.id === id);
-    if (!leadToMove) return;
+    if (!leadToMove || targetLeads.some(t => t.id === id)) return;
 
-    if (targetLeads.some(t => t.id === id)) return;
-
-    localStorage.setItem(
-      targetKey,
-      JSON.stringify([...targetLeads, leadToMove])
-    );
-
-    const updatedLeads = leads.filter(l => l.id !== id);
-    setLeads(updatedLeads);
-    window.dispatchEvent(new Event('lead-deleted'));
+    localStorage.setItem(targetKey, JSON.stringify([...targetLeads, leadToMove]));
+    setLeads(prev => prev.filter(l => l.id !== id));
     window.dispatchEvent(new Event('leadsUpdated'));
   };
 
@@ -201,11 +172,11 @@ const CampaignDetails = () => {
         </div>
       </div>
 
-      {leads.length === 0 ? (
-        <p className="text-gray-500">No leads yet.</p>
-      ) : (
-        <div className="space-y-4">
-          {leads.map((lead) => (
+      <div className="space-y-4">
+        {leads.length === 0 ? (
+          <p className="text-gray-500">No leads yet.</p>
+        ) : (
+          leads.map((lead) => (
             <LeadCard
               key={lead.id}
               lead={lead}
@@ -214,9 +185,9 @@ const CampaignDetails = () => {
               onCampaignChange={updateLeadCampaign}
               onDelete={deleteLead}
             />
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 };
