@@ -1,34 +1,26 @@
 import React from 'react';
 
 const LeadCard = ({ lead, campaigns, onStatusChange, onCampaignChange, onDelete }) => {
-  const artistProfiles = JSON.parse(localStorage.getItem('artistProfiles')) || {};
-  const artist = artistProfiles[lead.artistId];
-
-  if (!artist) {
-    console.warn('Missing artist profile for lead:', lead);
-    return null;
-  }
-
   // TEMP: Simulated AI match reason and tier (replace later with real logic)
-  const matchReason = artist.source === 'manual'
+  const matchReason = lead.source === 'manual'
     ? 'Added manually'
     : 'Matched by genre + location';
 
-  const tier = artist.followers > 100_000 ? 'Top' :
-               artist.followers > 10_000 ? 'Mid' :
+  const tier = lead.followers > 100_000 ? 'Top' :
+               lead.followers > 10_000 ? 'Mid' :
                'Emerging';
 
   return (
     <div className="flex justify-between items-start p-4 border rounded mb-2 bg-white shadow-sm">
       <div className="flex gap-3">
         <img
-          src={artist.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
-          alt={artist.name}
+          src={lead.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
+          alt={lead.name}
           className="w-12 h-12 rounded object-cover"
         />
         <div className="flex flex-col justify-center">
-          <div className="font-semibold text-base">{artist.name}</div>
-          <div className="text-sm text-gray-500 capitalize">{artist.genre || 'unknown genre'}</div>
+          <div className="font-semibold text-base">{lead.name}</div>
+          <div className="text-sm text-gray-500 capitalize">{lead.genres?.[0] || 'unknown genre'}</div>
           <div className="text-xs mt-1 bg-pink-100 text-pink-700 px-2 py-0.5 inline-block rounded">
             {matchReason}
           </div>
