@@ -1,5 +1,5 @@
-// Final fixed Leads.jsx with campaign tracking per lead
 import React, { useEffect, useState } from 'react';
+import LeadCard from '../components/LeadCard';
 
 const Leads = () => {
   const [leadsData, setLeadsData] = useState({});
@@ -41,20 +41,6 @@ const Leads = () => {
       localStorage.setItem(`leads_${normalizeKey(key)}`, JSON.stringify(leads));
     });
   };
-
-  const statusEmoji = {
-    New: '👀 New',
-    Contacted: '📞 Contacted',
-    Qualified: '✅ Qualified',
-    Rejected: '❌ Rejected'
-  };
-
-  const getColor = (status) => ({
-    New: 'bg-blue-200 text-blue-800',
-    Contacted: 'bg-yellow-200 text-yellow-800',
-    Qualified: 'bg-green-200 text-green-800',
-    Rejected: 'bg-red-200 text-red-800'
-  }[status] || 'bg-gray-200 text-gray-800');
 
   const changeStatus = (campKey, index, newStatus) => {
     const copy = { ...leadsData };
@@ -136,6 +122,7 @@ const Leads = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">Leads</h1>
+
       <div className="mb-6 flex items-center">
         <input
           type="text"
@@ -175,59 +162,29 @@ const Leads = () => {
       {Object.entries(leadsData).map(([campKey, arr]) => {
         const vis = filtered(arr);
         if (!vis.length) return null;
+
         return (
           <div key={campKey} className="mb-8">
             <h2 className="text-xl font-semibold mb-2">{displayName(campKey)}</h2>
             <div className="space-y-4">
               {vis.map((lead, i) => (
-                <div key={lead.id} className="flex items-center justify-between border p-4 rounded-lg shadow-sm">
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="checkbox"
-                      checked={selected[campKey]?.includes(i)}
-                      onChange={() => toggle(campKey, i)}
-                    />
-                    <img
-                      src={lead.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
-                      alt={lead.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div>
-                      <h3 className="font-medium">{lead.name}</h3>
-                      <span className={`inline-block px-2 py-1 mt-1 rounded text-sm ${getColor(lead.status)}`}>{statusEmoji[lead.status]}</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-4 items-center">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-gray-600">Status</span>
-                      <select
-                        className="border rounded px-2 py-1 text-sm"
-                        value={lead.status}
-                        onChange={e => changeStatus(campKey, i, e.target.value)}
-                      >
-                        <option>New</option>
-                        <option>Contacted</option>
-                        <option>Qualified</option>
-                        <option>Rejected</option>
-                      </select>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-xs text-gray-600">Campaign</span>
-                      <select
-                        className="border rounded px-2 py-1 text-sm"
-                        value={lead.campaign}
-                        onChange={e => moveCampaign(campKey, i, e.target.value)}
-                      >
-                        {campaigns.map(t => (
-                          <option key={t} value={t}>{t}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <button
-                      onClick={() => deleteLead(campKey, i)}
-                      className="text-red-600 text-sm ml-4"
-                    >Delete</button>
-                  </div>
+                <div key={lead.id} className="flex items-start gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selected[campKey]?.includes(i)}
+                    onChange={() => toggle(campKey, i)}
+                    className="mt-2"
+                  />
+                  <LeadCard
+                    lead={lead}
+                    campaigns={campaigns.map(title => ({
+                      id: normalizeKey(title),
+                      name: title
+                    }))}
+                    onStatusChange={(id, status) => changeStatus(campKey, i, status)}
+                    onCampaignChange={(id, campaign) => moveCampaign(campKey, i, campaign)}
+                    onDelete={() => deleteLead(campKey, i)}
+                  />
                 </div>
               ))}
             </div>
