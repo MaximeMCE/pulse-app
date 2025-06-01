@@ -1,4 +1,3 @@
-// Explorer.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
@@ -147,8 +146,31 @@ const Explorer = () => {
     const key = `leads_${campaign.toLowerCase()}`;
     const existing = JSON.parse(localStorage.getItem(key)) || [];
     if (existing.find(l => l.id === artist.id)) return;
-    const newLead = { id: artist.id, name: artist.name, image: artist.images?.[0]?.url || '', status: 'New', campaign };
+
+    const newLead = {
+      id: artist.id,
+      name: artist.name,
+      image: artist.images?.[0]?.url || '',
+      status: 'New',
+      campaign,
+    };
+
+    // Save to leads
     localStorage.setItem(key, JSON.stringify([...existing, newLead]));
+
+    // Save to artistProfiles
+    const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+    profiles[artist.id] = {
+      id: artist.id,
+      name: artist.name,
+      image: artist.images?.[0]?.url || '',
+      genres: artist.genres || [],
+      followers: artist.followers || 0,
+      monthlyListeners: artist.monthlyListeners || 0,
+      preview_url: artist.preview_url || '',
+    };
+    localStorage.setItem('artistProfiles', JSON.stringify(profiles));
+
     window.dispatchEvent(new Event('leadsUpdated'));
     setDropdownOpen(null);
   };
