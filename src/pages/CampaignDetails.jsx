@@ -5,6 +5,9 @@ import CampaignManager from '../components/CampaignManager';
 import SmartRecommendations from '../components/SmartRecommendations';
 import CampaignSwitcher from '../components/CampaignSwitcher';
 
+const normalizeKey = (title) =>
+  `leads_${title.toLowerCase().replace(/\s+/g, '-').trim()}`;
+
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();
   const [campaigns, setCampaigns] = useState([]);
@@ -21,7 +24,7 @@ const CampaignDetails = () => {
   }, []);
 
   const campaign = campaigns.find(c => c.id === campaignId);
-  const campaignKey = campaign ? `leads_${campaign.title.toLowerCase()}` : null;
+  const campaignKey = campaign ? normalizeKey(campaign.title) : null;
 
   useEffect(() => {
     if (campaignKey) {
@@ -105,7 +108,7 @@ const CampaignDetails = () => {
     const targetCampaign = campaigns.find(c => c.title === pendingCampaignMove);
     if (!targetCampaign) return;
 
-    const targetKey = `leads_${pendingCampaignMove.toLowerCase()}`;
+    const targetKey = normalizeKey(pendingCampaignMove);
     const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
 
     const leadsToMove = leads.filter(l => {
