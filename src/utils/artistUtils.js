@@ -28,3 +28,8 @@ export const getSpotifyData = (artist = {}) => {
     previewUrl: artist.preview_url || '',
   };
 };
+export const saveArtistProfile = (profile) => {
+  const stored = JSON.parse(localStorage.getItem('artistProfiles')) || {};
+  stored[profile.id] = profile;
+  localStorage.setItem('artistProfiles', JSON.stringify(stored));
+};

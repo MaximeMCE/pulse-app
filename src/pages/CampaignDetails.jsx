@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import CampaignManager from '../components/CampaignManager';
 import SmartRecommendations from '../components/SmartRecommendations';
 import CampaignSwitcher from '../components/CampaignSwitcher';
+import LeadCard from '../components/LeadCard';
+import { saveArtistProfile } from '../utils/artistUtils'; // ✅ NEW
 
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();
@@ -52,12 +54,27 @@ const CampaignDetails = () => {
 
   const addLead = () => {
     if (!newLeadName.trim()) return;
+
+    const artistId = uuidv4();
+
+    saveArtistProfile({
+      id: artistId,
+      name: newLeadName.trim(),
+      image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+      genre: 'unknown',
+      preview_url: null,
+      followers: 0,
+      source: 'manual'
+    });
+
     const newLead = {
       id: uuidv4(),
-      name: newLeadName.trim(),
+      artistId,
+      campaignId,
       status: newLeadStatus,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString()
     };
+
     setLeads(prev => [...prev, newLead]);
     setNewLeadName('');
     setNewLeadStatus('New');
@@ -73,6 +90,29 @@ const CampaignDetails = () => {
 
   const updateLeadStatus = (id, status) => {
     setLeads(prev => prev.map(l => (l.id === id ? { ...l, status } : l)));
+  };
+
+  const updateLeadCampaign = (id, newCampaignId) => {
+    const targetCampaign = campaigns.find(c => c.id === newCampaignId);
+    if (!targetCampaign) return;
+
+    const targetKey = `leads_${targetCampaign.title.toLowerCase()}`;
+    const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
+
+    const leadToMove = leads.find(l => l.id === id);
+    if (!leadToMove) return;
+
+    if (targetLeads.some(t => t.id === id)) return;
+
+    localStorage.setItem(
+      targetKey,
+      JSON.stringify([...targetLeads, leadToMove])
+    );
+
+    const updatedLeads = leads.filter(l => l.id !== id);
+    setLeads(updatedLeads);
+    window.dispatchEvent(new Event('lead-deleted'));
+    window.dispatchEvent(new Event('leadsUpdated'));
   };
 
   const toggleSelectLead = (id) => {
@@ -261,36 +301,20 @@ const CampaignDetails = () => {
             </div>
 
             {leads.map((lead) => (
-              <div
-                key={lead.id}
-                className="bg-white rounded shadow p-4 flex justify-between items-center"
-              >
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedLeads.includes(lead.id)}
-                    onChange={() => toggleSelectLead(lead.id)}
-                  />
-                  <span className="font-medium">{lead.name}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <select
-                    value={lead.status}
-                    onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
-                    className="border rounded px-2 py-1 text-sm"
-                  >
-                    <option>New</option>
-                    <option>Contacted</option>
-                    <option>Qualified</option>
-                    <option>Lost</option>
-                  </select>
-                  <button
-                    onClick={() => deleteLead(lead.id)}
-                    className="text-red-600 hover:underline text-sm"
-                  >
-                    Delete
-                  </button>
-                </div>
+              <div key={lead.id} className="flex gap-2 items-start">
+                <input
+                  type="checkbox"
+                  checked={selectedLeads.includes(lead.id)}
+                  onChange={() => toggleSelectLead(lead.id)}
+                  className="mt-2"
+                />
+                <LeadCard
+                  lead={lead}
+                  campaigns={campaigns}
+                  onStatusChange={updateLeadStatus}
+                  onCampaignChange={updateLeadCampaign}
+                  onDelete={deleteLead}
+                />
               </div>
             ))}
           </>
