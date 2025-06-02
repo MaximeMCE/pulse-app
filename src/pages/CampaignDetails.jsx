@@ -64,7 +64,9 @@ const CampaignDetails = () => {
   if (!campaign) return <div className="p-6">Campaign not found.</div>;
 
   const addLead = () => {
-    if (!newLeadName.trim()) return;
+    if (!newLeadName.trim() || !campaign) return;
+
+    const campaignKey = `leads_${campaign.id}`; // Force correct key
 
     const artistId = uuidv4();
     const newLeadId = uuidv4();
@@ -87,6 +89,12 @@ const CampaignDetails = () => {
       createdAt: new Date().toISOString()
     };
 
+    // Manually save to localStorage immediately
+    const stored = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+    const updated = [...stored, newLead];
+    localStorage.setItem(campaignKey, JSON.stringify(updated));
+
+    // Show it immediately in UI
     setLeads(prev => [
       ...prev,
       {
