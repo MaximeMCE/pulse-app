@@ -51,14 +51,23 @@ const Explorer = () => {
 
   const refreshSavedCampaigns = () => {
     const saved = {};
-    Object.keys(localStorage).filter(k => k.startsWith('leads_')).forEach(key => {
-      const camp = key.replace('leads_', '');
-      const leads = JSON.parse(localStorage.getItem(key)) || [];
-      leads.forEach(lead => {
-        if (!saved[lead.artistId || lead.id]) saved[lead.artistId || lead.id] = [];
-        if (!saved[lead.artistId || lead.id].includes(camp)) saved[lead.artistId || lead.id].push(camp);
+    const campaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+    const idToTitleMap = Object.fromEntries(campaigns.map(c => [c.id, c.title]));
+
+    Object.keys(localStorage)
+      .filter(k => k.startsWith('leads_'))
+      .forEach(key => {
+        const campaignId = key.replace('leads_', '');
+        const leads = JSON.parse(localStorage.getItem(key)) || [];
+        const label = idToTitleMap[campaignId] || campaignId;
+
+        leads.forEach(lead => {
+          const artistKey = lead.artistId || lead.id;
+          if (!saved[artistKey]) saved[artistKey] = [];
+          if (!saved[artistKey].includes(label)) saved[artistKey].push(label);
+        });
       });
-    });
+
     setSavedCampaigns(saved);
   };
 
@@ -198,7 +207,7 @@ const Explorer = () => {
 
   const removeLead = (artistId, campaignTitle) => {
     const key = `leads_${campaignTitle.toLowerCase()}`;
-    const existing = JSON.parse(localStorage.getItem(key)) || [];
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
     const updated = existing.filter(lead => lead.artistId !== artistId && lead.id !== artistId);
     localStorage.setItem(key, JSON.stringify(updated));
     window.dispatchEvent(new Event('leadsUpdated'));
