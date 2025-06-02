@@ -1,9 +1,6 @@
-// Campaigns.jsx — Final UI polish with deadline label + created date spacing
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-
-const toKey = (title) => `leads_${title.trim().toLowerCase()}`;
 
 const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -15,38 +12,31 @@ const Campaigns = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const loadCampaigns = () => {
-      const stored = localStorage.getItem('campaigns');
-      if (stored) {
-        try {
-          setCampaigns(JSON.parse(stored));
-        } catch (err) {
-          console.warn('Failed to parse campaigns:', err);
-          setCampaigns([]);
-        }
-      } else {
+    const stored = localStorage.getItem('campaigns');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setCampaigns(parsed);
+
+        const counts = {};
+        parsed.forEach(c => {
+          const key = `leads_${c.id}`;
+          try {
+            const leads = JSON.parse(localStorage.getItem(key) || '[]');
+            counts[c.id] = leads.length;
+          } catch (err) {
+            console.warn('Failed to parse leads for campaign:', c.id, err);
+            counts[c.id] = 0;
+          }
+        });
+        setLeadCounts(counts);
+      } catch (err) {
+        console.warn('Failed to parse campaigns:', err);
         setCampaigns([]);
       }
-    };
-
-    const loadCounts = () => {
-      const counts = {};
-      const stored = JSON.parse(localStorage.getItem('campaigns') || '[]');
-      stored.forEach(c => {
-        try {
-          const raw = localStorage.getItem(toKey(c.title));
-          const leads = JSON.parse(raw || '[]');
-          counts[c.title] = leads.length;
-        } catch (err) {
-          console.warn('Failed to parse leads for campaign:', c.title, err);
-          counts[c.title] = 0;
-        }
-      });
-      setLeadCounts(counts);
-    };
-
-    loadCampaigns();
-    loadCounts();
+    } else {
+      setCampaigns([]);
+    }
   }, []);
 
   const handleAddCampaign = () => {
@@ -62,7 +52,6 @@ const Campaigns = () => {
       createdAt: new Date().toISOString(),
     };
 
-    localStorage.setItem(toKey(title), JSON.stringify([]));
     const updated = [...campaigns, newCampaign];
     setCampaigns(updated);
     setNewTitle('');
@@ -70,14 +59,17 @@ const Campaigns = () => {
     setRegion('');
     setDeadline('');
     localStorage.setItem('campaigns', JSON.stringify(updated));
+    localStorage.setItem(`leads_${newCampaign.id}`, JSON.stringify([]));
+    setLeadCounts(prev => ({ ...prev, [newCampaign.id]: 0 }));
   };
 
   const handleDelete = (id) => {
     const campaign = campaigns.find(c => c.id === id);
     if (!campaign) return;
     if (!confirm(`Delete campaign '${campaign.title}'?`)) return;
+
     const updated = campaigns.filter(c => c.id !== id);
-    localStorage.removeItem(toKey(campaign.title));
+    localStorage.removeItem(`leads_${campaign.id}`);
     localStorage.setItem('campaigns', JSON.stringify(updated));
     setCampaigns(updated);
   };
@@ -145,7 +137,7 @@ const Campaigns = () => {
               {c.deadline && (
                 <div className="text-sm text-gray-700 mb-1">⏳ Deadline: {new Date(c.deadline).toLocaleDateString()}</div>
               )}
-              <div className="text-sm text-gray-800 mt-2">📦 {leadCounts[c.title] || 0} lead(s)</div>
+              <div className="text-sm text-gray-800 mt-2">📦 {leadCounts[c.id] || 0} lead(s)</div>
               <hr className="my-2 border-t border-gray-200" />
               <div className="text-sm text-gray-500">🗓 Created: {new Date(c.createdAt).toLocaleDateString()}</div>
               <button
