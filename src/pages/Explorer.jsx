@@ -149,15 +149,21 @@ const Explorer = () => {
     handleSearch();
   };
 
-  const saveLead = (artist, campaign) => {
+  const saveLead = (artist, campaignTitle) => {
     if (!artist?.id || !artist?.name) {
       console.warn('🚨 Invalid artist object in saveLead:', artist);
       return;
     }
 
-    const campaignId = campaign.toLowerCase();
-    const key = `leads_${campaignId}`;
-    const existing = JSON.parse(localStorage.getItem(key)) || [];
+    const allCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+    const matchedCampaign = allCampaigns.find(c => c.title.toLowerCase() === campaignTitle.toLowerCase());
+    if (!matchedCampaign) {
+      console.warn('🚨 No campaign matched for title:', campaignTitle);
+      return;
+    }
+
+    const campaignKey = `leads_${matchedCampaign.id}`;
+    const existing = JSON.parse(localStorage.getItem(campaignKey) || '[]');
 
     if (existing.some(l => l.artistId === artist.id || l.id === artist.id)) return;
 
@@ -165,11 +171,11 @@ const Explorer = () => {
       id: crypto.randomUUID(),
       artistId: artist.id,
       status: 'New',
-      campaignId,
+      campaignId: matchedCampaign.id,
       createdAt: new Date().toISOString()
     };
 
-    localStorage.setItem(key, JSON.stringify([...existing, newLead]));
+    localStorage.setItem(campaignKey, JSON.stringify([...existing, newLead]));
 
     const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
     profiles[artist.id] = {
