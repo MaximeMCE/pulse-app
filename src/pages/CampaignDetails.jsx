@@ -23,7 +23,6 @@ const CampaignDetails = () => {
   }, []);
 
   const campaign = campaigns.find(c => c.id === campaignId);
-  const campaignKey = campaign ? `leads_${campaign.id}` : null;
 
   const enrichLeads = (rawLeads) => {
     const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
@@ -41,33 +40,36 @@ const CampaignDetails = () => {
     });
   };
 
-  const loadLeads = () => {
-    if (!campaignKey) return;
-    const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
-    const enriched = enrichLeads(storedLeads);
-    setLeads(enriched);
-  };
+  useEffect(() => {
+    if (!campaign) return;
+
+    const key = `leads_${campaign.id}`;
+    const storedLeads = JSON.parse(localStorage.getItem(key) || '[]');
+    setLeads(enrichLeads(storedLeads));
+
+    const handleUpdate = () => {
+      const updated = JSON.parse(localStorage.getItem(key) || '[]');
+      setLeads(enrichLeads(updated));
+    };
+
+    window.addEventListener('leadsUpdated', handleUpdate);
+    return () => window.removeEventListener('leadsUpdated', handleUpdate);
+  }, [campaign?.id]);
 
   useEffect(() => {
-    loadLeads();
-    window.addEventListener('leadsUpdated', loadLeads);
-    return () => window.removeEventListener('leadsUpdated', loadLeads);
-  }, [campaignKey]);
-
-  useEffect(() => {
-    if (campaignKey) {
-      localStorage.setItem(campaignKey, JSON.stringify(leads));
+    if (campaign) {
+      const key = `leads_${campaign.id}`;
+      localStorage.setItem(key, JSON.stringify(leads));
       window.dispatchEvent(new Event('leadsUpdated'));
     }
-  }, [leads, campaignKey]);
+  }, [leads, campaign]);
 
   if (!campaign) return <div className="p-6">Campaign not found.</div>;
 
   const addLead = () => {
-    if (!newLeadName.trim() || !campaign) return;
+    if (!newLeadName.trim()) return;
 
-    const campaignKey = `leads_${campaign.id}`; // Force correct key
-
+    const campaignKey = `leads_${campaign.id}`;
     const artistId = uuidv4();
     const newLeadId = uuidv4();
 
@@ -89,12 +91,10 @@ const CampaignDetails = () => {
       createdAt: new Date().toISOString()
     };
 
-    // Manually save to localStorage immediately
     const stored = JSON.parse(localStorage.getItem(campaignKey) || '[]');
     const updated = [...stored, newLead];
     localStorage.setItem(campaignKey, JSON.stringify(updated));
 
-    // Show it immediately in UI
     setLeads(prev => [
       ...prev,
       {
