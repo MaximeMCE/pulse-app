@@ -23,15 +23,11 @@ const CampaignDetails = () => {
   }, []);
 
   const campaign = campaigns.find(c => c.id === campaignId);
-  const fallbackKey = campaign ? `leads_${campaign.title?.toLowerCase()}` : null;
-  const campaignKey = campaign ? `leads_${campaign.id}` : fallbackKey;
+  const campaignKey = campaign ? `leads_${campaign.id}` : null;
 
-  const loadLeads = () => {
-    if (!campaignKey) return;
-    const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+  const enrichLeads = (rawLeads) => {
     const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
-
-    const enriched = storedLeads.map(lead => {
+    return rawLeads.map((lead) => {
       const profile = profiles[lead.artistId] || {};
       return {
         ...lead,
@@ -43,7 +39,12 @@ const CampaignDetails = () => {
         tier: profile.tier || 'Emerging',
       };
     });
+  };
 
+  const loadLeads = () => {
+    if (!campaignKey) return;
+    const storedLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+    const enriched = enrichLeads(storedLeads);
     setLeads(enriched);
   };
 
@@ -66,6 +67,8 @@ const CampaignDetails = () => {
     if (!newLeadName.trim()) return;
 
     const artistId = uuidv4();
+    const newLeadId = uuidv4();
+
     saveArtistProfile({
       id: artistId,
       name: newLeadName.trim(),
@@ -77,18 +80,25 @@ const CampaignDetails = () => {
     });
 
     const newLead = {
-      id: uuidv4(),
+      id: newLeadId,
       artistId,
       campaignId,
       status: newLeadStatus,
       createdAt: new Date().toISOString()
     };
 
-    setLeads(prev => [...prev, {
-      ...newLead,
-      name: newLead.name,
-      image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-    }]);
+    setLeads(prev => [
+      ...prev,
+      {
+        ...newLead,
+        name: newLeadName.trim(),
+        image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+        genres: [],
+        monthlyListeners: 0,
+        preview_url: '',
+        tier: 'Emerging'
+      }
+    ]);
 
     setNewLeadName('');
     setNewLeadStatus('New');
@@ -112,7 +122,6 @@ const CampaignDetails = () => {
 
     const targetKey = `leads_${targetCampaign.id}`;
     const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
-
     const leadToMove = leads.find(l => l.id === id);
     if (!leadToMove || targetLeads.some(t => t.id === id)) return;
 
@@ -193,4 +202,3 @@ const CampaignDetails = () => {
 };
 
 export default CampaignDetails;
-
