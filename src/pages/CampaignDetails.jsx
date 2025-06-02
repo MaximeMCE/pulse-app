@@ -11,22 +11,26 @@ const CampaignDetails = () => {
   const { id: campaignId } = useParams();
   const [campaigns, setCampaigns] = useState([]);
   const [leads, setLeads] = useState([]);
-  const [selectedLeads, setSelectedLeads] = useState([]);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadStatus, setNewLeadStatus] = useState('New');
-  const [pendingStatusChange, setPendingStatusChange] = useState('');
-  const [pendingCampaignMove, setPendingCampaignMove] = useState('');
 
   useEffect(() => {
-    const storedCampaigns = JSON.parse(localStorage.getItem('campaigns')) || [];
-    setCampaigns(storedCampaigns);
+    const stored = localStorage.getItem('campaigns');
+    if (stored) {
+      try {
+        setCampaigns(JSON.parse(stored));
+      } catch (err) {
+        console.warn('Invalid campaigns JSON:', err);
+        setCampaigns([]);
+      }
+    }
   }, []);
 
   const campaign = campaigns.find(c => c.id === campaignId);
 
-  const enrichLeads = (rawLeads) => {
+  const enrichLeads = (raw) => {
     const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
-    return rawLeads.map((lead) => {
+    return raw.map(lead => {
       const profile = profiles[lead.artistId] || {};
       return {
         ...lead,
@@ -42,168 +46,93 @@ const CampaignDetails = () => {
 
   useEffect(() => {
     if (!campaign) return;
-
-    const key = `leads_${campaign.id}`;
-    const storedLeads = JSON.parse(localStorage.getItem(key) || '[]');
-    setLeads(enrichLeads(storedLeads));
-
-    const handleUpdate = () => {
-      const updated = JSON.parse(localStorage.getItem(key) || '[]');
-      setLeads(enrichLeads(updated));
-    };
-
-    window.addEventListener('leadsUpdated', handleUpdate);
-    return () => window.removeEventListener('leadsUpdated', handleUpdate);
-  }, [campaign?.id]);
-
-  useEffect(() => {
-    if (campaign) {
-      const key = `leads_${campaign.id}`;
-      localStorage.setItem(key, JSON.stringify(leads));
-      window.dispatchEvent(new Event('leadsUpdated'));
-    }
-  }, [leads, campaign]);
-
-  if (!campaign) return <div className="p-6">Campaign not found.</div>;
+    const keyById = `leads_${campaign.id}`;
+    const keyByTitle = `leads_${campaign.title?.trim().toLowerCase()}`;
+    let stored = localStorage.getItem(keyById);
+    if (!stored) stored = localStorage.getItem(keyByTitle);
+    const parsed = JSON.parse(stored || '[]');
+    setLeads(enrichLeads(parsed));
+  }, [campaignId, campaigns]);
 
   const addLead = () => {
     if (!newLeadName.trim()) return;
-
-    const campaignKey = `leads_${campaign.id}`;
     const artistId = uuidv4();
-    const newLeadId = uuidv4();
-
-    saveArtistProfile({
-      id: artistId,
-      name: newLeadName.trim(),
-      image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-      genre: 'unknown',
-      preview_url: null,
-      followers: 0,
-      source: 'manual'
-    });
-
     const newLead = {
-      id: newLeadId,
+      id: uuidv4(),
       artistId,
       campaignId,
       status: newLeadStatus,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
-
-    const stored = JSON.parse(localStorage.getItem(campaignKey) || '[]');
-    const updated = [...stored, newLead];
-    localStorage.setItem(campaignKey, JSON.stringify(updated));
-
-    setLeads(prev => [
-      ...prev,
-      {
-        ...newLead,
-        name: newLeadName.trim(),
-        image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-        genres: [],
-        monthlyListeners: 0,
-        preview_url: '',
-        tier: 'Emerging'
-      }
-    ]);
-
+    saveArtistProfile({ id: artistId, name: newLeadName.trim(), image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵' });
+    const updated = [...leads, newLead];
+    localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
+    setLeads(enrichLeads(updated));
     setNewLeadName('');
     setNewLeadStatus('New');
   };
 
   const deleteLead = (id) => {
-    if (window.confirm('Delete this lead?')) {
-      setLeads(prev => prev.filter(l => l.id !== id));
-      setSelectedLeads(prev => prev.filter(sid => sid !== id));
-      window.dispatchEvent(new Event('lead-deleted'));
-    }
+    if (!confirm('Delete this lead?')) return;
+    const updated = leads.filter(l => l.id !== id);
+    localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
+    setLeads(updated);
   };
 
   const updateLeadStatus = (id, status) => {
-    setLeads(prev => prev.map(l => (l.id === id ? { ...l, status } : l)));
+    const updated = leads.map(l => l.id === id ? { ...l, status } : l);
+    localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
+    setLeads(updated);
   };
 
-  const updateLeadCampaign = (id, newCampaignId) => {
-    const targetCampaign = campaigns.find(c => c.id === newCampaignId);
-    if (!targetCampaign) return;
-
-    const targetKey = `leads_${targetCampaign.id}`;
-    const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
-    const leadToMove = leads.find(l => l.id === id);
-    if (!leadToMove || targetLeads.some(t => t.id === id)) return;
-
-    localStorage.setItem(targetKey, JSON.stringify([...targetLeads, leadToMove]));
-    setLeads(prev => prev.filter(l => l.id !== id));
-    window.dispatchEvent(new Event('leadsUpdated'));
+  const updateLeadCampaign = (id, newId) => {
+    const lead = leads.find(l => l.id === id);
+    if (!lead) return;
+    const targetLeads = JSON.parse(localStorage.getItem(`leads_${newId}`) || '[]');
+    localStorage.setItem(`leads_${newId}`, JSON.stringify([...targetLeads, lead]));
+    deleteLead(id);
   };
+
+  if (!campaign) return <div className="p-6">Campaign not found.</div>;
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen text-gray-800">
+    <div className="p-6 bg-gray-50 min-h-screen">
       <div className="text-sm text-gray-500 mb-2">
-        <a href="/campaigns" className="text-blue-600 hover:underline">Campaigns</a>
-        <span className="mx-1">›</span>
-        <span>{campaign.title}</span>
+        <a href="/campaigns" className="text-blue-600 hover:underline">Campaigns</a> › {campaign.title}
       </div>
-
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">🎯 {campaign.title} - Leads</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold">🎯 {campaign.title}</h1>
         <CampaignSwitcher campaigns={campaigns} currentCampaignId={campaignId} />
       </div>
-
-      <div className="mb-6">
-        <CampaignManager />
-      </div>
-
-      <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h2 className="text-lg font-semibold mb-4">🧠 Smart Recommendations</h2>
+      <CampaignManager />
+      <div className="my-6">
+        <h2 className="text-lg font-semibold">🧠 Smart Recommendations</h2>
         <SmartRecommendations />
       </div>
-
-      <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h2 className="text-lg font-semibold mb-4">📝 Add Lead Manually</h2>
+      <div className="my-6">
+        <h2 className="text-lg font-semibold">📝 Add Lead Manually</h2>
         <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="New lead name"
-            value={newLeadName}
-            onChange={(e) => setNewLeadName(e.target.value)}
-            className="border rounded px-3 py-2 flex-grow"
-          />
-          <select
-            value={newLeadStatus}
-            onChange={(e) => setNewLeadStatus(e.target.value)}
-            className="border rounded px-2 py-2"
-          >
+          <input type="text" value={newLeadName} onChange={e => setNewLeadName(e.target.value)} className="border rounded px-3 py-2 flex-grow" placeholder="Name" />
+          <select value={newLeadStatus} onChange={e => setNewLeadStatus(e.target.value)} className="border rounded px-2 py-2">
             <option>New</option>
             <option>Contacted</option>
             <option>Qualified</option>
             <option>Lost</option>
           </select>
-          <button
-            onClick={addLead}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Add Lead
-          </button>
+          <button onClick={addLead} className="bg-blue-600 text-white px-4 py-2 rounded">Add Lead</button>
         </div>
       </div>
-
       <div className="space-y-4">
-        {leads.length === 0 ? (
-          <p className="text-gray-500">No leads yet.</p>
-        ) : (
-          leads.map((lead) => (
-            <LeadCard
-              key={lead.id}
-              lead={lead}
-              campaigns={campaigns}
-              onStatusChange={updateLeadStatus}
-              onCampaignChange={updateLeadCampaign}
-              onDelete={deleteLead}
-            />
-          ))
-        )}
+        {leads.length === 0 ? <p className="text-gray-500">No leads yet.</p> : leads.map(lead => (
+          <LeadCard
+            key={lead.id}
+            lead={lead}
+            campaigns={campaigns}
+            onStatusChange={updateLeadStatus}
+            onCampaignChange={updateLeadCampaign}
+            onDelete={deleteLead}
+          />
+        ))}
       </div>
     </div>
   );
