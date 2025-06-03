@@ -9,7 +9,6 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
     lead.followers > 10_000 ? 'Mid' :
     'Emerging';
 
-  // Match badge logic
   const campaignGenre = campaign?.genre?.toLowerCase();
   const campaignRegion = campaign?.region?.toLowerCase();
   const artistGenres = lead.genres?.map((g) => g.toLowerCase()) || [];
@@ -44,14 +43,15 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
   };
 
   return (
-    <div className="flex justify-between items-start p-4 border rounded mb-2 bg-white shadow-sm">
-      <div className="flex gap-3">
+    <div className="flex justify-between items-center p-4 border rounded-lg mb-3 bg-white shadow-sm min-h-[100px]">
+      {/* Left block: Image + Info */}
+      <div className="flex items-center gap-4 w-1/2">
         <img
           src={profile?.image || lead.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
           alt={lead.name}
-          className="w-12 h-12 rounded object-cover"
+          className="w-14 h-14 rounded object-cover"
         />
-        <div className="flex flex-col justify-center">
+        <div>
           <div className="font-semibold text-base">{lead.name}</div>
           <div className="text-sm text-gray-500 capitalize">{lead.genres?.[0] || 'unknown genre'}</div>
           {matchLabel && (
@@ -62,12 +62,13 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
         </div>
       </div>
 
-      <div className="flex flex-col items-end gap-2">
-        <div className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-medium">
+      {/* Right block: Actions */}
+      <div className="flex flex-col items-end gap-2 w-1/2">
+        <div className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-medium self-end">
           Tier: {tier}
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-end w-full">
           <select
             value={lead.status}
             onChange={(e) => onStatusChange(lead.id, e.target.value)}
