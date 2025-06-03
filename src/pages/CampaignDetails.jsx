@@ -186,16 +186,30 @@ const CampaignDetails = () => {
     if (!window.confirm(`Move ${selectedLeadIds.length} leads to another campaign?`)) return;
     const targetKey = `leads_${targetCampaignId}`;
     const current = JSON.parse(localStorage.getItem(targetKey) || '[]');
-    const toMove = leads.filter((l) =>
-      selectedLeadIds.includes(l.id) && !current.some((cl) => cl.artistId === l.artistId)
+
+    const toMove = leads.filter(
+      (l) => selectedLeadIds.includes(l.id) && !current.some((cl) => cl.artistId === l.artistId)
     );
-    const skipped = leads.filter((l) =>
-      selectedLeadIds.includes(l.id) && current.some((cl) => cl.artistId === l.artistId)
+
+    const skipped = leads.filter(
+      (l) => selectedLeadIds.includes(l.id) && current.some((cl) => cl.artistId === l.artistId)
     );
+
     localStorage.setItem(targetKey, JSON.stringify([...current, ...toMove]));
-    handleBulkDelete();
-    alert(`✅ ${toMove.length} leads moved.\n${skipped.length > 0 ? `⚠️ Skipped (already in target): ${skipped.map((s) => s.name).join(', ')}` : ''}`);
+
+    // ⚠️ Only remove moved leads from current campaign
+    const updated = leads.filter((l) => !toMove.includes(l));
+    localStorage.setItem(campaignKey, JSON.stringify(updated));
+    setLeads(updated);
+    setSelectedLeadIds([]);
+
+    alert(
+      `✅ ${toMove.length} leads moved.\n${
+        skipped.length > 0 ? `⚠️ Skipped (already in target): ${skipped.map((s) => s.name).join(', ')}` : ''
+      }`
+    );
   };
+
 
   if (!campaign) return <div className="p-6">Campaign not found.</div>;
 
