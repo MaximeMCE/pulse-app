@@ -2,14 +2,24 @@ import React, { useEffect, useState } from 'react';
 
 const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
   const [profile, setProfile] = useState(null);
+  const campaign = campaigns.find((c) => c.id === lead.campaignId);
 
-  const matchReason = lead.source === 'manual'
-    ? 'Added manually'
-    : 'Matched by genre + location';
+  const tier =
+    lead.followers > 100_000 ? 'Top' :
+    lead.followers > 10_000 ? 'Mid' :
+    'Emerging';
 
-  const tier = lead.followers > 100_000 ? 'Top' :
-               lead.followers > 10_000 ? 'Mid' :
-               'Emerging';
+  // Match badge logic
+  const campaignGenre = campaign?.genre?.toLowerCase();
+  const campaignRegion = campaign?.region?.toLowerCase();
+  const artistGenres = lead.genres?.map((g) => g.toLowerCase()) || [];
+  const artistRegion = lead.region?.toLowerCase();
+
+  const matches = [];
+  if (campaignGenre && artistGenres.includes(campaignGenre)) matches.push('genre');
+  if (campaignRegion && artistRegion === campaignRegion) matches.push('location');
+
+  const matchLabel = matches.length > 0 ? `Matched by ${matches.join(' + ')}` : null;
 
   useEffect(() => {
     const allProfiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
@@ -44,9 +54,11 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
         <div className="flex flex-col justify-center">
           <div className="font-semibold text-base">{lead.name}</div>
           <div className="text-sm text-gray-500 capitalize">{lead.genres?.[0] || 'unknown genre'}</div>
-          <div className="text-xs mt-1 bg-pink-100 text-pink-700 px-2 py-0.5 inline-block rounded">
-            {matchReason}
-          </div>
+          {matchLabel && (
+            <div className="text-xs mt-1 bg-pink-100 text-pink-700 px-2 py-0.5 inline-block rounded">
+              {matchLabel}
+            </div>
+          )}
         </div>
       </div>
 
@@ -74,10 +86,10 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
           >
             <option value="">Move</option>
             {campaigns
-              .filter(c => c.id !== lead.campaignId)
+              .filter((c) => c.id !== lead.campaignId)
               .map((campaign) => (
                 <option key={campaign.id} value={campaign.id}>
-                  {campaign.name}
+                  {campaign.title}
                 </option>
               ))}
             <option value="unassigned">Unassigned</option>
@@ -96,4 +108,3 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
 };
 
 export default LeadCard;
-
