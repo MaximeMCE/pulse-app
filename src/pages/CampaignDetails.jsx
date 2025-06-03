@@ -27,6 +27,7 @@ const CampaignDetails = () => {
   }, []);
 
   const campaign = campaigns.find(c => c.id === campaignId);
+  const campaignKey = campaign ? `leads_${campaign.id}` : null;
 
   const enrichLeads = (raw) => {
     const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
@@ -44,18 +45,21 @@ const CampaignDetails = () => {
     });
   };
 
+  const loadLeads = () => {
+    if (!campaignKey) return;
+    const raw = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+    setLeads(enrichLeads(raw));
+  };
+
   useEffect(() => {
-    if (!campaign) return;
-    const keyById = `leads_${campaign.id}`;
-    const keyByTitle = `leads_${campaign.title?.trim().toLowerCase()}`;
-    let stored = localStorage.getItem(keyById);
-    if (!stored) stored = localStorage.getItem(keyByTitle);
-    const parsed = JSON.parse(stored || '[]');
-    setLeads(enrichLeads(parsed));
-  }, [campaignId, campaigns]);
+    loadLeads();
+    window.addEventListener('leadsUpdated', loadLeads);
+    return () => window.removeEventListener('leadsUpdated', loadLeads);
+  }, [campaignKey]);
 
   const addLead = () => {
-    if (!newLeadName.trim()) return;
+    if (!newLeadName.trim() || !campaignKey) return;
+
     const artistId = uuidv4();
     const newLead = {
       id: uuidv4(),
@@ -64,10 +68,23 @@ const CampaignDetails = () => {
       status: newLeadStatus,
       createdAt: new Date().toISOString(),
     };
-    saveArtistProfile({ id: artistId, name: newLeadName.trim(), image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵' });
-    const updated = [...leads, newLead];
-    localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
-    setLeads(enrichLeads(updated));
+
+    saveArtistProfile({
+      id: artistId,
+      name: newLeadName.trim(),
+      image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+      genre: 'unknown',
+      preview_url: null,
+      followers: 0,
+      source: 'manual'
+    });
+
+    const existing = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+    const updated = [...existing, newLead];
+    localStorage.setItem(campaignKey, JSON.stringify(updated));
+    window.dispatchEvent(new Event('leadsUpdated'));
+    loadLeads(); // ✅ refresh visible leads
+
     setNewLeadName('');
     setNewLeadStatus('New');
   };
@@ -75,13 +92,13 @@ const CampaignDetails = () => {
   const deleteLead = (id) => {
     if (!confirm('Delete this lead?')) return;
     const updated = leads.filter(l => l.id !== id);
-    localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
+    localStorage.setItem(campaignKey, JSON.stringify(updated));
     setLeads(updated);
   };
 
   const updateLeadStatus = (id, status) => {
     const updated = leads.map(l => l.id === id ? { ...l, status } : l);
-    localStorage.setItem(`leads_${campaignId}`, JSON.stringify(updated));
+    localStorage.setItem(campaignKey, JSON.stringify(updated));
     setLeads(updated);
   };
 
