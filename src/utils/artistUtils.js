@@ -28,8 +28,24 @@ export const getSpotifyData = (artist = {}) => {
     previewUrl: artist.preview_url || '',
   };
 };
-export const saveArtistProfile = (profile) => {
+
+export const saveArtistProfile = (profile, maxProfiles = 250) => {
   const stored = JSON.parse(localStorage.getItem('artistProfiles')) || {};
-  stored[profile.id] = profile;
-  localStorage.setItem('artistProfiles', JSON.stringify(stored));
+
+  const enriched = {
+    ...profile,
+    savedAt: Date.now(),
+  };
+
+  stored[profile.id] = enriched;
+
+  const entries = Object.entries(stored);
+  if (entries.length > maxProfiles) {
+    const sorted = entries.sort((a, b) => a[1].savedAt - b[1].savedAt); // oldest first
+    const trimmed = sorted.slice(entries.length - maxProfiles); // keep newest N
+    const cleaned = Object.fromEntries(trimmed);
+    localStorage.setItem('artistProfiles', JSON.stringify(cleaned));
+  } else {
+    localStorage.setItem('artistProfiles', JSON.stringify(stored));
+  }
 };
