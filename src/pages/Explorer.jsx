@@ -1,9 +1,8 @@
-// src/pages/Explorer.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import { crawlArtistsByGenre } from '../api/crawlArtistsByGenre';
+import { searchLocalProfiles } from '../utils/searchLocalProfiles'; // ✅ NEW
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -79,6 +78,16 @@ const Explorer = () => {
     setResults([]);
 
     try {
+      // ✅ LOCAL PROFILE FALLBACK FIRST
+      if (searchTerm.trim().length === 0) {
+        const localResults = searchLocalProfiles(filters);
+        if (localResults.length > 0) {
+          setResults(localResults);
+          console.log('⚡ Using localProfiles for results');
+          return;
+        }
+      }
+
       let artists;
       if (searchTerm.trim().length > 0) {
         artists = await searchArtists(token, searchTerm, filters);
