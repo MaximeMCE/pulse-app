@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getRecommendedArtists } from '../utils/getRecommendedArtists';
-import { saveArtistProfile } from '../utils/artistUtils'; // ✅ Added
+import { saveArtistProfile } from '../utils/artistUtils';
 
 function getMatchReason(artist, campaign) {
-  const genres = (campaign.goal || '').toLowerCase().split(/\s+/);
+  const campaignGenres = (campaign.goal || '').toLowerCase().split(/\s+/);
   const region = (campaign.region || '').toLowerCase();
-  const artistGenres = (artist.genres || []).map(g => g.toLowerCase());
+  const artistGenres = (artist.genres || []).map((g) => g.toLowerCase());
 
-  const genreMatch = genres.find(g => artistGenres.includes(g));
+  const genreMatch = campaignGenres.find((g) => artistGenres.includes(g));
   const regionMatch = (artist.region || '').toLowerCase().includes(region);
 
   if (genreMatch) return `Matched genre: ${genreMatch}`;
@@ -17,24 +17,24 @@ function getMatchReason(artist, campaign) {
 }
 
 const SmartRecommendations = () => {
-  const { id } = useParams();
+  const { id: campaignId } = useParams();
   const [campaign, setCampaign] = useState(null);
   const [suggested, setSuggested] = useState([]);
   const [assignedIds, setAssignedIds] = useState([]);
 
-  const refreshAssignedLeads = (campaignTitle) => {
-    const key = `leads_${campaignTitle.toLowerCase()}`;
+  const refreshAssignedLeads = (id) => {
+    const key = `leads_${id}`;
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
     setAssignedIds(existing.map((l) => l.artistId || l.id));
   };
 
   useEffect(() => {
     const storedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
-    const found = storedCampaigns.find((c) => c.id === id);
+    const found = storedCampaigns.find((c) => c.id === campaignId);
     if (!found) return;
     setCampaign(found);
 
-    const key = `leads_${found.title.toLowerCase()}`;
+    const key = `leads_${found.id}`;
     const leadsInCampaign = JSON.parse(localStorage.getItem(key) || '[]');
 
     const recs = getRecommendedArtists({
@@ -43,13 +43,13 @@ const SmartRecommendations = () => {
     });
 
     setSuggested(recs);
-    refreshAssignedLeads(found.title);
-  }, [id]);
+    refreshAssignedLeads(found.id);
+  }, [campaignId]);
 
   useEffect(() => {
     if (!campaign) return;
 
-    const sync = () => refreshAssignedLeads(campaign.title);
+    const sync = () => refreshAssignedLeads(campaign.id);
     window.addEventListener('leadsUpdated', sync);
     window.addEventListener('lead-deleted', sync);
 
@@ -62,12 +62,11 @@ const SmartRecommendations = () => {
   const addToCampaign = (artist) => {
     if (!campaign) return;
 
-    const key = `leads_${campaign.title.toLowerCase()}`;
+    const key = `leads_${campaign.id}`;
     const existing = JSON.parse(localStorage.getItem(key) || '[]');
 
     if (existing.some((l) => l.artistId === artist.id || l.id === artist.id)) return;
 
-    // ✅ Save full artist profile
     saveArtistProfile({
       id: artist.id,
       name: artist.name,
@@ -75,7 +74,7 @@ const SmartRecommendations = () => {
       genre: artist.genres?.[0] || 'unknown',
       preview_url: artist.preview_url || null,
       followers: artist.followers || 0,
-      source: 'recommendation'
+      source: 'recommendation',
     });
 
     const newLead = {
@@ -83,7 +82,7 @@ const SmartRecommendations = () => {
       artistId: artist.id,
       status: 'New',
       campaignId: campaign.id,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     localStorage.setItem(key, JSON.stringify([...existing, newLead]));
@@ -94,7 +93,8 @@ const SmartRecommendations = () => {
   if (!campaign) return null;
 
   return (
-    <div>
+    <div className="mt-4">
+      <h2 className="text-lg font-semibold mb-2">🎯 Smart Recommendations</h2>
       {suggested.length > 0 ? (
         <ul className="space-y-2">
           {suggested.map((artist) => (
@@ -104,10 +104,13 @@ const SmartRecommendations = () => {
             >
               <div>
                 <div>
-                  <strong>{artist.name}</strong> — {artist.genres.join(', ')} ({artist.region})
+                  <strong>{artist.name}</strong>{' '}
+                  <span className="text-gray-600 text-sm">
+                    — {artist.genres.join(', ') || 'No genres'} ({artist.region || 'Unknown region'})
+                  </span>
                 </div>
                 <div className="text-xs text-gray-500 italic">
-                  🧠 {getMatchReason(artist, campaign)}
+                  🧠 {getMatchReason(artist, campaign) || 'No match reason'}
                 </div>
               </div>
               {assignedIds.includes(artist.id) ? (
