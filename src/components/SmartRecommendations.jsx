@@ -57,7 +57,7 @@ const SmartRecommendations = () => {
       window.removeEventListener('leadsUpdated', sync);
       window.removeEventListener('lead-deleted', sync);
     };
-  }, [campaign]);
+  }, [campaign?.id]);
 
   const addToCampaign = (artist) => {
     if (!campaign) return;
@@ -86,7 +86,6 @@ const SmartRecommendations = () => {
     };
 
     localStorage.setItem(key, JSON.stringify([...existing, newLead]));
-    setAssignedIds((prev) => [...prev, artist.id]);
     window.dispatchEvent(new Event('leadsUpdated'));
   };
 
