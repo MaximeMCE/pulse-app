@@ -1,4 +1,3 @@
-// ...imports unchanged
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,6 +14,7 @@ const CampaignDetails = () => {
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadStatus, setNewLeadStatus] = useState('New');
   const [newLeadGenre, setNewLeadGenre] = useState('');
+  const [newLeadRegion, setNewLeadRegion] = useState('');
 
   const campaign = campaigns.find((c) => c.id === campaignId);
   const campaignKey = campaign ? `leads_${campaign.id}` : null;
@@ -65,7 +65,6 @@ const CampaignDetails = () => {
     const trimmedName = newLeadName.trim().toLowerCase();
     const existingProfiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
 
-    // Check for existing artist by name (case-insensitive match)
     const existingId = Object.keys(existingProfiles).find((id) => {
       const storedName = (existingProfiles[id]?.name || '').toLowerCase().trim();
       return storedName === trimmedName;
@@ -73,7 +72,6 @@ const CampaignDetails = () => {
 
     const artistId = existingId || uuidv4();
 
-    // If artist does not exist, create a new profile
     if (!existingId) {
       saveArtistProfile({
         id: artistId,
@@ -82,7 +80,7 @@ const CampaignDetails = () => {
         genres: [newLeadGenre],
         preview_url: null,
         followers: 0,
-        region: 'Unknown',
+        region: newLeadRegion.trim() || 'Unknown',
         source: 'manual',
       });
     }
@@ -104,6 +102,7 @@ const CampaignDetails = () => {
     setNewLeadName('');
     setNewLeadStatus('New');
     setNewLeadGenre('');
+    setNewLeadRegion('');
   };
 
   const deleteLead = (id) => {
@@ -154,6 +153,13 @@ const CampaignDetails = () => {
             onChange={(e) => setNewLeadName(e.target.value)}
             className="border rounded px-3 py-2 flex-grow min-w-[120px]"
             placeholder="Name"
+          />
+          <input
+            type="text"
+            value={newLeadRegion}
+            onChange={(e) => setNewLeadRegion(e.target.value)}
+            className="border rounded px-3 py-2 flex-grow min-w-[120px]"
+            placeholder="Region (e.g. UK, Berlin)"
           />
           <select
             value={newLeadGenre}
