@@ -215,7 +215,11 @@ const CampaignDetails = () => {
 
       {/* Bulk Actions */}
       {leads.length > 0 && (
-        <div className="flex items-center justify-between mb-4 mt-8">
+        <div
+          className={`flex items-center justify-between mb-4 mt-8 transition-opacity ${
+            selectedLeadIds.length === 0 ? 'opacity-50 pointer-events-none' : 'opacity-100'
+          }`}
+        >
           <div className="flex items-center gap-4">
             <input
               type="checkbox"
@@ -227,39 +231,40 @@ const CampaignDetails = () => {
               {selectedLeadIds.length} selected
             </span>
           </div>
-          {selectedLeadIds.length > 0 && (
-            <div className="flex items-center gap-2">
-              <select
-                className="border rounded px-2 py-1"
-                onChange={(e) => handleBulkStatusChange(e.target.value)}
-              >
-                <option value="">Set Status</option>
-                <option value="New">New</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Qualified">Qualified</option>
-                <option value="Lost">Lost</option>
-              </select>
-              <select
-                className="border rounded px-2 py-1"
-                onChange={(e) => handleBulkMove(e.target.value)}
-              >
-                <option value="">Move to Campaign</option>
-                {campaigns
-                  .filter((c) => c.id !== campaignId)
-                  .map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.title}
-                    </option>
-                  ))}
-              </select>
-              <button
-                onClick={handleBulkDelete}
-                className="bg-red-600 text-white px-3 py-1 rounded text-sm"
-              >
-                Delete
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <select
+              className="border rounded px-2 py-1"
+              disabled={selectedLeadIds.length === 0}
+              onChange={(e) => handleBulkStatusChange(e.target.value)}
+            >
+              <option value="">Set Status</option>
+              <option value="New">New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Lost">Lost</option>
+            </select>
+            <select
+              className="border rounded px-2 py-1"
+              disabled={selectedLeadIds.length === 0}
+              onChange={(e) => handleBulkMove(e.target.value)}
+            >
+              <option value="">Move to Campaign</option>
+              {campaigns
+                .filter((c) => c.id !== campaignId)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.title}
+                  </option>
+                ))}
+            </select>
+            <button
+              disabled={selectedLeadIds.length === 0}
+              onClick={handleBulkDelete}
+              className="bg-red-600 text-white px-3 py-1 rounded text-sm disabled:opacity-50"
+            >
+              Delete
+            </button>
+          </div>
         </div>
       )}
 
@@ -283,7 +288,6 @@ const CampaignDetails = () => {
           </div>
         ))}
       </div>
-
     </div>
   );
 };
