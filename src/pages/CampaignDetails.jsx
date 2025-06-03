@@ -74,6 +74,7 @@ const CampaignDetails = () => {
     setNewLeadName(profile.name);
     setNewLeadGenre(profile.genres?.[0] || '');
     setNewLeadRegion(profile.region || '');
+    setSuggestions([]);
   };
 
   const addLead = () => {
@@ -170,6 +171,7 @@ const CampaignDetails = () => {
               type="text"
               value={newLeadName}
               onChange={(e) => setNewLeadName(e.target.value)}
+              onBlur={() => setTimeout(() => setSuggestions([]), 150)}
               className="border rounded px-3 py-2 flex-grow min-w-[120px]"
               placeholder="Name"
             />
@@ -178,10 +180,13 @@ const CampaignDetails = () => {
                 {suggestions.map((s) => (
                   <div
                     key={s.id}
+                    onMouseDown={() => handleSuggestionClick(s)}
                     className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => handleSuggestionClick(s)}
                   >
-                    {s.name} — {s.region}
+                    <div className="font-medium">{s.name}</div>
+                    <div className="text-xs text-gray-500">
+                      {s.genres?.[0] || 'Unknown Genre'} • {s.region || 'Unknown Region'}
+                    </div>
                   </div>
                 ))}
               </div>
