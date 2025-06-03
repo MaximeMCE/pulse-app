@@ -1,3 +1,4 @@
+// ...imports unchanged
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -61,7 +62,31 @@ const CampaignDetails = () => {
   const addLead = () => {
     if (!newLeadName.trim() || !newLeadGenre || !campaignKey) return;
 
-    const artistId = uuidv4();
+    const trimmedName = newLeadName.trim().toLowerCase();
+    const existingProfiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+
+    // Check for existing artist by name (case-insensitive match)
+    const existingId = Object.keys(existingProfiles).find((id) => {
+      const storedName = (existingProfiles[id]?.name || '').toLowerCase().trim();
+      return storedName === trimmedName;
+    });
+
+    const artistId = existingId || uuidv4();
+
+    // If artist does not exist, create a new profile
+    if (!existingId) {
+      saveArtistProfile({
+        id: artistId,
+        name: newLeadName.trim(),
+        image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+        genres: [newLeadGenre],
+        preview_url: null,
+        followers: 0,
+        region: 'Unknown',
+        source: 'manual',
+      });
+    }
+
     const newLead = {
       id: uuidv4(),
       artistId,
@@ -69,17 +94,6 @@ const CampaignDetails = () => {
       status: newLeadStatus,
       createdAt: new Date().toISOString(),
     };
-
-    saveArtistProfile({
-      id: artistId,
-      name: newLeadName.trim(),
-      image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-      genres: [newLeadGenre],
-      preview_url: null,
-      followers: 0,
-      region: 'Unknown',
-      source: 'manual',
-    });
 
     const existing = JSON.parse(localStorage.getItem(campaignKey) || '[]');
     const updated = [...existing, newLead];
