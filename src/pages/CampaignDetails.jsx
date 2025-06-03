@@ -217,7 +217,7 @@ const CampaignDetails = () => {
       {leads.length > 0 && (
         <div
           className={`flex items-center justify-between mb-4 mt-8 transition-opacity ${
-            selectedLeadIds.length === 0 ? 'opacity-50 pointer-events-none' : 'opacity-100'
+            selectedLeadIds.length === 0 ? 'opacity-50' : 'opacity-100'
           }`}
         >
           <div className="flex items-center gap-4">
