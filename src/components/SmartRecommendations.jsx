@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getRecommendedArtists } from '../utils/getRecommendedArtists';
+import { getSmartRecommendations } from '../utils/getSmartRecommendations'; // ✅ UPDATED
 import { saveArtistProfile } from '../utils/artistUtils';
 
 function getMatchReason(artist, campaign) {
@@ -37,7 +37,7 @@ const SmartRecommendations = () => {
     const key = `leads_${found.id}`;
     const leadsInCampaign = JSON.parse(localStorage.getItem(key) || '[]');
 
-    const recs = getRecommendedArtists({
+    const recs = getSmartRecommendations({
       campaign: found,
       existingLeads: leadsInCampaign,
     });
