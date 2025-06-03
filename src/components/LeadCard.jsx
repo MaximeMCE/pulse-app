@@ -4,10 +4,20 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
   const [profile, setProfile] = useState(null);
   const campaign = campaigns.find((c) => c.id === lead.campaignId);
 
-  const tier =
-    lead.followers > 100_000 ? 'Top' :
-    lead.followers > 10_000 ? 'Mid' :
-    'Emerging';
+  // Real tier logic
+  let tier = 'Early';
+  if (lead.followers > 100_000) tier = 'Top';
+  else if (lead.followers > 10_000) tier = 'Mid';
+  else if (lead.followers > 1_000) tier = 'Emerging';
+
+  const tierColors = {
+    Top: 'bg-yellow-200 text-yellow-800',
+    Mid: 'bg-purple-200 text-purple-800',
+    Emerging: 'bg-green-200 text-green-800',
+    Early: 'bg-gray-200 text-gray-800'
+  };
+
+  const badgeColor = tierColors[tier];
 
   const campaignGenre = campaign?.genre?.toLowerCase();
   const campaignRegion = campaign?.region?.toLowerCase();
@@ -64,7 +74,7 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
 
       {/* Right side */}
       <div className="flex items-center gap-3 w-[40%] justify-end">
-        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-medium whitespace-nowrap">
+        <span className={`text-xs px-2 py-0.5 rounded font-medium whitespace-nowrap ${badgeColor}`}>
           Tier: {tier}
         </span>
 
