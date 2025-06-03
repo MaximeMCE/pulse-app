@@ -213,7 +213,77 @@ const CampaignDetails = () => {
       <CampaignManager />
       <SmartRecommendations />
 
-      {/* Additional controls and lead list would go here */}
+      {/* Bulk Actions */}
+      {leads.length > 0 && (
+        <div className="flex items-center justify-between mb-4 mt-8">
+          <div className="flex items-center gap-4">
+            <input
+              type="checkbox"
+              checked={selectedLeadIds.length === leads.length}
+              onChange={handleSelectAll}
+              className="w-4 h-4"
+            />
+            <span className="text-sm text-gray-600">
+              {selectedLeadIds.length} selected
+            </span>
+          </div>
+          {selectedLeadIds.length > 0 && (
+            <div className="flex items-center gap-2">
+              <select
+                className="border rounded px-2 py-1"
+                onChange={(e) => handleBulkStatusChange(e.target.value)}
+              >
+                <option value="">Set Status</option>
+                <option value="New">New</option>
+                <option value="Contacted">Contacted</option>
+                <option value="Qualified">Qualified</option>
+                <option value="Lost">Lost</option>
+              </select>
+              <select
+                className="border rounded px-2 py-1"
+                onChange={(e) => handleBulkMove(e.target.value)}
+              >
+                <option value="">Move to Campaign</option>
+                {campaigns
+                  .filter((c) => c.id !== campaignId)
+                  .map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.title}
+                    </option>
+                  ))}
+              </select>
+              <button
+                onClick={handleBulkDelete}
+                className="bg-red-600 text-white px-3 py-1 rounded text-sm"
+              >
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Lead Cards */}
+      <div className="space-y-4">
+        {leads.map((lead) => (
+          <div key={lead.id} className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              className="mt-2"
+              checked={selectedLeadIds.includes(lead.id)}
+              onChange={() => handleSelectLead(lead.id)}
+            />
+            <LeadCard
+              lead={lead}
+              campaigns={campaigns}
+              onStatusChange={updateLeadStatus}
+              onCampaignChange={updateLeadCampaign}
+              onDelete={deleteLead}
+            />
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 };
