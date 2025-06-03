@@ -15,6 +15,7 @@ const CampaignDetails = () => {
   const [newLeadStatus, setNewLeadStatus] = useState('New');
   const [newLeadGenre, setNewLeadGenre] = useState('');
   const [newLeadRegion, setNewLeadRegion] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
 
   const campaign = campaigns.find((c) => c.id === campaignId);
   const campaignKey = campaign ? `leads_${campaign.id}` : null;
@@ -58,6 +59,22 @@ const CampaignDetails = () => {
     window.addEventListener('leadsUpdated', loadLeads);
     return () => window.removeEventListener('leadsUpdated', loadLeads);
   }, [campaignKey]);
+
+  useEffect(() => {
+    const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+    const input = newLeadName.toLowerCase().trim();
+    if (!input) return setSuggestions([]);
+    const matches = Object.values(profiles).filter((p) =>
+      p.name?.toLowerCase().includes(input)
+    );
+    setSuggestions(matches.slice(0, 5));
+  }, [newLeadName]);
+
+  const handleSuggestionClick = (profile) => {
+    setNewLeadName(profile.name);
+    setNewLeadGenre(profile.genres?.[0] || '');
+    setNewLeadRegion(profile.region || '');
+  };
 
   const addLead = () => {
     if (!newLeadName.trim() || !newLeadGenre || !campaignKey) return;
@@ -103,6 +120,7 @@ const CampaignDetails = () => {
     setNewLeadStatus('New');
     setNewLeadGenre('');
     setNewLeadRegion('');
+    setSuggestions([]);
   };
 
   const deleteLead = (id) => {
@@ -147,13 +165,29 @@ const CampaignDetails = () => {
       <div className="my-6">
         <h2 className="text-lg font-semibold">📝 Add Lead Manually</h2>
         <div className="flex flex-wrap gap-2 items-center">
-          <input
-            type="text"
-            value={newLeadName}
-            onChange={(e) => setNewLeadName(e.target.value)}
-            className="border rounded px-3 py-2 flex-grow min-w-[120px]"
-            placeholder="Name"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              value={newLeadName}
+              onChange={(e) => setNewLeadName(e.target.value)}
+              className="border rounded px-3 py-2 flex-grow min-w-[120px]"
+              placeholder="Name"
+            />
+            {suggestions.length > 0 && (
+              <div className="absolute top-full left-0 bg-white border w-full z-10 rounded shadow-md">
+                {suggestions.map((s) => (
+                  <div
+                    key={s.id}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleSuggestionClick(s)}
+                  >
+                    {s.name} — {s.region}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <input
             type="text"
             value={newLeadRegion}
