@@ -15,6 +15,7 @@ const CampaignDetails = () => {
   const [newLeadStatus, setNewLeadStatus] = useState('New');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedArtistId, setSelectedArtistId] = useState(null);
+  const [selectedLeadIds, setSelectedLeadIds] = useState([]);
 
   const campaign = campaigns.find((c) => c.id === campaignId);
   const campaignKey = campaign ? `leads_${campaign.id}` : null;
@@ -89,7 +90,6 @@ const CampaignDetails = () => {
 
     const artistId = matchedId || uuidv4();
 
-    // prevent duplicate leads in this campaign
     const existingLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
     if (existingLeads.some((l) => l.artistId === artistId)) {
       alert('This artist is already in this campaign.');
@@ -129,7 +129,6 @@ const CampaignDetails = () => {
   };
 
   const deleteLead = (id) => {
-    if (!confirm('Delete this lead?')) return;
     const updated = leads.filter((l) => l.id !== id);
     localStorage.setItem(campaignKey, JSON.stringify(updated));
     setLeads(updated);
@@ -149,6 +148,44 @@ const CampaignDetails = () => {
     const targetLeads = JSON.parse(localStorage.getItem(targetKey) || '[]');
     localStorage.setItem(targetKey, JSON.stringify([...targetLeads, lead]));
     deleteLead(id);
+  };
+
+  const handleSelectLead = (id) => {
+    setSelectedLeadIds((prev) =>
+      prev.includes(id) ? prev.filter((lid) => lid !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedLeadIds.length === leads.length) {
+      setSelectedLeadIds([]);
+    } else {
+      setSelectedLeadIds(leads.map((l) => l.id));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    const updated = leads.filter((l) => !selectedLeadIds.includes(l.id));
+    localStorage.setItem(campaignKey, JSON.stringify(updated));
+    setLeads(updated);
+    setSelectedLeadIds([]);
+  };
+
+  const handleBulkStatusChange = (status) => {
+    const updated = leads.map((l) =>
+      selectedLeadIds.includes(l.id) ? { ...l, status } : l
+    );
+    localStorage.setItem(campaignKey, JSON.stringify(updated));
+    setLeads(updated);
+    setSelectedLeadIds([]);
+  };
+
+  const handleBulkMove = (targetCampaignId) => {
+    const targetKey = `leads_${targetCampaignId}`;
+    const current = JSON.parse(localStorage.getItem(targetKey) || '[]');
+    const toMove = leads.filter((l) => selectedLeadIds.includes(l.id));
+    localStorage.setItem(targetKey, JSON.stringify([...current, ...toMove]));
+    handleBulkDelete();
   };
 
   if (!campaign) return <div className="p-6">Campaign not found.</div>;
@@ -219,6 +256,41 @@ const CampaignDetails = () => {
         </div>
       </div>
 
+      {leads.length > 0 && (
+        <div className="flex gap-2 mb-4 items-center">
+          <button
+            onClick={handleSelectAll}
+            className="text-sm text-blue-600 underline"
+          >
+            {selectedLeadIds.length === leads.length ? 'Unselect All' : 'Select All'}
+          </button>
+          <button onClick={handleBulkDelete} className="text-sm bg-red-100 text-red-700 px-3 py-1 rounded">
+            Delete Selected
+          </button>
+          <select
+            onChange={(e) => handleBulkStatusChange(e.target.value)}
+            className="text-sm border px-2 py-1 rounded"
+            defaultValue=""
+          >
+            <option value="" disabled>Change Status</option>
+            <option>New</option>
+            <option>Contacted</option>
+            <option>Qualified</option>
+            <option>Lost</option>
+          </select>
+          <select
+            onChange={(e) => handleBulkMove(e.target.value)}
+            className="text-sm border px-2 py-1 rounded"
+            defaultValue=""
+          >
+            <option value="" disabled>Move to Campaign</option>
+            {campaigns.filter(c => c.id !== campaignId).map(c => (
+              <option key={c.id} value={c.id}>{c.title}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="space-y-4">
         {leads.length === 0 ? (
           <p className="text-gray-500">No leads yet.</p>
@@ -231,6 +303,8 @@ const CampaignDetails = () => {
               onStatusChange={updateLeadStatus}
               onCampaignChange={updateLeadCampaign}
               onDelete={deleteLead}
+              isSelected={selectedLeadIds.includes(lead.id)}
+              onSelect={() => handleSelectLead(lead.id)}
             />
           ))
         )}
