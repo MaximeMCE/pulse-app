@@ -13,9 +13,8 @@ const CampaignDetails = () => {
   const [leads, setLeads] = useState([]);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadStatus, setNewLeadStatus] = useState('New');
-  const [newLeadGenre, setNewLeadGenre] = useState('');
-  const [newLeadRegion, setNewLeadRegion] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [selectedArtistId, setSelectedArtistId] = useState(null);
 
   const campaign = campaigns.find((c) => c.id === campaignId);
   const campaignKey = campaign ? `leads_${campaign.id}` : null;
@@ -72,33 +71,40 @@ const CampaignDetails = () => {
 
   const handleSuggestionClick = (profile) => {
     setNewLeadName(profile.name);
-    setNewLeadGenre((profile.genres?.[0] || '').toLowerCase());
-    setNewLeadRegion(profile.region || '');
+    setSelectedArtistId(profile.id);
     setSuggestions([]);
   };
 
   const addLead = () => {
-    if (!newLeadName.trim() || !newLeadGenre || !campaignKey) return;
+    if (!newLeadName.trim() || !campaignKey) return;
 
     const trimmedName = newLeadName.trim().toLowerCase();
-    const existingProfiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+    const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
 
-    const existingId = Object.keys(existingProfiles).find((id) => {
-      const storedName = (existingProfiles[id]?.name || '').toLowerCase().trim();
-      return storedName === trimmedName;
-    });
+    const matchedId = selectedArtistId ||
+      Object.keys(profiles).find((id) => {
+        const storedName = (profiles[id]?.name || '').toLowerCase().trim();
+        return storedName === trimmedName;
+      });
 
-    const artistId = existingId || uuidv4();
+    const artistId = matchedId || uuidv4();
 
-    if (!existingId) {
+    // prevent duplicate leads in this campaign
+    const existingLeads = JSON.parse(localStorage.getItem(campaignKey) || '[]');
+    if (existingLeads.some((l) => l.artistId === artistId)) {
+      alert('This artist is already in this campaign.');
+      return;
+    }
+
+    if (!matchedId) {
       saveArtistProfile({
         id: artistId,
         name: newLeadName.trim(),
         image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-        genres: [newLeadGenre],
+        genres: [],
         preview_url: null,
         followers: 0,
-        region: newLeadRegion.trim() || 'Unknown',
+        region: 'Unknown',
         source: 'manual',
       });
     }
@@ -111,16 +117,14 @@ const CampaignDetails = () => {
       createdAt: new Date().toISOString(),
     };
 
-    const existing = JSON.parse(localStorage.getItem(campaignKey) || '[]');
-    const updated = [...existing, newLead];
+    const updated = [...existingLeads, newLead];
     localStorage.setItem(campaignKey, JSON.stringify(updated));
     window.dispatchEvent(new Event('leadsUpdated'));
     loadLeads();
 
     setNewLeadName('');
     setNewLeadStatus('New');
-    setNewLeadGenre('');
-    setNewLeadRegion('');
+    setSelectedArtistId(null);
     setSuggestions([]);
   };
 
@@ -165,6 +169,9 @@ const CampaignDetails = () => {
 
       <div className="my-6">
         <h2 className="text-lg font-semibold">📝 Add Lead Manually</h2>
+        <p className="text-sm text-gray-500 mb-2 italic">
+          Start typing to find an artist. Fields will auto-fill from your database.
+        </p>
         <div className="flex flex-wrap gap-2 items-center">
           <div className="relative">
             <input
@@ -193,25 +200,6 @@ const CampaignDetails = () => {
             )}
           </div>
 
-          <input
-            type="text"
-            value={newLeadRegion}
-            onChange={(e) => setNewLeadRegion(e.target.value)}
-            className="border rounded px-3 py-2 flex-grow min-w-[120px]"
-            placeholder="Region (e.g. UK, Berlin)"
-          />
-          <select
-            value={newLeadGenre}
-            onChange={(e) => setNewLeadGenre(e.target.value)}
-            className="border rounded px-2 py-2"
-          >
-            <option value="">Genre</option>
-            <option value="techno">Techno</option>
-            <option value="afrobeat">Afrobeat</option>
-            <option value="indie">Indie</option>
-            <option value="house">House</option>
-            <option value="rap">Rap</option>
-          </select>
           <select
             value={newLeadStatus}
             onChange={(e) => setNewLeadStatus(e.target.value)}
