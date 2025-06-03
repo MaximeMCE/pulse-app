@@ -72,7 +72,7 @@ const CampaignDetails = () => {
 
   const handleSuggestionClick = (profile) => {
     setNewLeadName(profile.name);
-    setNewLeadGenre(profile.genres?.[0] || '');
+    setNewLeadGenre((profile.genres?.[0] || '').toLowerCase());
     setNewLeadRegion(profile.region || '');
     setSuggestions([]);
   };
