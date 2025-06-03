@@ -43,9 +43,9 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
   };
 
   return (
-    <div className="flex justify-between items-center p-4 border rounded-lg mb-3 bg-white shadow-sm min-h-[100px]">
-      {/* Left block: Image + Info */}
-      <div className="flex items-center gap-4 w-1/2">
+    <div className="flex justify-between items-center p-4 border rounded-lg mb-3 bg-white shadow-sm min-h-[96px] w-full">
+      {/* Left side */}
+      <div className="flex items-center gap-4 w-[60%] min-w-[280px]">
         <img
           src={profile?.image || lead.image || 'https://placehold.co/48x48/eeeeee/777777?text=🎵'}
           alt={lead.name}
@@ -62,47 +62,45 @@ const LeadCard = ({ lead, campaigns, onStatusChange, onDelete }) => {
         </div>
       </div>
 
-      {/* Right block: Actions */}
-      <div className="flex flex-col items-end gap-2 w-1/2">
-        <div className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-medium self-end">
+      {/* Right side */}
+      <div className="flex items-center gap-3 w-[40%] justify-end">
+        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-medium whitespace-nowrap">
           Tier: {tier}
-        </div>
+        </span>
 
-        <div className="flex gap-2 justify-end w-full">
-          <select
-            value={lead.status}
-            onChange={(e) => onStatusChange(lead.id, e.target.value)}
-            className="border px-2 py-1 text-sm rounded"
-          >
-            <option>New</option>
-            <option>Contacted</option>
-            <option>Qualified</option>
-            <option>Rejected</option>
-          </select>
+        <select
+          value={lead.status}
+          onChange={(e) => onStatusChange(lead.id, e.target.value)}
+          className="border px-2 py-1 text-sm rounded w-[110px]"
+        >
+          <option>New</option>
+          <option>Contacted</option>
+          <option>Qualified</option>
+          <option>Rejected</option>
+        </select>
 
-          <select
-            defaultValue=""
-            onChange={(e) => handleMove(e.target.value)}
-            className="border px-2 py-1 text-sm rounded"
-          >
-            <option value="">Move</option>
-            {campaigns
-              .filter((c) => c.id !== lead.campaignId)
-              .map((campaign) => (
-                <option key={campaign.id} value={campaign.id}>
-                  {campaign.title}
-                </option>
-              ))}
-            <option value="unassigned">Unassigned</option>
-          </select>
+        <select
+          defaultValue=""
+          onChange={(e) => handleMove(e.target.value)}
+          className="border px-2 py-1 text-sm rounded w-[110px]"
+        >
+          <option value="">Move</option>
+          {campaigns
+            .filter((c) => c.id !== lead.campaignId)
+            .map((campaign) => (
+              <option key={campaign.id} value={campaign.id}>
+                {campaign.title}
+              </option>
+            ))}
+          <option value="unassigned">Unassigned</option>
+        </select>
 
-          <button
-            onClick={() => onDelete(lead.id)}
-            className="text-red-500 text-lg px-2"
-          >
-            ✕
-          </button>
-        </div>
+        <button
+          onClick={() => onDelete(lead.id)}
+          className="text-red-500 text-lg px-2"
+        >
+          ✕
+        </button>
       </div>
     </div>
   );
