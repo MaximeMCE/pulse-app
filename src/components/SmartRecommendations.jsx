@@ -87,6 +87,7 @@ const SmartRecommendations = () => {
 
     localStorage.setItem(key, JSON.stringify([...existing, newLead]));
     window.dispatchEvent(new Event('leadsUpdated'));
+    refreshAssignedLeads(campaign.id); // ✅ Update status live
   };
 
   if (!campaign) return null;
