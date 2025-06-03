@@ -13,6 +13,7 @@ const CampaignDetails = () => {
   const [leads, setLeads] = useState([]);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadStatus, setNewLeadStatus] = useState('New');
+  const [newLeadGenre, setNewLeadGenre] = useState('');
 
   const campaign = campaigns.find((c) => c.id === campaignId);
   const campaignKey = campaign ? `leads_${campaign.id}` : null;
@@ -58,7 +59,7 @@ const CampaignDetails = () => {
   }, [campaignKey]);
 
   const addLead = () => {
-    if (!newLeadName.trim() || !campaignKey) return;
+    if (!newLeadName.trim() || !newLeadGenre || !campaignKey) return;
 
     const artistId = uuidv4();
     const newLead = {
@@ -73,9 +74,10 @@ const CampaignDetails = () => {
       id: artistId,
       name: newLeadName.trim(),
       image: 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-      genre: 'unknown',
+      genres: [newLeadGenre],
       preview_url: null,
       followers: 0,
+      region: 'Unknown',
       source: 'manual',
     });
 
@@ -87,6 +89,7 @@ const CampaignDetails = () => {
 
     setNewLeadName('');
     setNewLeadStatus('New');
+    setNewLeadGenre('');
   };
 
   const deleteLead = (id) => {
@@ -126,19 +129,30 @@ const CampaignDetails = () => {
       </div>
 
       <CampaignManager />
-
       <SmartRecommendations />
 
       <div className="my-6">
         <h2 className="text-lg font-semibold">📝 Add Lead Manually</h2>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           <input
             type="text"
             value={newLeadName}
             onChange={(e) => setNewLeadName(e.target.value)}
-            className="border rounded px-3 py-2 flex-grow"
+            className="border rounded px-3 py-2 flex-grow min-w-[120px]"
             placeholder="Name"
           />
+          <select
+            value={newLeadGenre}
+            onChange={(e) => setNewLeadGenre(e.target.value)}
+            className="border rounded px-2 py-2"
+          >
+            <option value="">Genre</option>
+            <option value="techno">Techno</option>
+            <option value="afrobeat">Afrobeat</option>
+            <option value="indie">Indie</option>
+            <option value="house">House</option>
+            <option value="rap">Rap</option>
+          </select>
           <select
             value={newLeadStatus}
             onChange={(e) => setNewLeadStatus(e.target.value)}
