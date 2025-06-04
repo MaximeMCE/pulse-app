@@ -5,7 +5,7 @@ import CampaignManager from '../components/CampaignManager';
 import SmartRecommendations from '../components/SmartRecommendations';
 import CampaignSwitcher from '../components/CampaignSwitcher';
 import LeadCard from '../components/LeadCard';
-import { saveArtistProfile } from '../utils/artistUtils';
+import { saveArtistProfile } from '../utils/artistProfileDB';
 
 const CampaignDetails = () => {
   const { id: campaignId } = useParams();

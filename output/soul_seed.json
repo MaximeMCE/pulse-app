@@ -1,0 +1,1360 @@
+[
+  {
+    "id": "10TSIJnyUcowWhpjj59gHB",
+    "name": "Arthur Conley",
+    "genres": [
+      "northern soul",
+      "motown",
+      "classic soul",
+      "soul"
+    ],
+    "followers": 45669,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b273835216c247f4a6787177f075",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "2BVYdY4PyfCF9z4NrkhEB2",
+    "name": "Sam & Dave",
+    "genres": [
+      "motown",
+      "soul",
+      "classic soul"
+    ],
+    "followers": 360920,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/b1f68bdefbe49b474c9aac457114aac70d06f880",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "7nwUJBm0HE4ZxD3f5cy5ok",
+    "name": "Aretha Franklin",
+    "genres": [
+      "soul",
+      "motown",
+      "classic soul",
+      "jazz blues"
+    ],
+    "followers": 3691634,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebf12270128127ba170f90097d",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "0PDqlUGugF5Jt6DZyATvfz",
+    "name": "Betty Wright",
+    "genres": [
+      "classic soul",
+      "soul"
+    ],
+    "followers": 308863,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/e1c052baf67063bd9565b61c4a5ec0195ebb49f5",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "0Xf8oDAJYd2D0k3NLI19OV",
+    "name": "CHIC",
+    "genres": [
+      "disco"
+    ],
+    "followers": 782065,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb4c74c17081e7e0ef8b5eb323",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "60df5JBRRPcnSpsIMxxwQm",
+    "name": "Otis Redding",
+    "genres": [
+      "soul",
+      "motown",
+      "classic soul",
+      "soul blues"
+    ],
+    "followers": 2460239,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/4ad89c805aff0fb76b01b6b62b39e21fcd8943c3",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "6Bfy6QzadCXS92y0T8dDZF",
+    "name": "Eddie Floyd",
+    "genres": [
+      "soul",
+      "motown",
+      "classic soul",
+      "northern soul"
+    ],
+    "followers": 60715,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/a2d13492200ed858f8e54b48fa584adde3aca222",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "39T6qqI0jDtSWWioX8eGJz",
+    "name": "The Doobie Brothers",
+    "genres": [
+      "yacht rock",
+      "classic rock",
+      "soft rock",
+      "southern rock"
+    ],
+    "followers": 2744274,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb28f5622994674caec36fd95c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "1twC2fwPG5FkvYcMpVBQRz",
+    "name": "Randy Crawford",
+    "genres": [
+      "classic soul"
+    ],
+    "followers": 376891,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/5cdc6f9707988cd602164687718e2b9e868ee129",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "5tHs3fthucNRGAFpdE9rmz",
+    "name": "Gabriels",
+    "genres": [
+      "retro soul"
+    ],
+    "followers": 149017,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7c3ee4602ccc27286b25776b",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.721Z"
+  },
+  {
+    "id": "1zuJe6b1roixEKMOtyrEak",
+    "name": "Tina Turner",
+    "genres": [],
+    "followers": 4609534,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb22102415297132237b78829d",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "6mQfAAqZGBzIfrmlZCeaYT",
+    "name": "Chaka Khan",
+    "genres": [],
+    "followers": 1742242,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb87b0c6a4811964bd1b7d701f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "10GT4yz8c6xjjnPGtGPI1l",
+    "name": "Franc Moody",
+    "genres": [
+      "nu disco"
+    ],
+    "followers": 178277,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb96a091a0f6f5b83e6c0ce41e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "1c4rxrxy8eDLvMVL1DTiBe",
+    "name": "Andra Day",
+    "genres": [
+      "soft pop"
+    ],
+    "followers": 455364,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebfc6652ad89be0ca09f5caad6",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0W498bDDNlJIrYMKXdpLHA",
+    "name": "Roberta Flack",
+    "genres": [
+      "adult standards"
+    ],
+    "followers": 1087030,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/d3b80d0493e0b44c1879fefff018b0a224d62468",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2AOt5htsbtyaHd5Eq3kl3j",
+    "name": "Maxwell",
+    "genres": [
+      "neo soul",
+      "quiet storm",
+      "r&b"
+    ],
+    "followers": 1763368,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7deeb99e9886e6132640e13f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7t0guqO9rqAJgJa4IUdDxS",
+    "name": "miu",
+    "genres": [],
+    "followers": 3685,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb6bc90cfa178b39304a41583",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "5fbhwqYYh4YwUoEs582mq5",
+    "name": "The Spinners",
+    "genres": [
+      "philly soul",
+      "motown",
+      "classic soul",
+      "soul",
+      "northern soul"
+    ],
+    "followers": 1002789,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc973e7f9d1a3be98df8b8dbc",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0CcvfJAMRa28MnCnujCdXQ",
+    "name": "Lady Blackbird",
+    "genres": [
+      "retro soul"
+    ],
+    "followers": 72887,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebd26f1a333f99d3487b6a0854",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "6qJgLKcdcL8zxzfsWRylRk",
+    "name": "Jeanne & The Darlings",
+    "genres": [
+      "classic soul",
+      "soul"
+    ],
+    "followers": 2374,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b273187d6283dcb1a9ee0428c1e0",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "1XkoF8ryArs86LZvFOkbyr",
+    "name": "Mary J. Blige",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 4230698,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb3d7888ba4d2bf67fe6b64a55",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7erYZsfekXYGWvup1bnkUZ",
+    "name": "Linda Jones",
+    "genres": [
+      "northern soul",
+      "classic soul"
+    ],
+    "followers": 28899,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb874505ea8848f6aac824b61",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "4N8BwYTEC6XqykGvXXlmfv",
+    "name": "George Benson",
+    "genres": [
+      "smooth jazz",
+      "yacht rock",
+      "jazz funk",
+      "soul jazz"
+    ],
+    "followers": 912703,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb487b00fa17362b8eab3b16c8",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "4nts0oxMT67lVUoi5Kjxrb",
+    "name": "Solomon Burke",
+    "genres": [
+      "soul",
+      "soul blues",
+      "classic soul",
+      "motown"
+    ],
+    "followers": 286270,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/aed870c7f3469439b6cb87036a7a8a0f009334ae",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "3YFP5QHEKv8RZZsPminjdv",
+    "name": "Baby Huey",
+    "genres": [
+      "soul"
+    ],
+    "followers": 42616,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b2739ed801be1a9fb100f815afb1",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2AV6XDIs32ofIJhkkDevjm",
+    "name": "Curtis Mayfield",
+    "genres": [
+      "classic soul",
+      "soul",
+      "motown"
+    ],
+    "followers": 1160064,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebeea0f2f51d7969bbb4000f92",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2JRvXPGWiINrnJljNJhG5s",
+    "name": "The Meters",
+    "genres": [
+      "funk",
+      "soul",
+      "jazz funk"
+    ],
+    "followers": 287752,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/2439ee3f609c4039a544a4505d7294f3240a290d",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "6oV3BNm1Gj2GGgpYknc5TN",
+    "name": "George McCrae",
+    "genres": [
+      "disco",
+      "classic soul"
+    ],
+    "followers": 156246,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/fe9b81e113fda9e9594c1be350add321d8eaffea",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "4ba7uNtpOq0us2C5Nx19zN",
+    "name": "Wendy Rene",
+    "genres": [
+      "northern soul"
+    ],
+    "followers": 32089,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b273d25cc6f0755624f4b5be5372",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7z1zaOeWiHpl4SD2N9ZBgk",
+    "name": "Bloodstone",
+    "genres": [
+      "classic soul"
+    ],
+    "followers": 225315,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b273809e8b9431e1cb62c66e270a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0QZvxyFZXcweramX6WnRN7",
+    "name": "Rufus & Carla",
+    "genres": [],
+    "followers": 10922,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b27305bcf7201c8283562c113cbc",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2aM5jpQ0WTcQDeHsil8Ihz",
+    "name": "Michael Gray",
+    "genres": [
+      "disco house",
+      "funky house"
+    ],
+    "followers": 55825,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb6348c2b13b9cb231d6543d5",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0du5cEVh5yTK9QJze8zA0C",
+    "name": "Bruno Mars",
+    "genres": [],
+    "followers": 72303806,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc36dd9eb55fb0db4911f25dd",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "60nDKjd690Luygtd3Fm0Cu",
+    "name": "Ogi",
+    "genres": [
+      "retro soul"
+    ],
+    "followers": 59294,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebf879b63a1865581d0557a19f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2ttm3uT0N1RN7vwKv1pQgh",
+    "name": "Brook Benton",
+    "genres": [
+      "classic soul"
+    ],
+    "followers": 80771,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/4ada684f556acdc024c09dac0e172d92a3f94a5a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "1eYhYunlNJlDoQhtYBvPsi",
+    "name": "Ray Charles",
+    "genres": [
+      "jazz blues",
+      "soul",
+      "soul blues",
+      "blues",
+      "classic soul",
+      "vocal jazz"
+    ],
+    "followers": 2532439,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb6fc460f10177fa38af69b8bf",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "4Qk0lWGeXydDvfrDufDQ9p",
+    "name": "Richie Havens",
+    "genres": [],
+    "followers": 132866,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/2fb50665a61aa4712afe3568dd9a653a58925da4",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "1Z8ODXyhEBi3WynYw0Rya6",
+    "name": "De La Soul",
+    "genres": [
+      "jazz rap",
+      "east coast hip hop"
+    ],
+    "followers": 1107797,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc443011311dcf7f6eeaf507d",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "1OxJzMLmR9l5zPLap9OxuO",
+    "name": "Rose Royce",
+    "genres": [
+      "quiet storm",
+      "disco",
+      "classic soul"
+    ],
+    "followers": 497496,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b2737e40943c3f4ce9c25ec7b098",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0HU0U9kdXEHZVxUNbuQe8S",
+    "name": "Donny Hathaway",
+    "genres": [
+      "soul",
+      "classic soul"
+    ],
+    "followers": 634954,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/2c9a122b0f6a1c6f083b1725f309d3a25636f4ae",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "3S34Unhn5yRcaH5K9aU5Et",
+    "name": "Candi Staton",
+    "genres": [],
+    "followers": 117226,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb0e71d4a7317a1087d3711760",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2JSjCHK79gdaiPWdKiNUNp",
+    "name": "Dionne Warwick",
+    "genres": [],
+    "followers": 1021493,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb460f728695000dadb44a4e8c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2vDV0T8sxx2ENnKXds75e5",
+    "name": "Booker T. & the M.G.'s",
+    "genres": [],
+    "followers": 328968,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/386f66b89b4b1ca0e9b5b2d0ffce9ce3a66a7101",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "4KzDc4l3K3flfz4RBp2VlN",
+    "name": "Pink Cafe",
+    "genres": [],
+    "followers": 656,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebda48396d67adf468c4f44fcd",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7gW0r5CkdEUMm42w9XpyZO",
+    "name": "Laufey",
+    "genres": [],
+    "followers": 7287447,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb98c2527b85500f68f53084f2",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "3b6TinIPahsS8iSCYAeinr",
+    "name": "Galt MacDermot",
+    "genres": [],
+    "followers": 54587,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc7b4a38569897f2c145be8ff",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2P1puQXmG48EVLBrHbum1J",
+    "name": "Melody Gardot",
+    "genres": [
+      "vocal jazz",
+      "french jazz",
+      "jazz"
+    ],
+    "followers": 739055,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebe8c664096b8c81c4d7e25114",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7nXyULtoL8k7wP9l6kg8Ef",
+    "name": "Madeleine Peyroux",
+    "genres": [
+      "french jazz",
+      "vocal jazz",
+      "jazz"
+    ],
+    "followers": 465058,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebf878fa1f2dfe15aa758364b3",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0iOVhN3tnSvgDbcg25JoJb",
+    "name": "Etta James",
+    "genres": [
+      "soul",
+      "jazz blues",
+      "soul blues",
+      "blues",
+      "vocal jazz"
+    ],
+    "followers": 1913674,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb058531dfd9746a96ad85265f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7G1GBhoKtEPnP86X2PvEYO",
+    "name": "Nina Simone",
+    "genres": [
+      "vocal jazz",
+      "jazz blues",
+      "soul",
+      "soul jazz",
+      "jazz",
+      "blues"
+    ],
+    "followers": 3141364,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb136c51c848c26a6cce7f9e56",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "1Mxqyy3pSjf8kZZL4QVxS0",
+    "name": "Frank Sinatra",
+    "genres": [
+      "christmas",
+      "big band",
+      "adult standards",
+      "swing music",
+      "vocal jazz",
+      "jazz"
+    ],
+    "followers": 8091626,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/fc4e0f474fb4c4cb83617aa884dc9fd9822d4411",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "6Q192DXotxtaysaqNPy5yR",
+    "name": "Amy Winehouse",
+    "genres": [],
+    "followers": 9593053,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb2ceb023b10da17590878e88c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "32r72WOqqRO1DtSznId7Lr",
+    "name": "James Brown & The Famous Flames",
+    "genres": [],
+    "followers": 220760,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/9f18124c9c8b2c4071cdd7baf5ceffd6eed7b839",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "49e4v89VmlDcFCMyDv9wQ9",
+    "name": "Dean Martin",
+    "genres": [
+      "christmas",
+      "adult standards",
+      "big band",
+      "swing music"
+    ],
+    "followers": 1892584,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb63066e18f9af780b2bc73b4f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "5V0MlUE1Bft0mbLlND7FJz",
+    "name": "Ella Fitzgerald",
+    "genres": [
+      "vocal jazz",
+      "jazz",
+      "swing music",
+      "jazz blues",
+      "big band",
+      "christmas"
+    ],
+    "followers": 2670578,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/3c1d23141059785c8a863137d176319329dc17ef",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "10GHM9JOaF3TLlHWwfApno",
+    "name": "John Riesen",
+    "genres": [
+      "neoclassical"
+    ],
+    "followers": 20143,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb2197236126e865ca0272b7fc",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7y8DYLVX5I1HonLm7j26U8",
+    "name": "Marína Ósk",
+    "genres": [
+      "vocal jazz",
+      "soul jazz",
+      "jazz blues"
+    ],
+    "followers": 1462,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb63c1c7a11a2983084ddd6eb0",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0ytyS944Vjixf9O0omhpyd",
+    "name": "Boaz",
+    "genres": [
+      "soul jazz",
+      "jazz blues",
+      "soul blues"
+    ],
+    "followers": 4680,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb3f7123cd18a1568bfa589783",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "6IUOmHexxK6USkykXUKZSA",
+    "name": "Teresa Bergman",
+    "genres": [
+      "soul jazz",
+      "jazz blues",
+      "soul blues"
+    ],
+    "followers": 2150,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb95c68e20a396f7767c3f73ca",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0hnLrU5XEMykB55Ofghfvw",
+    "name": "Lena Morris",
+    "genres": [
+      "soul jazz",
+      "jazz blues",
+      "soul blues",
+      "blues"
+    ],
+    "followers": 962,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7c35b516fe8735bb0455fb6e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "19eLuQmk9aCobbVDHc6eek",
+    "name": "Louis Armstrong",
+    "genres": [
+      "jazz",
+      "swing music",
+      "big band",
+      "vocal jazz",
+      "jazz blues"
+    ],
+    "followers": 3156039,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6772690000c46c4a0e9d5e55f9f3721c3243c5",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7rcjVbooAaV2pPRdyPHCrM",
+    "name": "Cyrille Aimee",
+    "genres": [
+      "french jazz",
+      "vocal jazz",
+      "jazz"
+    ],
+    "followers": 57158,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7f2a11fca34bcde43c78ee29",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2lolQgalUvZDfp5vvVtTYV",
+    "name": "Tony Bennett",
+    "genres": [
+      "vocal jazz",
+      "christmas",
+      "big band",
+      "adult standards",
+      "jazz"
+    ],
+    "followers": 989925,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebcd9641c8b449440a77ee19cc",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "4iRZAbYvBqnxrbs6K25aJ7",
+    "name": "The Dave Brubeck Quartet",
+    "genres": [
+      "jazz",
+      "cool jazz"
+    ],
+    "followers": 331684,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/b6f7dc3c16f95e6df120af205d4007f518b01e0e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0ntHR4rFkifBFwteBtfllC",
+    "name": "Julia Volk",
+    "genres": [],
+    "followers": 499,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb05a765fc53e295d84269248e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "5rsN9tfaeWAlyU1bWJY02D",
+    "name": "Ben Rosenblum Nebula Project",
+    "genres": [],
+    "followers": 227,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b273db5b7a4dae793cf5c0be773c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "06nevPmNVfWUXyZkccahL8",
+    "name": "Gregory Porter",
+    "genres": [
+      "vocal jazz",
+      "jazz"
+    ],
+    "followers": 683807,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb05a870004c9b9358e1499ba7",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "3rxeQlsv0Sc2nyYaZ5W71T",
+    "name": "Chet Baker",
+    "genres": [
+      "jazz",
+      "cool jazz",
+      "vocal jazz"
+    ],
+    "followers": 1284430,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/8fd767aa91ecd8e5720b424812e2a17586834ac2",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "5aSW8XbsteHFgFPYpp1s3x",
+    "name": "Lynne Arriale Trio",
+    "genres": [
+      "jazz"
+    ],
+    "followers": 3104,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b27307fd3eaa0278b4328f675e49",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0WZ7IgzdjPvwFdjDjjuZm7",
+    "name": "Esther Phillips",
+    "genres": [
+      "northern soul",
+      "jazz blues",
+      "soul"
+    ],
+    "followers": 64958,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb57803ec3d9be1dddd564d94a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "32LHRiof0sa4taYew9i3Fa",
+    "name": "Dinah Washington",
+    "genres": [
+      "vocal jazz",
+      "jazz",
+      "jazz blues"
+    ],
+    "followers": 504012,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/219cf4ef5ee4065d4b431da35b9997aaa7293c8d",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "35LGcmj5WCf5kTNnfmPjtK",
+    "name": "The Everettes",
+    "genres": [
+      "retro soul"
+    ],
+    "followers": 933,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb94da2cbe9a5a6a14b2dec920",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7tn2NxdUjOm9WuvEXQNhLi",
+    "name": "Stína Ágústsdóttir",
+    "genres": [
+      "vocal jazz"
+    ],
+    "followers": 3096,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb240f964bc65a556c51aa9a71",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "5UhQO527vFhsv2QhSH29UL",
+    "name": "Thomas Kahn",
+    "genres": [
+      "soul blues"
+    ],
+    "followers": 5239,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc9ea56588495a0b7aeb03220",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "5z1VAFwT35EVvCp1XlZZuL",
+    "name": "Diana Krall",
+    "genres": [
+      "vocal jazz",
+      "jazz",
+      "smooth jazz"
+    ],
+    "followers": 1149378,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebd1bfc97e11bb4c1f90f287a6",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7bvcQXJHkFiN1ppIN3q4fi",
+    "name": "Joss Stone",
+    "genres": [
+      "neo soul"
+    ],
+    "followers": 1111283,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebaf8e9730026523b1ef1eedb8",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0B530ZeLXBaPt7AN3wHNcM",
+    "name": "Muca",
+    "genres": [],
+    "followers": 181,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebf43a14bdaf1d5a16aa592844",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "6kXm2YCtdUOpRYNKeKhfue",
+    "name": "Ryan Gosling",
+    "genres": [],
+    "followers": 262507,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb2a4a7d2d1e8acd5d95df137e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "15RmsKjY8mMmyZaFRkUrwt",
+    "name": "Linda Purl",
+    "genres": [],
+    "followers": 278,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb64a3fc0e32ab00d389c1664a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7nil2yzeAZsym3rLtdcSya",
+    "name": "Laura Baron",
+    "genres": [],
+    "followers": 119,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb05762f4abb2ce7f0b18baac4",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2TmPUKaYZYZeIHGZmKjMfB",
+    "name": "Skylar Peterson",
+    "genres": [],
+    "followers": 184,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc71d37df136813e862b8454a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2qVbIjSCSrBzqUFIF6epCU",
+    "name": "Hippie Tendencies",
+    "genres": [],
+    "followers": 98,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b2730e8b1066273d7e503c2712bc",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "1GxkXlMwML1oSg5eLPiAz3",
+    "name": "Michael Bublé",
+    "genres": [
+      "christmas"
+    ],
+    "followers": 6850113,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebecf79fd5be85dabb0f489107",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "02085d2Dl1uAc5qEcUlBOf",
+    "name": "Kane Kalas",
+    "genres": [],
+    "followers": 168,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b27383ca16e4d375a95ef5c17d76",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0FMucZsEnCxs5pqBjHjIc8",
+    "name": "Stan Getz",
+    "genres": [
+      "bossa nova",
+      "jazz",
+      "brazilian jazz",
+      "cool jazz",
+      "latin jazz"
+    ],
+    "followers": 512851,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb45dd470659deedf47618968e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0UsE6afkPT9wiUdZEn8R9w",
+    "name": "Hazel Mei",
+    "genres": [],
+    "followers": 810,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb0f9e91e529a77ffa7caf0d77",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "602DnpaSXJB4b9DZrvxbDc",
+    "name": "Peggy Lee",
+    "genres": [
+      "vocal jazz",
+      "swing music",
+      "big band",
+      "jazz"
+    ],
+    "followers": 491181,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebd4a26542545d9aad6c5b49be",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "4NtRWO2EXZaceRyXe2QWGY",
+    "name": "Couleur d'opium",
+    "genres": [],
+    "followers": 227,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb28718584927eda078936c0c0",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "6CXGfKrSfbCE4rFB0OLVie",
+    "name": "Sylvia Brooks",
+    "genres": [
+      "vocal jazz"
+    ],
+    "followers": 510,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb75e038ea9f7d7698de50b18a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7yiilgx7kKijTeHJs2FoWb",
+    "name": "Mathilde Widding",
+    "genres": [],
+    "followers": 525,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebe723cbc246bde7b2021f34b2",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "1RsmXc1ZqW3WBs9iwxiSwk",
+    "name": "Sidney Bechet",
+    "genres": [
+      "jazz",
+      "swing music",
+      "ragtime"
+    ],
+    "followers": 140286,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/8b70777a318ad9e51c27b0104067c43d14288043",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "5WM5zPOswRcPu07rxP2dQv",
+    "name": "Hugh Laurie",
+    "genres": [
+      "blues",
+      "jazz blues",
+      "comedy"
+    ],
+    "followers": 260596,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ec7795c92ee8ee445d2b3c6bfe9afc4002816cf9",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2SHlODtwF1zJilTEgmeROe",
+    "name": "Lisa Marie Simmons",
+    "genres": [
+      "spoken word"
+    ],
+    "followers": 537,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebac33286cfbd0685055623df8",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0iB1UM5uy24qKwjyP7X3aK",
+    "name": "Zada Records",
+    "genres": [],
+    "followers": 165,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b273f3d78442f8a2aa5ccd562d31",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "6MnOCiaE7aOIbAaWLDQ0xC",
+    "name": "Valeria Maurer",
+    "genres": [
+      "soul jazz"
+    ],
+    "followers": 42,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb9ce553edc23a51a2f407c96e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "3qaojuvv8VPS2rZG9Q68TT",
+    "name": "Russ Lorenson",
+    "genres": [],
+    "followers": 878,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb619608d911a3f13bb754ace2",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "0MJguoSvWCXCv69Mrr4xPk",
+    "name": "Carrie Marshall",
+    "genres": [
+      "vocal jazz"
+    ],
+    "followers": 381,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb84a2d1d1a381f7ecc073e1d5",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7j46Sze6UWb7p41IqcYFAp",
+    "name": "Catherine Russell",
+    "genres": [
+      "vocal jazz",
+      "swing music",
+      "jazz"
+    ],
+    "followers": 35617,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb3ccf6d9ffc084b4e593bed07",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "7GVhktAErEZLjNGohmFDm5",
+    "name": "Deva Tamo",
+    "genres": [
+      "jazz blues",
+      "soul jazz"
+    ],
+    "followers": 159,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb4212f18f2ddb62c039f7164c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  },
+  {
+    "id": "2lq7oUiBl6BsETCLemkemK",
+    "name": "Wuzy Bambussy",
+    "genres": [],
+    "followers": 1631,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc79f4b85f304f58bbb684b9d",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:22:07.722Z"
+  }
+]

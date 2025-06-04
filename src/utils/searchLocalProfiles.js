@@ -1,5 +1,7 @@
-export const searchLocalProfiles = (filters) => {
-  const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+import { getAllArtistProfiles } from './artistProfileDB';
+
+export const searchLocalProfiles = async (filters) => {
+  const profiles = await getAllArtistProfiles();
   const results = Object.values(profiles).filter((profile) => {
     const {
       genres = [],

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import { crawlArtistsByGenre } from '../api/crawlArtistsByGenre';
-import { searchLocalProfiles } from '../utils/searchLocalProfiles'; // ✅ NEW
+import { searchLocalProfiles } from '../utils/searchLocalProfiles';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -78,14 +78,17 @@ const Explorer = () => {
     setResults([]);
 
     try {
-      // ✅ LOCAL PROFILE FALLBACK FIRST
       if (searchTerm.trim().length === 0) {
-        const localResults = searchLocalProfiles(filters);
+        const localResults = await searchLocalProfiles(filters);
         if (localResults.length > 0) {
           setResults(localResults);
+          localStorage.setItem('last_explorer_results', JSON.stringify(localResults));
           console.log('⚡ Using localProfiles for results');
-          return;
+        } else {
+          setError('No artists found locally for these filters.');
         }
+        setLoading(false);
+        return;
       }
 
       let artists;
@@ -127,6 +130,24 @@ const Explorer = () => {
 
       setResults(filtered);
       localStorage.setItem('last_explorer_results', JSON.stringify(filtered));
+
+      const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
+      filtered.forEach((artist) => {
+        const id = artist.id;
+        if (!id || profiles[id]) return;
+        profiles[id] = {
+          id: artist.id,
+          name: artist.name,
+          image: artist.image || artist.images?.[0]?.url || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+          genres: Array.isArray(artist.genres) ? artist.genres : [],
+          followers: typeof artist.followers === 'number' ? artist.followers : 0,
+          monthlyListeners: typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0,
+          preview_url: artist.preview_url || '',
+          source: 'explorer_auto',
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      localStorage.setItem('artistProfiles', JSON.stringify(profiles));
     } catch (err) {
       console.error(err);
       setError('Search failed.');
@@ -137,7 +158,6 @@ const Explorer = () => {
 
   useEffect(() => {
     if (!filters || results.length === 0) return;
-
     const sorted = [...results];
     switch (sortOrder) {
       case 'listeners_desc':
@@ -158,7 +178,6 @@ const Explorer = () => {
       default:
         break;
     }
-
     setResults(sorted);
   }, [sortOrder]);
 
@@ -194,20 +213,6 @@ const Explorer = () => {
     };
 
     localStorage.setItem(campaignKey, JSON.stringify([...existing, newLead]));
-
-    const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
-    profiles[artist.id] = {
-      id: artist.id,
-      name: artist.name,
-      image: artist.image || artist.images?.[0]?.url || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-      genres: Array.isArray(artist.genres) ? artist.genres : [],
-      followers: typeof artist.followers === 'number' ? artist.followers : 0,
-      monthlyListeners: typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0,
-      preview_url: artist.preview_url || '',
-      source: 'explorer'
-    };
-    localStorage.setItem('artistProfiles', JSON.stringify(profiles));
-
     window.dispatchEvent(new Event('leadsUpdated'));
     setDropdownOpen(null);
   };
@@ -227,7 +232,6 @@ const Explorer = () => {
     <div className="flex h-screen bg-gray-50 text-gray-800">
       <div className="flex-1 p-6 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
-
         <FilterBlock onSubmitFilters={handleFilterSubmit} />
         <SearchBlock
           query={query}
@@ -242,13 +246,11 @@ const Explorer = () => {
           ]}
         />
         <SortDropdown sortBy={sortOrder} setSortBy={setSortOrder} />
-
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
         {!loading && filters && results.length === 0 && (
           <p className="text-sm text-gray-500 italic">No artists found. Try adjusting your filters or search terms.</p>
         )}
-
         <div className="flex flex-col gap-4">
           {results.map((artist) => (
             <ArtistCard
@@ -265,7 +267,6 @@ const Explorer = () => {
           ))}
         </div>
       </div>
-
       <div className="w-64 border-l bg-white shadow-inner">
         <ExploreManager
           recentSearches={recentSearches}

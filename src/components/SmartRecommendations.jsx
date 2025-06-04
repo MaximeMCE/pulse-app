@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSmartRecommendations } from '../utils/getSmartRecommendations'; // ✅ UPDATED
-import { saveArtistProfile } from '../utils/artistUtils';
+import { saveArtistProfile } from '../utils/artistProfileDB';
 
 function getMatchReason(artist, campaign) {
   const campaignGenres = (campaign.goal || '').toLowerCase().split(/\s+/);

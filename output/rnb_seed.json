@@ -1,0 +1,1241 @@
+[
+  {
+    "id": "27FGXRNruFoOdf1vP8dqcH",
+    "name": "Cassie",
+    "genres": [],
+    "followers": 1829854,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb9592a41ec193fd20c5372ed3",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1YfEcTuGvBQ8xSD1f53UnK",
+    "name": "Busta Rhymes",
+    "genres": [
+      "east coast hip hop"
+    ],
+    "followers": 3058747,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7b31aba081ef084510cde4e3",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1c70yCa8sRgIiQxl3HOEFo",
+    "name": "Cherish",
+    "genres": [],
+    "followers": 670824,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebed896a298ee61f6cec91abc4",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2NdeV5rLm47xAvogXrYhJX",
+    "name": "Ciara",
+    "genres": [],
+    "followers": 7157771,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb6a28d3c64b3bcf6675ddfe3",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6eBYLQONaYZhZNAVK061t6",
+    "name": "Nina Sky",
+    "genres": [],
+    "followers": 158333,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb99130a511f82caacd3fecc03",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7urq0VfqxEYEEiZUkebXT4",
+    "name": "112",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 1326524,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/21a8b23a23a41f3736b2dd6a5df2d7dc8341ea05",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5EvFsr3kj42KNv97ZEnqij",
+    "name": "Shaggy",
+    "genres": [
+      "reggae"
+    ],
+    "followers": 2399748,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb356dc7e9ba8792cb86a0c50c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "4qwGe91Bz9K2T8jXTZ815W",
+    "name": "Janet Jackson",
+    "genres": [
+      "new jack swing"
+    ],
+    "followers": 4059123,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb24eb85119eb02ae07972fb4b",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1Y8cdNmUJH7yBTd9yOvr5i",
+    "name": "Destiny's Child",
+    "genres": [],
+    "followers": 7889554,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebf75e64532704bd6acf0b4e76",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2gBjLmx6zQnFGQJCAQpRgw",
+    "name": "Nelly",
+    "genres": [],
+    "followers": 3477434,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/3677690af58abb70a5c5fd58d69db4d1ad705d4f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1XkoF8ryArs86LZvFOkbyr",
+    "name": "Mary J. Blige",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 4230698,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb3d7888ba4d2bf67fe6b64a55",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7hJcb9fa4alzcOq3EaNPoG",
+    "name": "Snoop Dogg",
+    "genres": [
+      "g-funk",
+      "west coast hip hop",
+      "gangster rap",
+      "hip hop",
+      "old school hip hop",
+      "rap"
+    ],
+    "followers": 14884670,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc19a88576ebe6fcbb325c297",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "4iHNK0tOyZPYnBU7nGAgpQ",
+    "name": "Mariah Carey",
+    "genres": [
+      "christmas"
+    ],
+    "followers": 11459450,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb9de8967e3f792c7954f69695",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "31TPClRtHm23RisEBtV3X7",
+    "name": "Justin Timberlake",
+    "genres": [],
+    "followers": 15409556,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7a5cfe2597665a3d160e805e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5Y5TRrQiqgUO4S36tzjIRZ",
+    "name": "Timbaland",
+    "genres": [],
+    "followers": 3281628,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb713079a55dcf937d241dd2b",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2RdwBSPQiwcmiDo9kixcl8",
+    "name": "Pharrell Williams",
+    "genres": [],
+    "followers": 5193584,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebf0789cd783c20985ec3deb4e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6zDBeei6hHRiZdAJ6zoTCo",
+    "name": "Tweet",
+    "genres": [
+      "neo soul"
+    ],
+    "followers": 617662,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/9cf78b831ef3a4c193148c73cafaf847010467ab",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3Isy6kedDrgPYoTS1dazA9",
+    "name": "Sean Paul",
+    "genres": [
+      "dancehall"
+    ],
+    "followers": 5147281,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb60c3e9abe7327c0097738f22",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2DlGxzQSjYe5N6G9nkYghR",
+    "name": "Jennifer Lopez",
+    "genres": [],
+    "followers": 13581062,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb48e24f77a03f78a00cfda0bb",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1J2VVASYAamtQ3Bt8wGgA6",
+    "name": "Ja Rule",
+    "genres": [
+      "east coast hip hop"
+    ],
+    "followers": 2076156,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb47b549b590b63e52c68b89b",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1G9G7WwrXka3Z1r7aIDjI7",
+    "name": "Outkast",
+    "genres": [
+      "southern hip hop",
+      "hip hop"
+    ],
+    "followers": 3188092,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb0cb3f95b9f8f7337e135a925",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "12Kgt2eahvxNWhD5PnSUde",
+    "name": "Mary Mary",
+    "genres": [
+      "gospel",
+      "gospel r&b"
+    ],
+    "followers": 663420,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/1c6da0ef21d1f2f242fe64571a76ed3bfe7870e5",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "4d3yvTptO48nOYTPBcPFZC",
+    "name": "Eve",
+    "genres": [],
+    "followers": 1526589,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb62423f0aa64340b1fe57c0a3",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6tbjWDEIzxoDsBA1FuhfPW",
+    "name": "Madonna",
+    "genres": [],
+    "followers": 8561506,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb6ccc1215f5b205aa6b34b48b",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "08rMCq2ek1YjdDBsCPVH2s",
+    "name": "Amerie",
+    "genres": [],
+    "followers": 958585,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb5559ca5590b05848e4086ae9",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3LIJJJkO7R5RasRwt7xIn5",
+    "name": "Mystikal",
+    "genres": [
+      "southern hip hop",
+      "crunk",
+      "gangster rap"
+    ],
+    "followers": 779589,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/99443414f1603cb47d783e1974148f3cb1de6f62",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6vytZ677lz4LzCrUDcDokM",
+    "name": "Blu Cantrell",
+    "genres": [],
+    "followers": 343794,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb46920c12235935b517751f54",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2wIVse2owClT7go1WT98tk",
+    "name": "Missy Elliott",
+    "genres": [
+      "hip hop"
+    ],
+    "followers": 2665580,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebf6691f40d906f097e9fbaa4c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2jw70GZXlAI8QzWeY2bgRc",
+    "name": "Nelly Furtado",
+    "genres": [],
+    "followers": 4455257,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebd2ce0bf5614b54bd44e059d5",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "0IF46mUS8NXjgHabxk2MCM",
+    "name": "Kelis",
+    "genres": [],
+    "followers": 670710,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebd1222863c4217cf03dde3613",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5K4W6rqBFWDnAN6FQUkS6x",
+    "name": "Kanye West",
+    "genres": [
+      "rap"
+    ],
+    "followers": 30124151,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb6e835a500e791bf9c27a422a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6vWDO969PvNqNYHIOW5v0m",
+    "name": "Beyoncé",
+    "genres": [],
+    "followers": 40412967,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7eaa373538359164b843f7c0",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5rkVyNGXEgeUqKkB5ccK83",
+    "name": "Ashanti",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 3438176,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb1ebb81323a96e465ad20b932",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "0YWxKQj2Go9CGHCp77UOyy",
+    "name": "Fabolous",
+    "genres": [],
+    "followers": 2731760,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebece5603bef9fa046ef9a178c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5T0MSzX9RC5NA6gAI6irSn",
+    "name": "Estelle",
+    "genres": [],
+    "followers": 361632,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb253991558853fd60bd319a34",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7IfculRW2WXyzNQ8djX8WX",
+    "name": "Erykah Badu",
+    "genres": [
+      "neo soul",
+      "r&b"
+    ],
+    "followers": 3143165,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebfb1bc9e7ca44d473641b7842",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3ScY9CQxNLQei8Umvpx5g6",
+    "name": "Fat Joe",
+    "genres": [
+      "east coast hip hop"
+    ],
+    "followers": 2032720,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eba1fe5b14818dd48f0efbf919",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5qK5bOC6wLtuLhG5KvU17c",
+    "name": "Lil Mama",
+    "genres": [],
+    "followers": 102063,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb5480bacf7da47dd37e1b4f7",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "01QTIT5P1pFP3QnnFSdsJf",
+    "name": "Lupe Fiasco",
+    "genres": [],
+    "followers": 1952929,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb17e0a43f3aaa0c48410c4b68",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5pKCCKE2ajJHZ9KAiaK11H",
+    "name": "Rihanna",
+    "genres": [],
+    "followers": 67202160,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb373e1be0410d4212bf72acab",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3nFkdlSjzX9mRTtwJOzDYB",
+    "name": "JAY-Z",
+    "genres": [
+      "hip hop",
+      "east coast hip hop",
+      "rap"
+    ],
+    "followers": 10070995,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc75afcd5a9027f60eaebb5e4",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "085pc2PYOi8bGKj0PNjekA",
+    "name": "will.i.am",
+    "genres": [],
+    "followers": 4372868,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc9ab8da6f7a3ce02f0b16fd8",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6wPhSqRtPu1UhRCDX5yaDJ",
+    "name": "The Pussycat Dolls",
+    "genres": [],
+    "followers": 6069630,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb292575f7d081016e04dff9ee",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7Aq8lpLMSt1Zxu56pe9bmp",
+    "name": "Jagged Edge",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 2236889,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb2bb45e7d9626f2fec4b6465f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "67nwj3Y5sZQLl72VNUHEYE",
+    "name": "Wale",
+    "genres": [],
+    "followers": 4220253,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb204ce9bb25bd19a056cac78a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3Mcii5XWf6E0lrY3Uky4cA",
+    "name": "Ice Cube",
+    "genres": [
+      "gangster rap",
+      "west coast hip hop",
+      "old school hip hop",
+      "g-funk"
+    ],
+    "followers": 10531371,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb650e79afafd00492e33d7b8c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3tCxM1rTj2qUXsiQZxvt2I",
+    "name": "Nappy Roots",
+    "genres": [
+      "southern hip hop"
+    ],
+    "followers": 242740,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb73a8da6ea12ee648db5ce015",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3s2wTjWxK8NOX09dmsvVOh",
+    "name": "Chingy",
+    "genres": [
+      "crunk"
+    ],
+    "followers": 1035915,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebec6d65f8f8a7a95d6c6817d7",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5me0Irg2ANcsgc93uaYrpb",
+    "name": "The Notorious B.I.G.",
+    "genres": [
+      "old school hip hop",
+      "gangster rap",
+      "east coast hip hop",
+      "hip hop"
+    ],
+    "followers": 12185598,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/1b4858fbd24046a81cace5ee18d19c868262b91f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1IO0GVa1xjkFMXsg66FiE9",
+    "name": "Lumidee",
+    "genres": [],
+    "followers": 169327,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc186cf4123cac0f6cb9f6d8a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "05oH07COxkXKIMt6mIPRee",
+    "name": "Brandy",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 3970344,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb39417aaafb9c373e78594ef",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1l7ZsJRRS8wlW3WfJfPfNS",
+    "name": "Christina Aguilera",
+    "genres": [],
+    "followers": 8993987,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb1fb7a2d94b56df1f8a61d779",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6t7nbFAc2dUa7oNu7kBOui",
+    "name": "Michelle Williams",
+    "genres": [
+      "gospel",
+      "gospel r&b"
+    ],
+    "followers": 266418,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebcc33156abd7faf1bd4a4bf30",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6vbY3hOaCAhC7VjucswgdS",
+    "name": "Twista",
+    "genres": [],
+    "followers": 1195615,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb710d4af3acce3fb0bfd97746",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6nzxy2wXs6tLgzEtqOkEi2",
+    "name": "Monica",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 2785830,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebe511dad92fbc2626144a02a2",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5NDMothbpdpq2xHqSjrrWn",
+    "name": "Faith Evans",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 1778480,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb59b1c5df87253aa6bfd1f524",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6csA2rxNLkQJXeEa7lyGXn",
+    "name": "Mis-Teeq",
+    "genres": [
+      "uk garage"
+    ],
+    "followers": 128279,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb01604c583eee95123e61098c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2hWr3AjjKOCVmWcwvuT4uM",
+    "name": "Angie Stone",
+    "genres": [
+      "neo soul",
+      "soul"
+    ],
+    "followers": 705761,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/5b128023e8c83a475685b6b796c35b6db0d17e57",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5Jz9kKRnCRLTodCH58MyB4",
+    "name": "Daz Dillinger",
+    "genres": [
+      "g-funk",
+      "west coast hip hop",
+      "gangster rap"
+    ],
+    "followers": 303409,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab67616d0000b273da3782e4e6eb5acfeede7824",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2JyWXPbkqI5ZJa3gwqVa0c",
+    "name": "Craig David",
+    "genres": [],
+    "followers": 955746,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb1e08103af765774d5f2daf83",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "0TImkz4nPqjegtVSMZnMRq",
+    "name": "TLC",
+    "genres": [],
+    "followers": 4369797,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7356ae4581e46319f99c813a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3DiDSECUqqY1AuBP8qtaIa",
+    "name": "Alicia Keys",
+    "genres": [
+      "r&b",
+      "neo soul"
+    ],
+    "followers": 12614056,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebebfd16a3bca87c31c1e20576",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7iMvwE8qANp3aIfAGKEAwS",
+    "name": "Cam'ron",
+    "genres": [
+      "east coast hip hop"
+    ],
+    "followers": 775087,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7455f2c344f66269f98948a4",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "12PSlydMSjEHzSCj9X5qv7",
+    "name": "Baby Bash",
+    "genres": [],
+    "followers": 1020280,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb0feee74aea6c89ebaae3913e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "0urTpYCsixqZwgNTkPJOJ4",
+    "name": "Aaliyah",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 4886450,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebd2493cea701d45401cc79ffd",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6vUjpCAR58MB3Jq2TsKUmK",
+    "name": "Nikka Costa",
+    "genres": [],
+    "followers": 48806,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb54bddd1d55ef0c342af20420",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "23zg3TcAtWQy7J6upgbUnj",
+    "name": "USHER",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 13286619,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb716114797a4a644c67c5fa72",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "20s0P9QLxGqKuCsGwFsp7w",
+    "name": "Mario",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 3822029,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb48f54214e0580b101375840c",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2vvmx7E4mgWsebwyJ6H1Kl",
+    "name": "Wayne Wonder, LL Cool J [Feat. Dutchess]",
+    "genres": [],
+    "followers": 645,
+    "monthlyListeners": 0,
+    "image": "",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7bXgB6jMjp9ATFy66eO08Z",
+    "name": "Chris Brown",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 26624447,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eba48397e590a1c70e2cda7728",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6V3F8MZrOKdT9fU686ybE9",
+    "name": "Mark Morrison",
+    "genres": [],
+    "followers": 136271,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb28ce7bddd2d283e8e0f3141f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "4BIQA9vRkqXEnA2twmq7mU",
+    "name": "Mario Winans",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 80758,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb3f716e9a9961e612458b8518",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "360IAlyVv4PCEVjgyMZrxK",
+    "name": "Miguel",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 5909131,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb35e36c368fdcd26aba296bd1",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2MGT7CYlixSPxAnnkhLpaA",
+    "name": "Next",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 1241226,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebb58f9f8c32588c5bfe4388b8",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "4w1YPIWGueT0iLzZ1XM6vn",
+    "name": "Bill C da Don",
+    "genres": [],
+    "followers": 2696,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb8ffc37c7d5b0880a44ef100d",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3y24n3XhZ96wgwRXjvS17T",
+    "name": "Coolio",
+    "genres": [
+      "west coast hip hop",
+      "g-funk"
+    ],
+    "followers": 1679428,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb5ea53fc78df8f7e7559e228d",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7DstpUpWwECRkuhXsfxtxq",
+    "name": "RAHTWOFIVE",
+    "genres": [],
+    "followers": 1402,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb9b8bc836c52686fb2b373707",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "59wfkuBoNyhDMQGCljbUbA",
+    "name": "Diddy",
+    "genres": [
+      "hip hop",
+      "east coast hip hop"
+    ],
+    "followers": 1921266,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb5065f82653e9ad00fdcafa42",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "4EnEZVjo3w1cwcQYePccay",
+    "name": "N.W.A.",
+    "genres": [
+      "old school hip hop",
+      "gangster rap",
+      "west coast hip hop",
+      "hip hop",
+      "rap",
+      "g-funk"
+    ],
+    "followers": 6463564,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/4f36d3f900eaf8381b0d3f5febe0e5bf8c94dbea",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "4O36cq71Cq7NazopFLBMmb",
+    "name": "PJ",
+    "genres": [],
+    "followers": 22982,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebba2e2d2a5668ccd09c19cee3",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6XwcepfAsPhrvwziGxhwju",
+    "name": "Pretty Ricky",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 1738682,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebbe775c460b5cb46870921795",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2IJQYEjHVobSClca8CtqsI",
+    "name": "4",
+    "genres": [],
+    "followers": 617,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb60e72b4cb627b07f843ad325",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1ZwdS5xdxEREPySFridCfh",
+    "name": "2Pac",
+    "genres": [
+      "old school hip hop",
+      "gangster rap",
+      "west coast hip hop",
+      "g-funk",
+      "hip hop"
+    ],
+    "followers": 21603823,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb7f5cc432c9c109248ebec1ac",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5Berubt6ysOy2LCMyqhmXP",
+    "name": "YFN Lucci",
+    "genres": [],
+    "followers": 2553787,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb65d29c08f5a954756534fd91",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "5e4gmiVV4XkRfnXhqRBEOk",
+    "name": "Flight",
+    "genres": [],
+    "followers": 100153,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb664e8f8666edf79df39404d4",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2Xu7q46Hf02xOoEIm4E1Qs",
+    "name": "Big Pun",
+    "genres": [
+      "east coast hip hop",
+      "old school hip hop",
+      "hardcore hip hop"
+    ],
+    "followers": 1572338,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb4dd28760ce53bdbc747fd598",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "31IZdHrCZ5pRhLz4zBxN3o",
+    "name": "Riff Raff",
+    "genres": [],
+    "followers": 193057,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb5d5ac92c10c1fa130e852180",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "4GxlrZnW9qHie0I5fbBsrC",
+    "name": "Cartier J",
+    "genres": [],
+    "followers": 91,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eba8666a5a0702e80411422a2f",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "50NoVNy9GU1lCrDV8iGpyu",
+    "name": "Ol' Dirty Bastard",
+    "genres": [
+      "east coast hip hop",
+      "old school hip hop",
+      "hardcore hip hop"
+    ],
+    "followers": 1155913,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/cdcf0ecd5b041452681badedca98f7d3b8494c52",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6rPgMyrhTQgfLkTQF4JRtk",
+    "name": "Justina Valentine",
+    "genres": [],
+    "followers": 69943,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebc4a30b880e5f523c86d3be08",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6xS5PpBWaVYraexEkEjjXv",
+    "name": "Maxo Kream",
+    "genres": [],
+    "followers": 477956,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebcb38cedfa83aa5eecc386655",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6L7yHQOGoPzk6otf1II35I",
+    "name": "4ourty8",
+    "genres": [],
+    "followers": 6710,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb553abe517e93407b7538d9fa",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "1wiBLzTI7z9RUwEpNPdFT6",
+    "name": "Mase",
+    "genres": [],
+    "followers": 895037,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/80b9f130819e4e6f6783805f30d1ce148b75a50e",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "6wYiFTuHYTj3h3Vl8tZ2Vi",
+    "name": "Moneydw",
+    "genres": [],
+    "followers": 237,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb747f40d350a956826039c30a",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7352aRY2mqSxBZwzUb6LmA",
+    "name": "Bow Wow",
+    "genres": [
+      "r&b"
+    ],
+    "followers": 1587592,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebdabcde5a80653290a9f0afad",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "21E3waRsmPlU7jZsS13rcj",
+    "name": "Ne-Yo",
+    "genres": [],
+    "followers": 9872413,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5ebca118e3822061f7b7f6bc537",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7oLFZsy3s1tG6r7VKQPkGq",
+    "name": "YUNG XAVI",
+    "genres": [],
+    "followers": 926,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb09d5f20a8c0728b645ae80fc",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "2GXwqQu5t2x8IgkoUw7RUA",
+    "name": "Jvuitton",
+    "genres": [],
+    "followers": 130,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb2bf01514a27170b364fe015b",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "3q7HBObVc0L8jNeTe5Gofh",
+    "name": "50 Cent",
+    "genres": [
+      "east coast hip hop",
+      "old school hip hop"
+    ],
+    "followers": 17812078,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/dd031b9c5d1b6eba4a691cd89c954255aae787f2",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  },
+  {
+    "id": "7wqtxqI3eo7Gn1P7SpP6cQ",
+    "name": "Salt-N-Pepa",
+    "genres": [
+      "old school hip hop"
+    ],
+    "followers": 931198,
+    "monthlyListeners": 0,
+    "image": "https://i.scdn.co/image/ab6761610000e5eb0675a243b8f4b5301f514206",
+    "preview_url": "",
+    "source": "spotify",
+    "savedAt": "2025-06-04T17:30:47.622Z"
+  }
+]
