@@ -135,17 +135,23 @@ const Explorer = () => {
       filtered.forEach((artist) => {
         const id = artist.id;
         if (!id || profiles[id]) return;
-        profiles[id] = {
-          id: artist.id,
-          name: artist.name,
-          image: artist.image || artist.images?.[0]?.url || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-          genres: Array.isArray(artist.genres) ? artist.genres : [],
-          followers: typeof artist.followers === 'number' ? artist.followers : 0,
-          monthlyListeners: typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0,
-          preview_url: artist.preview_url || '',
-          source: 'explorer_auto',
-          updatedAt: new Date().toISOString(),
-        };
+        const fallbackGenre = (genres.length === 0 && filters.genres?.length > 0)
+          ? filters.genres
+          : [];
+
+            profiles[id] = {
+              id: artist.id,
+              name: artist.name,
+              image: artist.image || artist.images?.[0]?.url || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
+              genres: Array.isArray(artist.genres) && artist.genres.length > 0
+                ? artist.genres
+                : fallbackGenre,
+              followers: typeof artist.followers === 'number' ? artist.followers : 0,
+              monthlyListeners: typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0,
+              preview_url: artist.preview_url || '',
+              source: 'explorer_auto',
+              updatedAt: new Date().toISOString(),
+            };
       });
       localStorage.setItem('artistProfiles', JSON.stringify(profiles));
     } catch (err) {
