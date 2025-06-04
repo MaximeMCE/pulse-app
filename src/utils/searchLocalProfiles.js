@@ -10,16 +10,18 @@ export const searchLocalProfiles = async (filters) => {
       preview_url = '',
     } = profile;
 
-    // ✅ Genre filter with partial match
+    // ✅ Genre filter (case-insensitive, partial match)
     if (filters.genres && filters.genres.length > 0) {
+      if (!Array.isArray(genres) || genres.length === 0) return false;
+
       const lowerGenres = filters.genres.map((g) => g.toLowerCase());
       const profileGenres = genres.map((g) => g.toLowerCase());
 
-      const allMatch = lowerGenres.every((g) =>
+      const hasMatch = lowerGenres.every((g) =>
         profileGenres.some((pg) => pg.includes(g))
       );
 
-      if (!allMatch) return false;
+      if (!hasMatch) return false;
     }
 
     // ✅ Listener range filter
@@ -27,11 +29,12 @@ export const searchLocalProfiles = async (filters) => {
     const max = filters.maxListeners ?? Infinity;
     if (monthlyListeners < min || monthlyListeners > max) return false;
 
-    // ✅ Preview required filter
+    // ✅ Preview required
     if (filters.requirePreview && !preview_url) return false;
 
     return true;
   });
 
+  console.log(`✅ Local filter returned ${results.length} artists`);
   return results;
 };
