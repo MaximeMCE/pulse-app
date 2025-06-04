@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import { crawlArtistsByGenre } from '../api/crawlArtistsByGenre';
 import { getAllArtistProfiles } from '../utils/artistProfileDB';
+import { saveArtistProfile } from '../utils/artistUtils';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -79,10 +80,9 @@ const Explorer = () => {
     setResults([]);
 
     try {
-      let artists = [];
-
       const allProfiles = await getAllArtistProfiles();
-      const dbResults = allProfiles.filter((profile) => {
+
+      const dbResults = Object.values(allProfiles).filter((profile) => {
         const genres = profile.genres?.map((g) => g.toLowerCase()) || [];
         const listeners = profile.monthlyListeners || 0;
         const preview = profile.preview_url || '';
@@ -95,60 +95,74 @@ const Explorer = () => {
           listeners >= (activeFilters.minListeners ?? 0) &&
           listeners <= (activeFilters.maxListeners ?? Infinity);
 
-        const previewMatch = !activeFilters.requirePreview || !!preview;
+        const previewMatch =
+          !activeFilters.requirePreview || !!preview;
 
         return genreMatch && listenerMatch && previewMatch;
       });
 
-      if (dbResults.length > 0) {
-        console.log(`🎯 DB Search returned ${dbResults.length} artists`);
-        setResults(dbResults);
-        localStorage.setItem('last_explorer_results', JSON.stringify(dbResults));
-        setLoading(false);
-        return;
-      }
+      let finalResults = [...dbResults];
 
-      console.log('⚠️ DB returned 0 artists — falling back to Spotify');
-
-      if (searchTerm.trim().length > 0) {
-        artists = await searchArtists(token, searchTerm, filters);
-        addSearch(searchTerm);
-      } else {
-        artists = await crawlArtistsByGenre(token, filters);
-      }
-
-      const minListeners = filters.minListeners ?? 0;
-      const maxListeners = filters.maxListeners ?? Infinity;
-      const recentRelease = filters.recentRelease === '' ? 'off' : filters.recentRelease;
-      const genres = filters.genres ?? [];
-      const genreSource = filters.genreSource ?? 'spotify';
-
-      const filtered = artists.filter((artist) => {
-        const listeners = artist?.monthlyListeners ?? artist?.listeners ?? 0;
-        const releaseDays = artist?.releaseDaysAgo ?? null;
-
-        const listenerCheck = listeners >= minListeners && listeners <= maxListeners;
-        const releaseCheck =
-          recentRelease === 'off' ||
-          (typeof releaseDays === 'number' && releaseDays <= Number(recentRelease));
-
-        let genreCheck = true;
-        if (genres.length > 0) {
-          const lowerGenres = genres.map((g) => g.toLowerCase());
-          const artistGenres =
-            genreSource === 'spotify'
-              ? (artist.genres || []).map((g) => g.toLowerCase())
-              : (artist.customGenres || []).map((g) => g.toLowerCase());
-
-          genreCheck = lowerGenres.every((g) => artistGenres.includes(g));
+      if (dbResults.length < 100) {
+        let artists;
+        if (searchTerm.trim().length > 0) {
+          artists = await searchArtists(token, searchTerm, filters);
+          addSearch(searchTerm);
+        } else {
+          artists = await crawlArtistsByGenre(token, filters);
         }
 
-        return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
-      });
+        const minListeners = filters.minListeners ?? 0;
+        const maxListeners = filters.maxListeners ?? Infinity;
+        const recentRelease = filters.recentRelease === '' ? 'off' : filters.recentRelease;
+        const genres = filters.genres ?? [];
+        const genreSource = filters.genreSource ?? 'spotify';
 
-      setResults(filtered);
-      localStorage.setItem('last_explorer_results', JSON.stringify(filtered));
+        const filtered = artists.filter((artist) => {
+          const listeners = artist?.monthlyListeners ?? artist?.listeners ?? 0;
+          const releaseDays = artist?.releaseDaysAgo ?? null;
 
+          const listenerCheck = listeners >= minListeners && listeners <= maxListeners;
+          const releaseCheck =
+            recentRelease === 'off' ||
+            (typeof releaseDays === 'number' && releaseDays <= Number(recentRelease));
+
+          let genreCheck = true;
+          if (genres.length > 0) {
+            const lowerGenres = genres.map((g) => g.toLowerCase());
+            const artistGenres =
+              genreSource === 'spotify'
+                ? (artist.genres || []).map((g) => g.toLowerCase())
+                : (artist.customGenres || []).map((g) => g.toLowerCase());
+
+            genreCheck = lowerGenres.every((g) => artistGenres.includes(g));
+          }
+
+          return artist && artist.id && artist.name && listenerCheck && releaseCheck && genreCheck;
+        });
+
+        // Only add new artists not already in DB
+        const existingIds = new Set(Object.keys(allProfiles));
+        const newArtists = filtered.filter((artist) => !existingIds.has(artist.id));
+        for (const artist of newArtists) {
+          await saveArtistProfile({
+            id: artist.id,
+            name: artist.name,
+            image: artist.image || artist.images?.[0]?.url || '',
+            genres: Array.isArray(artist.genres) ? artist.genres : [],
+            followers: typeof artist.followers === 'number' ? artist.followers : 0,
+            monthlyListeners: typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0,
+            preview_url: artist.preview_url || '',
+            source: 'explorer_fallback',
+            updatedAt: new Date().toISOString(),
+          });
+        }
+
+        finalResults = [...dbResults, ...newArtists];
+      }
+
+      setResults(finalResults);
+      localStorage.setItem('last_explorer_results', JSON.stringify(finalResults));
     } catch (err) {
       console.error(err);
       setError('Search failed.');
@@ -227,7 +241,7 @@ const Explorer = () => {
   return (
     <div className="flex h-screen bg-gray-50 text-gray-800">
       <div className="flex-1 p-6 overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-6">🎵 Explore Artists</h2>
+        <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
         <FilterBlock onSubmitFilters={handleFilterSubmit} />
         <SearchBlock
           query={query}
@@ -245,9 +259,7 @@ const Explorer = () => {
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
         {!loading && filters && results.length === 0 && (
-          <p className="text-sm text-gray-500 italic">
-            No artists found. Try adjusting your filters or search terms.
-          </p>
+          <p className="text-sm text-gray-500 italic">No artists found. Try adjusting your filters or search terms.</p>
         )}
         <div className="flex flex-col gap-4">
           {results.map((artist) => (
