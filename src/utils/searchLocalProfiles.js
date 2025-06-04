@@ -2,6 +2,7 @@ import { getAllArtistProfiles } from './artistProfileDB';
 
 export const searchLocalProfiles = async (filters) => {
   const profiles = await getAllArtistProfiles();
+
   const results = Object.values(profiles).filter((profile) => {
     const {
       genres = [],
@@ -9,20 +10,24 @@ export const searchLocalProfiles = async (filters) => {
       preview_url = '',
     } = profile;
 
-    // Genre filter
+    // ✅ Genre filter with partial match
     if (filters.genres && filters.genres.length > 0) {
       const lowerGenres = filters.genres.map((g) => g.toLowerCase());
       const profileGenres = genres.map((g) => g.toLowerCase());
-      const allMatch = lowerGenres.every((g) => profileGenres.includes(g));
+
+      const allMatch = lowerGenres.every((g) =>
+        profileGenres.some((pg) => pg.includes(g))
+      );
+
       if (!allMatch) return false;
     }
 
-    // Listener range filter
+    // ✅ Listener range filter
     const min = filters.minListeners ?? 0;
     const max = filters.maxListeners ?? Infinity;
     if (monthlyListeners < min || monthlyListeners > max) return false;
 
-    // Preview required only if filter asks for it (optional for now)
+    // ✅ Preview required filter
     if (filters.requirePreview && !preview_url) return false;
 
     return true;
