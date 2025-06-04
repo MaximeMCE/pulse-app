@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchArtists } from '../api/Spotify';
 import { crawlArtistsByGenre } from '../api/crawlArtistsByGenre';
-import { searchLocalProfiles } from '../utils/searchLocalProfiles';
+import { getAllArtistProfiles } from '../utils/artistProfileDB';
 import ArtistCard from '../components/ArtistCard';
 import ExploreManager from '../components/ExploreManager';
 import FilterBlock from '../components/FilterBlock';
@@ -79,21 +79,37 @@ const Explorer = () => {
     setResults([]);
 
     try {
-      const activeFilters = filters || JSON.parse(localStorage.getItem('last_explorer_filters') || '{}');
-      if (searchTerm.trim().length === 0) {
-        const localResults = await searchLocalProfiles(activeFilters);
-        if (localResults.length > 0) {
-          setResults(localResults);
-          localStorage.setItem('last_explorer_results', JSON.stringify(localResults));
-          console.log('⚡ Using localProfiles for results');
-        } else {
-          setError('No artists found locally for these filters.');
-        }
+      let artists = [];
+
+      const allProfiles = await getAllArtistProfiles();
+      const dbResults = allProfiles.filter((profile) => {
+        const genres = profile.genres?.map((g) => g.toLowerCase()) || [];
+        const listeners = profile.monthlyListeners || 0;
+        const preview = profile.preview_url || '';
+
+        const genreMatch = activeFilters.genres?.some((g) =>
+          genres.some((pg) => pg.includes(g.toLowerCase()))
+        );
+
+        const listenerMatch =
+          listeners >= (activeFilters.minListeners ?? 0) &&
+          listeners <= (activeFilters.maxListeners ?? Infinity);
+
+        const previewMatch = !activeFilters.requirePreview || !!preview;
+
+        return genreMatch && listenerMatch && previewMatch;
+      });
+
+      if (dbResults.length > 0) {
+        console.log(`🎯 DB Search returned ${dbResults.length} artists`);
+        setResults(dbResults);
+        localStorage.setItem('last_explorer_results', JSON.stringify(dbResults));
         setLoading(false);
         return;
       }
 
-      let artists;
+      console.log('⚠️ DB returned 0 artists — falling back to Spotify');
+
       if (searchTerm.trim().length > 0) {
         artists = await searchArtists(token, searchTerm, filters);
         addSearch(searchTerm);
@@ -133,29 +149,6 @@ const Explorer = () => {
       setResults(filtered);
       localStorage.setItem('last_explorer_results', JSON.stringify(filtered));
 
-      const profiles = JSON.parse(localStorage.getItem('artistProfiles') || '{}');
-      filtered.forEach((artist) => {
-        const id = artist.id;
-        if (!id || profiles[id]) return;
-        const fallbackGenre = (genres.length === 0 && filters.genres?.length > 0)
-          ? filters.genres
-          : [];
-
-            profiles[id] = {
-              id: artist.id,
-              name: artist.name,
-              image: artist.image || artist.images?.[0]?.url || 'https://placehold.co/48x48/eeeeee/777777?text=🎵',
-              genres: Array.isArray(artist.genres) && artist.genres.length > 0
-                ? artist.genres
-                : fallbackGenre,
-              followers: typeof artist.followers === 'number' ? artist.followers : 0,
-              monthlyListeners: typeof artist.monthlyListeners === 'number' ? artist.monthlyListeners : 0,
-              preview_url: artist.preview_url || '',
-              source: 'explorer_auto',
-              updatedAt: new Date().toISOString(),
-            };
-      });
-      localStorage.setItem('artistProfiles', JSON.stringify(profiles));
     } catch (err) {
       console.error(err);
       setError('Search failed.');
@@ -191,22 +184,16 @@ const Explorer = () => {
 
   const handleFilterSubmit = (newFilters) => {
     setFilters(newFilters);
-    localStorage.setItem('last_explorer_filters', JSON.stringify(newFilters)); // ✅ add this
+    localStorage.setItem('last_explorer_filters', JSON.stringify(newFilters));
     handleSearch();
   };
 
   const saveLead = (artist, campaignTitle) => {
-    if (!artist?.id || !artist?.name) {
-      console.warn('🚨 Invalid artist object in saveLead:', artist);
-      return;
-    }
+    if (!artist?.id || !artist?.name) return;
 
     const allCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
     const matchedCampaign = allCampaigns.find(c => c.title.toLowerCase() === campaignTitle.toLowerCase());
-    if (!matchedCampaign) {
-      console.warn('🚨 No campaign matched for title:', campaignTitle);
-      return;
-    }
+    if (!matchedCampaign) return;
 
     const campaignKey = `leads_${matchedCampaign.id}`;
     const existing = JSON.parse(localStorage.getItem(campaignKey) || '[]');
@@ -240,7 +227,7 @@ const Explorer = () => {
   return (
     <div className="flex h-screen bg-gray-50 text-gray-800">
       <div className="flex-1 p-6 overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-6">🎧 Explore Artists</h2>
+        <h2 className="text-2xl font-bold mb-6">🎵 Explore Artists</h2>
         <FilterBlock onSubmitFilters={handleFilterSubmit} />
         <SearchBlock
           query={query}
@@ -258,7 +245,9 @@ const Explorer = () => {
         {loading && <p className="text-sm text-blue-500 mb-4">Searching...</p>}
         {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
         {!loading && filters && results.length === 0 && (
-          <p className="text-sm text-gray-500 italic">No artists found. Try adjusting your filters or search terms.</p>
+          <p className="text-sm text-gray-500 italic">
+            No artists found. Try adjusting your filters or search terms.
+          </p>
         )}
         <div className="flex flex-col gap-4">
           {results.map((artist) => (
