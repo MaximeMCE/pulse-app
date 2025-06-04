@@ -73,13 +73,15 @@ const Explorer = () => {
   const handleSearch = async (overrideQuery) => {
     if (!token || !filters) return;
     const searchTerm = overrideQuery || query;
+    const activeFilters = filters || JSON.parse(localStorage.getItem('last_explorer_filters') || '{}');
     setLoading(true);
     setError('');
     setResults([]);
 
     try {
+      const activeFilters = filters || JSON.parse(localStorage.getItem('last_explorer_filters') || '{}');
       if (searchTerm.trim().length === 0) {
-        const localResults = await searchLocalProfiles(filters);
+        const localResults = await searchLocalProfiles(activeFilters);
         if (localResults.length > 0) {
           setResults(localResults);
           localStorage.setItem('last_explorer_results', JSON.stringify(localResults));
@@ -189,6 +191,7 @@ const Explorer = () => {
 
   const handleFilterSubmit = (newFilters) => {
     setFilters(newFilters);
+    localStorage.setItem('last_explorer_filters', JSON.stringify(newFilters)); // ✅ add this
     handleSearch();
   };
 
